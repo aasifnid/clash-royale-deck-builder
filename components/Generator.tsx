@@ -15,6 +15,7 @@ interface PickCard {
   level: number;
   isSubstitute: boolean;
   isMissing: boolean;
+  underLeveled: boolean;
   evolved: boolean;
   hero: boolean;
 }
@@ -38,6 +39,8 @@ interface EnrichedPick {
   winCondition: string;
   avgElixir: number;
   fieldable: boolean;
+  competitiveLevel: number;
+  weakCards: number;
   source: "curated" | "meta";
   usage: number;
   substitutions: { role: string; from: string; to: string }[];
@@ -82,8 +85,9 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
       {cards.map((c, i) => {
         const card = c.key ? cardByKey(c.key) : undefined;
         const rarity = card ? RARITY_COLOR[card.rarity] : "var(--border)";
-        const frame = c.isMissing ? "#6b7280" : c.evolved ? "#ec4899" : c.hero ? "#facc15" : rarity;
-        const glow = c.evolved ? "0 0 8px rgba(236,72,153,0.55)" : c.hero ? "0 0 8px rgba(250,204,21,0.5)" : "none";
+        const low = c.underLeveled && !c.isMissing;
+        const frame = c.isMissing ? "#6b7280" : low ? "#f59e0b" : c.evolved ? "#ec4899" : c.hero ? "#facc15" : rarity;
+        const glow = low ? "0 0 8px rgba(245,158,11,0.6)" : c.evolved ? "0 0 8px rgba(236,72,153,0.55)" : c.hero ? "0 0 8px rgba(250,204,21,0.5)" : "none";
         return (
           <div
             key={i}
@@ -128,8 +132,8 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
                     {c.name ?? c.role}
                     {c.isSubstitute ? " (sub)" : ""}
                   </div>
-                  <div className="text-[10px] font-extrabold" style={{ color: c.isMissing ? "#f3a0a0" : "#fff", textShadow: "0 1px 1px rgba(0,0,0,1)" }}>
-                    {c.isMissing ? "don't have" : `Lv ${c.level}`}
+                  <div className="text-[10px] font-extrabold" style={{ color: c.isMissing ? "#f3a0a0" : low ? "#fbbf24" : "#fff", textShadow: "0 1px 1px rgba(0,0,0,1)" }}>
+                    {c.isMissing ? "don't have" : low ? `Lv ${c.level} · low` : `Lv ${c.level}`}
                   </div>
                 </div>
               </div>
@@ -314,6 +318,14 @@ export default function Generator({ collection, onSave }: Props) {
                   <span className="text-[11px]" style={{ color: "var(--muted)" }}>
                     {pick.avgElixir} avg elixir
                   </span>
+                  <span className="text-[11px]" style={{ color: "var(--muted)" }} title="The card level this deck was judged against, from the cards you actually field.">
+                    built for level {pick.competitiveLevel}
+                  </span>
+                  {pick.weakCards > 0 && (
+                    <span className="rounded px-1.5 py-0.5 text-[10px] font-bold" style={{ background: "rgba(245,158,11,0.18)", color: "#f59e0b" }} title="This deck includes a card below your level. Highlighted in amber below.">
+                      {pick.weakCards} card{pick.weakCards > 1 ? "s" : ""} under your level
+                    </span>
+                  )}
                 </div>
                 <div className="flex gap-2">
                   <button

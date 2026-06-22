@@ -80,6 +80,8 @@ function enrichCandidate(cand: DeckCandidate) {
     skillFloor: cand.deck.skillFloor,
     avgElixir: cand.avgElixir,
     fieldable: cand.fieldable,
+    competitiveLevel: cand.competitiveLevel,
+    weakCards: cand.weakCards,
     source: cand.deck.source ?? "curated",
     usage: cand.deck.usage ?? 0,
     scores: cand.scores,
@@ -98,6 +100,7 @@ function enrichCandidate(cand: DeckCandidate) {
         level: s.level,
         isSubstitute: s.isSubstitute,
         isMissing: s.isMissing,
+        underLeveled: s.weak,
         evolved: s.chosenKey ? evoKeys.has(s.chosenKey) : false,
         hero: s.chosenKey ? heroKeys.has(s.chosenKey) : false,
       };

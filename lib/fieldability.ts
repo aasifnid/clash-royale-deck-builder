@@ -25,6 +25,7 @@ export interface ResolvedSlot {
   isSubstitute: boolean;
   isMissing: boolean;
   level: number; // 0 if missing
+  weak: boolean; // owned but more than COMPETITIVE_GAP below the player's fielding level
 }
 
 export interface PowerCard {
@@ -49,6 +50,8 @@ export interface DeckCandidate {
   extras: string[]; // owned Evo/Hero forms with no slot free
   avgElixir: number;
   fieldable: boolean; // all 8 slots filled from owned cards
+  competitiveLevel: number; // the player's fielding level this deck was judged against
+  weakCards: number; // count of owned-but-under-leveled cards in the resolved deck
   scores: { ownership: number; level: number; skill: number; arena: number; edge: number; meta: number; coverage: number; total: number };
 }
 
@@ -59,20 +62,24 @@ interface RankOptions {
 }
 
 // A card this many levels below the player's competitive level is treated as unusable.
-const COMPETITIVE_GAP = 5;
+// Kept tight (3): at high ladder a card even 3 levels under your fielding level loses its
+// duels, so the engine should reject a proven deck that relies on an under-leveled card
+// rather than field it (e.g. a level-10 Earthquake in a level-14 account).
+const COMPETITIVE_GAP = 3;
 // Swap the canonical card for an owned substitute only if the sub is more than this many
 // levels higher — keeps deck integrity for close calls, fixes egregious under-leveling.
 const LEVEL_UPGRADE_TOLERANCE = 2;
 
-/** The player's realistic competitive level: the 70th percentile of their owned card
- *  levels. Robust to a few maxed outliers (unlike "highest card") and to a pile of low
- *  cards (unlike the mean). Falls back to king level when nothing is owned. */
+/** The player's realistic competitive level: the 80th percentile of their owned card levels.
+ *  Higher than the median so the long tail of never-leveled junk cards doesn't drag it down,
+ *  but not so high it treats the few maxed outliers as the baseline. Falls back to king level
+ *  when nothing is owned. */
 function targetLevel(collection: Collection): number {
   const levels = Object.values(collection.owned)
     .map((o) => o.level)
     .sort((a, b) => a - b);
   if (levels.length === 0) return collection.kingLevel || 11;
-  return levels[Math.floor(0.7 * (levels.length - 1))];
+  return levels[Math.floor(0.8 * (levels.length - 1))];
 }
 
 
@@ -148,7 +155,7 @@ function scoreDeck(
     const r = resolveIntended(deck.slots[i], collection, used);
     if (r) {
       used.add(r.chosenKey);
-      slots[i] = { role: deck.slots[i].role, canonicalKey: deck.slots[i].cardKey, chosenKey: r.chosenKey, isSubstitute: r.isSubstitute, isMissing: false, level: r.level };
+      slots[i] = { role: deck.slots[i].role, canonicalKey: deck.slots[i].cardKey, chosenKey: r.chosenKey, isSubstitute: r.isSubstitute, isMissing: false, level: r.level, weak: false };
     } else {
       pending.push(i);
     }
@@ -158,9 +165,9 @@ function scoreDeck(
     const r = slot.role !== "win-condition" && slot.role !== "champion" ? roleFill(slot, collection, used) : null;
     if (r) {
       used.add(r.chosenKey);
-      slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: r.chosenKey, isSubstitute: true, isMissing: false, level: r.level };
+      slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: r.chosenKey, isSubstitute: true, isMissing: false, level: r.level, weak: false };
     } else {
-      slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: null, isSubstitute: false, isMissing: true, level: 0 };
+      slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: null, isSubstitute: false, isMissing: true, level: 0, weak: false };
     }
   }
   const levelFloor = Math.max(1, target - COMPETITIVE_GAP);
@@ -172,6 +179,9 @@ function scoreDeck(
   // So a level-9 card in a level-15 account scores 0, not 0.6 — under-leveled decks sink.
   let levelWeighted = 0;
   let levelWeightTotal = 0;
+  // Cards more than COMPETITIVE_GAP below the player's fielding level are dead weight: they
+  // lose their duels and quietly lose games. We count them to penalize the deck below.
+  let weakCards = 0;
 
   for (const s of slots) {
     const w = slotWeight(s.role);
@@ -181,6 +191,10 @@ function scoreDeck(
       const fit = Math.max(0, Math.min(1, (s.level - levelFloor) / COMPETITIVE_GAP));
       levelWeighted += w * fit;
       levelWeightTotal += w;
+      if (s.level <= levelFloor) {
+        s.weak = true;
+        weakCards += 1;
+      }
     }
   }
 
@@ -253,6 +267,9 @@ function scoreDeck(
   total *= coverage;
   // A deck you can't field a full 8 for is a poor recommendation — discount hard.
   if (!fieldable) total *= 0.5;
+  // Every under-leveled card is a slot that loses its fight. One is a real liability; two is
+  // a losing deck. Discount steeply so a clean all-level deck always beats one with dead cards.
+  if (weakCards > 0) total *= Math.pow(0.8, weakCards);
   // "Forgiving" must mean it: a high-execution deck (Balloon beatdown, X-Bow, Graveyard) should
   // never be the top "easy" pick just because it fields well. This multiplicative penalty by
   // skill floor decisively sinks demanding decks for forgiving players, while leaving "any" and
@@ -285,6 +302,8 @@ function scoreDeck(
     extras,
     avgElixir,
     fieldable,
+    competitiveLevel: target,
+    weakCards,
     scores: {
       ownership: Math.round(ownership * 100),
       level: Math.round(level * 100),
