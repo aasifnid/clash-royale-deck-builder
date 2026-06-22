@@ -6,19 +6,15 @@
 import provenDecks from "@/data/proven-decks.json";
 import { cardByKey } from "./cards";
 import { metaFitScore } from "./archetypes";
-import { META_DECKS } from "./meta-decks";
 import { cardsWithRole, ANTI_AIR } from "./roles";
 import type { Card, Collection, ProvenDeck } from "./types";
 
-const CURATED = (provenDecks as ProvenDeck[]).map((d) => ({ ...d, source: "curated" as const }));
-const sig = (d: ProvenDeck) => d.slots.map((s) => s.cardKey).sort().join(",");
-const curatedSigs = new Set(CURATED.map(sig));
-
-// Pool = curated archetype library + this season's top-ladder meta decks (deduped).
-export const DECKS: ProvenDeck[] = [
-  ...CURATED,
-  ...META_DECKS.filter((m) => !curatedSigs.has(sig(m))),
-];
+// Pool = the hand-curated library of established, proven archetypes ONLY. We deliberately do
+// NOT mix in the live top-ladder pull: that sample is small, so most "meta" decks were run by
+// just 1-2 players (individual brews, not popular proven decks), and they were ranking above
+// genuine archetypes purely on evolution-slot fit. Every suggestion must be a deck that is
+// actually proven to win, not one player's experiment.
+export const DECKS: ProvenDeck[] = (provenDecks as ProvenDeck[]).map((d) => ({ ...d, source: "curated" as const }));
 
 export type EasePreference = "forgiving" | "any" | "challenge";
 
@@ -253,10 +249,19 @@ function scoreDeck(
   // a deck that leaves both evolution slots empty is a real disadvantage. Past-loss meta is
   // only a minor nudge (the user asked not to drive suggestions off recent failures).
   let total =
-    (0.26 * ownership + 0.4 * level + 0.05 * skill + 0.04 * arena + 0.17 * edge + 0.08 * meta) * 100;
+    (0.26 * ownership + 0.4 * level + 0.08 * skill + 0.04 * arena + 0.17 * edge + 0.05 * meta) * 100;
   total *= coverage;
   // A deck you can't field a full 8 for is a poor recommendation — discount hard.
   if (!fieldable) total *= 0.5;
+  // "Forgiving" must mean it: a high-execution deck (Balloon beatdown, X-Bow, Graveyard) should
+  // never be the top "easy" pick just because it fields well. This multiplicative penalty by
+  // skill floor decisively sinks demanding decks for forgiving players, while leaving "any" and
+  // "challenge" untouched. The weights above keep skill a factor in every mode; this gates it.
+  if (ease === "forgiving") {
+    if (deck.skillFloor >= 5) total *= 0.78;
+    else if (deck.skillFloor === 4) total *= 0.88;
+    else if (deck.skillFloor === 3) total *= 0.96;
+  }
 
   const cards = slots.filter((s) => s.chosenKey).map((s) => cardByKey(s.chosenKey!)!);
   const avgElixir =
