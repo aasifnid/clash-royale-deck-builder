@@ -14,16 +14,8 @@ interface Props {
 export default function SavedDecks({ decks, onDelete }: Props) {
   const [copied, setCopied] = useState<string | null>(null);
 
-  if (decks.length === 0) {
-    return (
-      <section className="rounded-xl p-6" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-        <h2 className="mb-1 text-lg font-bold">Saved Decks</h2>
-        <p className="text-sm" style={{ color: "var(--muted)" }}>
-          Decks you save will appear here.
-        </p>
-      </section>
-    );
-  }
+  // Only render this section once the player has actually saved a deck.
+  if (decks.length === 0) return null;
 
   function copy(deck: SavedDeck) {
     const cards = deck.cardKeys.map(cardByKey).filter(Boolean);

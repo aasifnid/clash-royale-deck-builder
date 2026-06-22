@@ -209,40 +209,54 @@ export default function Generator({ collection, onSave }: Props) {
         Three real top-ladder decks, ranked by how well your cards fit, each with recommended evolutions and a game plan.
       </p>
 
-      <div className="mb-3 flex flex-wrap items-end gap-3">
+      <div className="mb-3 flex flex-wrap items-end gap-4">
         <label className="text-sm">
-          <span className="mb-1 block" style={{ color: "var(--muted)" }}>
+          <span className="mb-1.5 block" style={{ color: "var(--muted)" }}>
             Archetype
           </span>
-          <select
-            value={archetype}
-            onChange={(e) => setArchetype(e.target.value)}
-            className="cursor-pointer rounded-lg bg-[var(--background)] px-4 py-2.5 pr-9 text-sm outline-none"
-            style={{ border: "1px solid var(--border)" }}
-          >
-            {ARCHETYPES.map((a) => (
-              <option key={a} value={a}>
-                {a === "auto" ? "Best for me" : a}
-              </option>
-            ))}
-          </select>
+          <div className="relative inline-block">
+            <select
+              value={archetype}
+              onChange={(e) => setArchetype(e.target.value)}
+              className="cursor-pointer appearance-none rounded-lg bg-[var(--background)] py-2 pl-3 pr-8 text-sm outline-none"
+              style={{ border: "1px solid var(--border)" }}
+            >
+              {ARCHETYPES.map((a) => (
+                <option key={a} value={a}>
+                  {a === "auto" ? "Best for me" : a}
+                </option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center" style={{ color: "var(--muted)" }}>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </div>
         </label>
         <label className="text-sm">
-          <span className="mb-1 block" style={{ color: "var(--muted)" }}>
+          <span className="mb-1.5 block" style={{ color: "var(--muted)" }}>
             Style
           </span>
-          <select
-            value={ease}
-            onChange={(e) => setEase(e.target.value as EasePreference)}
-            className="cursor-pointer rounded-lg bg-[var(--background)] px-4 py-2.5 pr-9 text-sm outline-none"
-            style={{ border: "1px solid var(--border)" }}
-          >
-            {EASES.map((e) => (
-              <option key={e.value} value={e.value}>
-                {e.label}
-              </option>
-            ))}
-          </select>
+          <div className="relative inline-block">
+            <select
+              value={ease}
+              onChange={(e) => setEase(e.target.value as EasePreference)}
+              className="cursor-pointer appearance-none rounded-lg bg-[var(--background)] py-2 pl-3 pr-8 text-sm outline-none"
+              style={{ border: "1px solid var(--border)" }}
+            >
+              {EASES.map((e) => (
+                <option key={e.value} value={e.value}>
+                  {e.label}
+                </option>
+              ))}
+            </select>
+            <span className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center" style={{ color: "var(--muted)" }}>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </div>
         </label>
         <button
           onClick={generate}

@@ -45,6 +45,9 @@ interface ApiPlayer {
   name: string;
   trophies: number;
   expLevel: number; // king tower level
+  wins?: number;
+  losses?: number;
+  battleCount?: number;
   arena?: { id: number; name: string };
   cards: ApiCard[];
   supportCards?: ApiSupportCard[]; // owned tower troops
@@ -123,6 +126,9 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
     trophies: data.trophies,
     arena: arenaNumberFor(data.arena?.id),
     experienceLevel: data.expLevel,
+    wins: data.wins ?? null,
+    losses: data.losses ?? null,
+    battleCount: data.battleCount ?? null,
     kingLevel,
     owned,
     towerTroops,

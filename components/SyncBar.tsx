@@ -36,6 +36,19 @@ export default function SyncBar({ collection, onSynced }: Props) {
 
   const synced = collection.syncedAt && collection.name;
 
+  const { wins, losses, battleCount, trophies, arena, experienceLevel } = collection;
+  const decided = (wins ?? 0) + (losses ?? 0);
+  const winRate = wins != null && decided > 0 ? `${Math.round((wins / decided) * 100)}%` : "—";
+  const metrics = [
+    { label: "Trophies", value: trophies != null ? `${trophies} 🏆` : "—" },
+    { label: "Arena", value: arena != null ? arena : "—" },
+    { label: "Exp level", value: experienceLevel != null ? experienceLevel : "—" },
+    { label: "Win rate", value: winRate },
+    { label: "Games", value: battleCount != null ? battleCount.toLocaleString() : "—" },
+    { label: "Wins", value: wins != null ? wins.toLocaleString() : "—" },
+    { label: "Losses", value: losses != null ? losses.toLocaleString() : "—" },
+  ];
+
   return (
     <section className="rounded-xl p-6" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
       <div className="grid items-stretch gap-6 md:grid-cols-2">
@@ -103,21 +116,13 @@ export default function SyncBar({ collection, onSynced }: Props) {
               <div className="mt-1 text-2xl font-extrabold leading-tight" style={{ color: "var(--foreground)" }}>
                 {collection.name}
               </div>
-              <div className="mt-4 grid grid-cols-3 gap-2">
-                {[
-                  { label: "Trophies", value: collection.trophies != null ? `${collection.trophies} 🏆` : "—" },
-                  { label: "Arena", value: collection.arena != null ? collection.arena : "—" },
-                  { label: "Exp level", value: collection.experienceLevel != null ? collection.experienceLevel : "—" },
-                ].map((s) => (
-                  <div
-                    key={s.label}
-                    className="rounded-lg px-2 py-2 text-center"
-                    style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-                  >
+              <div className="mt-4 grid grid-cols-4 gap-x-4 gap-y-3">
+                {metrics.map((s) => (
+                  <div key={s.label}>
                     <div className="text-[10px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
                       {s.label}
                     </div>
-                    <div className="mt-0.5 text-base font-extrabold" style={{ color: "var(--accent-2)" }}>
+                    <div className="mt-0.5 text-[15px] font-extrabold leading-tight" style={{ color: "var(--accent-2)" }}>
                       {s.value}
                     </div>
                   </div>

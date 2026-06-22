@@ -52,6 +52,9 @@ export interface Collection {
   trophies: number | null;
   arena: number | null; // current arena number
   experienceLevel: number | null; // account XP level (the star-badge number); NOT the king tower level
+  wins: number | null; // career ladder wins
+  losses: number | null; // career ladder losses
+  battleCount: number | null; // total battles played
   kingLevel: number; // king tower level, 1..MAX_LEVEL (API doesn't expose this; derived/editable)
   owned: Record<number, OwnedCard>; // keyed by card id
   towerTroops: Record<number, OwnedTowerTroop>; // owned tower troops, keyed by id
