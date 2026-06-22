@@ -217,7 +217,7 @@ export default function Generator({ collection, onSave }: Props) {
           <select
             value={archetype}
             onChange={(e) => setArchetype(e.target.value)}
-            className="rounded-lg bg-[var(--background)] px-3 py-1.5 text-sm outline-none"
+            className="cursor-pointer rounded-lg bg-[var(--background)] px-4 py-2.5 pr-9 text-sm outline-none"
             style={{ border: "1px solid var(--border)" }}
           >
             {ARCHETYPES.map((a) => (
@@ -234,7 +234,7 @@ export default function Generator({ collection, onSave }: Props) {
           <select
             value={ease}
             onChange={(e) => setEase(e.target.value as EasePreference)}
-            className="rounded-lg bg-[var(--background)] px-3 py-1.5 text-sm outline-none"
+            className="cursor-pointer rounded-lg bg-[var(--background)] px-4 py-2.5 pr-9 text-sm outline-none"
             style={{ border: "1px solid var(--border)" }}
           >
             {EASES.map((e) => (
