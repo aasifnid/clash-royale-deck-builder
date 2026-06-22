@@ -101,7 +101,7 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
                   className="absolute -left-1.5 -top-1.5 z-20 flex h-5 w-5 items-center justify-center"
                   style={{ background: "radial-gradient(circle at 35% 30%, #f06ee0, #a01f8f)", borderRadius: "0 50% 50% 50%", transform: "rotate(45deg)", border: "1.5px solid rgba(255,255,255,0.5)" }}
                 >
-                  <span className="text-[11px] font-extrabold text-white" style={{ transform: "rotate(-45deg)" }}>{card.elixir}</span>
+                  <span className="text-[12px] font-extrabold text-white" style={{ transform: "rotate(-45deg)" }}>{card.elixir}</span>
                 </span>
               )}
               <div
@@ -109,10 +109,10 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
                 style={{ border: `2px solid ${frame}`, boxShadow: glow, background: "#1a2342" }}
               >
                 {c.isMissing ? (
-                  <span className="absolute right-0 top-0 z-10 bg-[#6b7280] px-1 text-[10px] font-bold text-white" style={{ borderBottomLeftRadius: 4 }}>NEED</span>
+                  <span className="absolute right-0 top-0 z-10 bg-[#6b7280] px-1.5 py-0.5 text-[11px] font-bold text-white" style={{ borderBottomLeftRadius: 4 }}>NEED</span>
                 ) : (
                   (c.evolved || c.hero) && (
-                    <span className="absolute right-0 top-0 z-10 px-1 text-[10px] font-bold" style={{ background: c.evolved ? "#ec4899" : "#facc15", color: c.evolved ? "#fff" : "#3a2e00", borderBottomLeftRadius: 4 }}>
+                    <span className="absolute right-0 top-0 z-10 px-1.5 py-0.5 text-[11px] font-bold" style={{ background: c.evolved ? "#ec4899" : "#facc15", color: c.evolved ? "#fff" : "#3a2e00", borderBottomLeftRadius: 4 }}>
                       {c.evolved ? "EVO" : "HERO"}
                     </span>
                   )
@@ -128,11 +128,11 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
                   className="absolute inset-x-0 bottom-0 px-1 pb-0.5 pt-3 text-center"
                   style={{ background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 55%)" }}
                 >
-                  <div className="truncate text-[10px] font-bold leading-tight text-white" style={{ textShadow: "0 1px 2px rgba(0,0,0,1)" }} title={c.name ?? c.role}>
+                  <div className="truncate text-[12px] font-bold leading-tight text-white" style={{ textShadow: "0 1px 2px rgba(0,0,0,1)" }} title={c.name ?? c.role}>
                     {c.name ?? c.role}
                     {c.isSubstitute ? " (sub)" : ""}
                   </div>
-                  <div className="text-[10px] font-extrabold" style={{ color: c.isMissing ? "#f3a0a0" : low ? "#fbbf24" : "#fff", textShadow: "0 1px 1px rgba(0,0,0,1)" }}>
+                  <div className="text-[12px] font-extrabold" style={{ color: c.isMissing ? "#f3a0a0" : low ? "#fbbf24" : "#fff", textShadow: "0 1px 1px rgba(0,0,0,1)" }}>
                     {c.isMissing ? "don't have" : low ? `Lv ${c.level} · low` : `Lv ${c.level}`}
                   </div>
                 </div>
@@ -201,7 +201,7 @@ export default function Generator({ collection, onSave }: Props) {
   }
 
   return (
-    <section className="rounded-xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+    <section className="rounded-xl p-6" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
       <h2 className="text-lg font-bold">
         <span style={{ color: "var(--accent-2)" }}>Step 2</span> · Get your decks
       </h2>

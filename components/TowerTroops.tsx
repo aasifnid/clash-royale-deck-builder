@@ -52,14 +52,14 @@ export default function TowerTroops({ collection, onTroopChange, onSetActive }: 
                     className="absolute inset-x-0 bottom-0 px-1 pb-0.5 pt-3 text-center"
                     style={{ background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 55%)" }}
                   >
-                    <div className="truncate text-[12px] font-bold leading-tight text-white" style={{ textShadow: "0 1px 2px rgba(0,0,0,1)" }} title={troop.name}>
+                    <div className="truncate text-[13px] font-bold leading-tight text-white" style={{ textShadow: "0 1px 2px rgba(0,0,0,1)" }} title={troop.name}>
                       {troop.name}
                     </div>
                     {owned && (
                       <select
                         value={owned.level}
                         onChange={(e) => onTroopChange(troop.id, { level: Number(e.target.value) })}
-                        className="cursor-pointer appearance-none bg-transparent text-center text-[12px] font-extrabold text-white outline-none"
+                        className="cursor-pointer appearance-none bg-transparent text-center text-[13px] font-extrabold text-white outline-none"
                         style={{ textShadow: "0 1px 1px rgba(0,0,0,1)" }}
                         title="Edit level"
                       >

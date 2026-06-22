@@ -102,7 +102,7 @@ export default function Home() {
           <Generator collection={collection} onSave={handleSave} />
           <SavedDecks decks={decks} onDelete={handleDelete} />
           {/* Your account: cards + tower troops in one panel */}
-          <section className="rounded-xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <section className="rounded-xl p-6" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
             <CollectionDashboard
               collection={collection}
               onCardChange={handleCardChange}

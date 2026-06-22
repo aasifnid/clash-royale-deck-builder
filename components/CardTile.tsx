@@ -76,7 +76,7 @@ export default function CardTile({ card, owned, onChange }: Props) {
             style={{ background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 55%)" }}
           >
             <div
-              className="truncate text-[11px] font-bold leading-tight text-white"
+              className="truncate text-[13px] font-bold leading-tight text-white"
               style={{ textShadow: "0 1px 2px rgba(0,0,0,1)" }}
               title={card.name}
             >
@@ -86,7 +86,7 @@ export default function CardTile({ card, owned, onChange }: Props) {
               <select
                 value={owned!.level}
                 onChange={(e) => onChange({ level: Number(e.target.value) })}
-                className="cursor-pointer appearance-none bg-transparent text-center text-[11px] font-extrabold text-white outline-none"
+                className="cursor-pointer appearance-none bg-transparent text-center text-[13px] font-extrabold text-white outline-none"
                 style={{ textShadow: "0 1px 1px rgba(0,0,0,1)" }}
                 title="Edit level"
               >
@@ -100,14 +100,24 @@ export default function CardTile({ card, owned, onChange }: Props) {
           </div>
         </div>
 
-        {/* Controls sit on the card's metallic footer, inside the frame. */}
-        {isOwned ? (
-          (card.hasEvolution || card.hasHero) && (
-            <div className="flex flex-wrap justify-center gap-1.5 px-1 py-1.5">
+        {/* Footer is reserved on EVERY card (fixed min-height) so all cards are the same height
+            whether or not they have Evolution/Hero controls. Owned cards with neither just leave
+            this space empty. */}
+        <div className="flex min-h-[2.5rem] flex-wrap items-center justify-center gap-1.5 px-2 py-2">
+          {!isOwned ? (
+            <button
+              onClick={() => onChange({})}
+              className="w-full rounded px-3 py-1 text-[13px] font-semibold"
+              style={{ background: "var(--surface-2)", color: "var(--foreground)", border: "1px solid var(--border)" }}
+            >
+              + Own
+            </button>
+          ) : (
+            <>
               {card.hasEvolution && (
                 <button
                   onClick={() => onChange({ evolved: !isEvolved })}
-                  className="rounded px-1.5 py-0.5 text-[10px] font-semibold"
+                  className="rounded px-2 py-1 text-[12px] font-semibold"
                   style={{
                     background: isEvolved ? "#ec4899" : "transparent",
                     color: isEvolved ? "#fff" : "var(--muted)",
@@ -121,7 +131,7 @@ export default function CardTile({ card, owned, onChange }: Props) {
               {card.hasHero && (
                 <button
                   onClick={() => onChange({ hero: !isHero })}
-                  className="rounded px-1.5 py-0.5 text-[10px] font-semibold"
+                  className="rounded px-2 py-1 text-[12px] font-semibold"
                   style={{
                     background: isHero ? "#facc15" : "transparent",
                     color: isHero ? "#3a2e00" : "var(--muted)",
@@ -132,19 +142,9 @@ export default function CardTile({ card, owned, onChange }: Props) {
                   Hero
                 </button>
               )}
-            </div>
-          )
-        ) : (
-          <div className="px-1.5 py-1.5">
-            <button
-              onClick={() => onChange({})}
-              className="w-full rounded px-3 py-0.5 text-[12px] font-semibold"
-              style={{ background: "var(--surface-2)", color: "var(--foreground)", border: "1px solid var(--border)" }}
-            >
-              + Own
-            </button>
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
