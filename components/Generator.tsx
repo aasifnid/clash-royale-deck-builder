@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Collection } from "@/lib/types";
 import type { EasePreference } from "@/lib/fieldability";
 import { cardByKey } from "@/lib/cards";
@@ -72,9 +72,10 @@ function topEntries(rec: Record<string, number>, n = 3): string {
     .join(", ");
 }
 
-// Mirrors the archetype set the engine produces (lib/fieldability). Hardcoded so the client
-// bundle doesn't have to import the whole deck library + scoring engine just for this list.
-const ARCHETYPES = ["auto", "Bait", "Beatdown", "Bridge Spam", "Control", "Cycle", "Siege"];
+interface Filters {
+  archetypes: string[];
+  winConditions: string[];
+}
 const EASES: { value: EasePreference; label: string }[] = [
   { value: "any", label: "Strongest (meta)" },
   { value: "forgiving", label: "Easy to play" },
@@ -159,6 +160,15 @@ export default function Generator({ collection, onSave }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [filters, setFilters] = useState<Filters>({ archetypes: [], winConditions: [] });
+
+  // Load the available deck-filter options (styles + win conditions) from the server.
+  useEffect(() => {
+    fetch("/api/filters")
+      .then((r) => r.json())
+      .then((f: Filters) => setFilters({ archetypes: f.archetypes ?? [], winConditions: f.winConditions ?? [] }))
+      .catch(() => {});
+  }, []);
 
   const ownedCount = Object.keys(collection.owned).length;
 
@@ -214,7 +224,7 @@ export default function Generator({ collection, onSave }: Props) {
       <div className="mb-3 flex flex-wrap items-end gap-4">
         <label className="text-sm">
           <span className="mb-1.5 block" style={{ color: "var(--muted)" }}>
-            Archetype
+            Deck type
           </span>
           <div className="relative inline-block">
             <select
@@ -223,11 +233,25 @@ export default function Generator({ collection, onSave }: Props) {
               className="cursor-pointer appearance-none rounded-lg bg-[var(--background)] py-2 pl-3 pr-8 text-sm outline-none"
               style={{ border: "1px solid var(--border)" }}
             >
-              {ARCHETYPES.map((a) => (
-                <option key={a} value={a}>
-                  {a === "auto" ? "Best for me" : a}
-                </option>
-              ))}
+              <option value="auto">Best for me</option>
+              {filters.archetypes.length > 0 && (
+                <optgroup label="Play style">
+                  {filters.archetypes.map((a) => (
+                    <option key={`a-${a}`} value={a}>
+                      {a}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              {filters.winConditions.length > 0 && (
+                <optgroup label="Win condition">
+                  {filters.winConditions.map((w) => (
+                    <option key={`w-${w}`} value={w}>
+                      {w}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
             <span className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center" style={{ color: "var(--muted)" }}>
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
