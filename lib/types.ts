@@ -76,4 +76,6 @@ export interface ProvenDeck {
   minArena: number; // arena where this deck becomes viable
   slots: DeckSlot[]; // 8 slots
   notes?: string; // short gameplan hint
+  source?: "curated" | "meta"; // where the deck came from
+  usage?: number; // for meta decks: how many sampled top players ran it
 }

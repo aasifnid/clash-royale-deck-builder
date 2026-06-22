@@ -5,9 +5,19 @@
 
 import provenDecks from "@/data/proven-decks.json";
 import { cardByKey } from "./cards";
+import { metaFitScore } from "./archetypes";
+import { META_DECKS } from "./meta-decks";
 import type { Card, Collection, ProvenDeck } from "./types";
 
-export const DECKS = provenDecks as ProvenDeck[];
+const CURATED = (provenDecks as ProvenDeck[]).map((d) => ({ ...d, source: "curated" as const }));
+const sig = (d: ProvenDeck) => d.slots.map((s) => s.cardKey).sort().join(",");
+const curatedSigs = new Set(CURATED.map(sig));
+
+// Pool = curated archetype library + this season's top-ladder meta decks (deduped).
+export const DECKS: ProvenDeck[] = [
+  ...CURATED,
+  ...META_DECKS.filter((m) => !curatedSigs.has(sig(m))),
+];
 
 export type EasePreference = "forgiving" | "any" | "challenge";
 
@@ -36,30 +46,59 @@ export interface DeckCandidate {
   powerCards: PowerCard[]; // deck cards the player has in Evolution/Hero form
   avgElixir: number;
   fieldable: boolean; // all 8 slots filled from owned cards
-  scores: { ownership: number; level: number; skill: number; arena: number; edge: number; total: number };
+  scores: { ownership: number; level: number; skill: number; arena: number; edge: number; meta: number; coverage: number; total: number };
 }
 
 interface RankOptions {
   archetype?: string; // filter to one archetype; omit/"auto" = all
   ease?: EasePreference; // default "forgiving"
+  threats?: Record<string, number>; // archetype -> loss count, from the player's battle log
 }
 
-/** Target card level for this player — their king tower level is the best proxy. */
+// A card this many levels below the player's competitive level is treated as unusable.
+const COMPETITIVE_GAP = 5;
+
+/** The player's realistic competitive level: the 70th percentile of their owned card
+ *  levels. Robust to a few maxed outliers (unlike "highest card") and to a pile of low
+ *  cards (unlike the mean). Falls back to king level when nothing is owned. */
 function targetLevel(collection: Collection): number {
-  return collection.kingLevel || 11;
+  const levels = Object.values(collection.owned)
+    .map((o) => o.level)
+    .sort((a, b) => a - b);
+  if (levels.length === 0) return collection.kingLevel || 11;
+  return levels[Math.floor(0.7 * (levels.length - 1))];
 }
 
-/** Resolve one deck slot to the card the player would field (canonical, else best owned sub). */
-function resolveSlot(slot: ProvenDeck["slots"][number], collection: Collection): ResolvedSlot {
-  const ownedLevel = (key: string): number | null => {
-    const card = cardByKey(key);
-    if (!card) return null;
-    const owned = collection.owned[card.id];
-    return owned ? owned.level : null;
-  };
+// Cards that can hit air — used to check a resolved deck isn't defenceless against air.
+const ANTI_AIR = new Set<string>([
+  "musketeer", "archers", "mega-minion", "minions", "minion-horde", "baby-dragon",
+  "inferno-dragon", "electro-dragon", "electro-wizard", "wizard", "witch", "mother-witch",
+  "firecracker", "dart-goblin", "princess", "hunter", "magic-archer", "executioner", "bats",
+  "spear-goblins", "zappies", "phoenix", "flying-machine", "electro-spirit", "ice-wizard",
+  "tesla", "inferno-tower", "archer-queen", "skeleton-dragons", "super-archers",
+  "arrows", "zap", "lightning", "fireball", "rocket", "giant-snowball", "poison",
+]);
 
-  const canonicalLevel = ownedLevel(slot.cardKey);
-  if (canonicalLevel !== null) {
+function ownedLevelOf(collection: Collection, key: string): number | null {
+  const card = cardByKey(key);
+  if (!card) return null;
+  const owned = collection.owned[card.id];
+  return owned ? owned.level : null;
+}
+
+/** Resolve one slot to the card the player would actually field. Keeps the canonical card
+ *  when the player owns it at a competitive level; otherwise picks the highest-level owned
+ *  alternate (so a level-9 canonical is swapped for, say, a level-13 substitute you own). */
+function resolveSlot(
+  slot: ProvenDeck["slots"][number],
+  collection: Collection,
+  target: number,
+): ResolvedSlot {
+  const floor = Math.max(1, target - COMPETITIVE_GAP);
+  const canonicalLevel = ownedLevelOf(collection, slot.cardKey);
+
+  // Keep the canonical card if it's owned and competitive — preserves deck integrity.
+  if (canonicalLevel !== null && canonicalLevel >= floor) {
     return {
       role: slot.role,
       canonicalKey: slot.cardKey,
@@ -70,18 +109,25 @@ function resolveSlot(slot: ProvenDeck["slots"][number], collection: Collection):
     };
   }
 
+  // Otherwise pick the best-leveled owned option (canonical or any substitute).
+  let best: { key: string; level: number; canonical: boolean } | null =
+    canonicalLevel !== null ? { key: slot.cardKey, level: canonicalLevel, canonical: true } : null;
   for (const sub of slot.substitutes) {
-    const subLevel = ownedLevel(sub);
-    if (subLevel !== null) {
-      return {
-        role: slot.role,
-        canonicalKey: slot.cardKey,
-        chosenKey: sub,
-        isSubstitute: true,
-        isMissing: false,
-        level: subLevel,
-      };
+    const lvl = ownedLevelOf(collection, sub);
+    if (lvl !== null && (!best || lvl > best.level)) {
+      best = { key: sub, level: lvl, canonical: false };
     }
+  }
+
+  if (best) {
+    return {
+      role: slot.role,
+      canonicalKey: slot.cardKey,
+      chosenKey: best.key,
+      isSubstitute: !best.canonical,
+      isMissing: false,
+      level: best.level,
+    };
   }
 
   return {
@@ -99,14 +145,21 @@ function slotWeight(role: string): number {
   return role === "win-condition" || role === "champion" ? 2 : 1;
 }
 
-function scoreDeck(deck: ProvenDeck, collection: Collection, ease: EasePreference): DeckCandidate {
-  const slots = deck.slots.map((s) => resolveSlot(s, collection));
+function scoreDeck(
+  deck: ProvenDeck,
+  collection: Collection,
+  ease: EasePreference,
+  threats: Record<string, number>,
+): DeckCandidate {
   const target = targetLevel(collection);
+  const slots = deck.slots.map((s) => resolveSlot(s, collection, target));
+  const levelFloor = Math.max(1, target - COMPETITIVE_GAP);
 
   // Ownership: weighted fraction of slots the player can fill.
   let ownedWeight = 0;
   let totalWeight = 0;
-  // Level fit: weighted average of (cardLevel / target), only over filled slots.
+  // Level fit (steep): a card at/above target = 1.0, COMPETITIVE_GAP below target = 0.
+  // So a level-9 card in a level-15 account scores 0, not 0.6 — under-leveled decks sink.
   let levelWeighted = 0;
   let levelWeightTotal = 0;
 
@@ -115,7 +168,8 @@ function scoreDeck(deck: ProvenDeck, collection: Collection, ease: EasePreferenc
     totalWeight += w;
     if (!s.isMissing) {
       ownedWeight += w;
-      levelWeighted += w * Math.min(1, s.level / target);
+      const fit = Math.max(0, Math.min(1, (s.level - levelFloor) / COMPETITIVE_GAP));
+      levelWeighted += w * fit;
       levelWeightTotal += w;
     }
   }
@@ -153,8 +207,24 @@ function scoreDeck(deck: ProvenDeck, collection: Collection, ease: EasePreferenc
 
   const fieldable = slots.every((s) => !s.isMissing);
 
+  // Meta fit: how well this deck's archetype answers what's beating the player on ladder.
+  // Neutral (0.5) when there's no battle-log threat data.
+  const meta = metaFitScore(deck.archetype, threats);
+
+  // Coverage: after substitutions, does the resolved deck still answer air and carry a spell?
+  // An incoherent resolution (e.g. no anti-air) gets discounted, not silently surfaced.
+  const chosenKeys = slots.map((s) => s.chosenKey).filter((k): k is string => Boolean(k));
+  const hasAntiAir = chosenKeys.some((k) => ANTI_AIR.has(k));
+  const hasSpell = chosenKeys.some((k) => cardByKey(k)?.type === "Spell");
+  let coverage = 1;
+  if (!hasAntiAir) coverage *= 0.82;
+  if (!hasSpell) coverage *= 0.9;
+
+  // Card level dominates: an expert wouldn't run under-leveled cards at this arena. Past-loss
+  // meta is only a minor nudge (the user asked not to drive suggestions off recent failures).
   let total =
-    (0.42 * ownership + 0.27 * level + 0.13 * skill + 0.1 * arena + 0.08 * edge) * 100;
+    (0.3 * ownership + 0.45 * level + 0.06 * skill + 0.05 * arena + 0.06 * edge + 0.08 * meta) * 100;
+  total *= coverage;
   // A deck you can't field a full 8 for is a poor recommendation — discount hard.
   if (!fieldable) total *= 0.5;
 
@@ -181,6 +251,8 @@ function scoreDeck(deck: ProvenDeck, collection: Collection, ease: EasePreferenc
       skill: Math.round(skill * 100),
       arena: Math.round(arena * 100),
       edge: Math.round(edge * 100),
+      meta: Math.round(meta * 100),
+      coverage: Math.round(coverage * 100),
       total: Math.round(total),
     },
   };
@@ -194,8 +266,9 @@ export function rankDecks(collection: Collection, opts: RankOptions = {}): DeckC
       ? DECKS.filter((d) => d.archetype === opts.archetype)
       : DECKS;
 
+  const threats = opts.threats ?? {};
   return pool
-    .map((d) => scoreDeck(d, collection, ease))
+    .map((d) => scoreDeck(d, collection, ease, threats))
     .sort((a, b) => b.scores.total - a.scores.total);
 }
 

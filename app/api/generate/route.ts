@@ -8,7 +8,8 @@ import { NextResponse } from "next/server";
 import type { Collection } from "@/lib/types";
 import { rankDecks, type DeckCandidate, type EasePreference } from "@/lib/fieldability";
 import { coachDecks, CoachError, type CoachPick } from "@/lib/coach";
-import { coachingFor } from "@/lib/coaching";
+import { coachingForDeck } from "@/lib/coaching";
+import { fetchBattleInsights } from "@/lib/battlelog";
 import { cardByKey } from "@/lib/cards";
 
 const SHORTLIST_SIZE = 6;
@@ -40,7 +41,7 @@ function buildStaticPicks(shortlist: DeckCandidate[]): CoachPick[] {
   const chosen = (fieldable.length > 0 ? fieldable : shortlist).slice(0, MAX_PICKS);
 
   return chosen.map((cand) => {
-    const c = coachingFor(cand.deck.id);
+    const c = coachingForDeck(cand.deck.id, cand.deck.archetype);
     return {
       deckId: cand.deck.id,
       summary: personalizedSummary(cand),
@@ -63,6 +64,8 @@ function enrichCandidate(cand: DeckCandidate) {
     skillFloor: cand.deck.skillFloor,
     avgElixir: cand.avgElixir,
     fieldable: cand.fieldable,
+    source: cand.deck.source ?? "curated",
+    usage: cand.deck.usage ?? 0,
     scores: cand.scores,
     substitutions: cand.substitutions,
     missingRoles: cand.missingRoles,
@@ -91,11 +94,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing or invalid collection." }, { status: 400 });
   }
 
-  const ranked = rankDecks(collection, { archetype, ease });
+  // Read the player's recent ladder battles to learn the local meta + what beats them.
+  const insights = collection.tag ? await fetchBattleInsights(collection.tag) : null;
+
+  const ranked = rankDecks(collection, { archetype, ease, threats: insights?.threats });
   const shortlist = ranked.slice(0, SHORTLIST_SIZE);
 
   if (shortlist.length === 0) {
-    return NextResponse.json({ aiUsed: false, picks: [], shortlist: [], note: "No proven decks matched your filters." });
+    return NextResponse.json({ aiUsed: false, picks: [], shortlist: [], insights, note: "No proven decks matched your filters." });
   }
 
   const byId = new Map(shortlist.map((c) => [c.deck.id, c]));
@@ -125,6 +131,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json({
     aiUsed,
+    insights,
     picks: enrichedPicks,
     shortlist: shortlist.map(enrichCandidate),
   });

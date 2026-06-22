@@ -1,21 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f1320;
-  --surface: #181d2e;
-  --surface-2: #212740;
-  --border: #2c3450;
-  --foreground: #e7e9f3;
-  --muted: #939bbd;
-  --accent: #5b8cff;
-  --accent-2: #ffd34e;
+  /* Clash Royale arena palette: deep blues + gold */
+  --background: #0e1c3f;
+  --surface: #1b2f63;
+  --surface-2: #24407e;
+  --border: #3c5aa6;
+  --foreground: #eef4ff;
+  --muted: #9db0e0;
+  --accent: #2b8bff;
+  --accent-2: #ffc23d;
 
   /* rarity colors */
-  --r-common: #b8c0d9;
+  --r-common: #c9d4ee;
   --r-rare: #f97316;
   --r-epic: #c06cff;
   --r-legendary: #3fd5e0;
-  --r-champion: #ffd34e;
+  --r-champion: #ffc23d;
 }
 
 @theme inline {
@@ -27,20 +28,52 @@
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-accent-2: var(--accent-2);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
 }
 
 body {
   background:
-    radial-gradient(1200px 600px at 50% -10%, #1a2240 0%, transparent 60%),
-    var(--background);
+    radial-gradient(1100px 520px at 50% -8%, #2c4a91 0%, transparent 62%),
+    linear-gradient(180deg, #16285a 0%, #0c1736 100%) fixed;
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
 }
 
-/* Thin scrollbars for the card grid */
+/* Chunky display font for headings, buttons, labels, selects — the game's voice */
+h1,
+h2,
+h3,
+h4,
+button,
+select {
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: 0.01em;
+}
+
+h1,
+h2 {
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* Beveled, slightly 3D buttons like the game */
+button:not(:disabled) {
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+  transition:
+    transform 0.04s ease,
+    box-shadow 0.04s ease;
+}
+button:not(:disabled):active {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 rgba(0, 0, 0, 0.35);
+}
+
+/* Panels read as raised game cards */
+section {
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;

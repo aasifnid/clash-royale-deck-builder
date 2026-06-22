@@ -36,12 +36,11 @@ export default function CardTile({ card, owned, onChange }: Props) {
 
   return (
     <div
-      className="relative flex flex-col items-center rounded-xl p-3 text-center transition"
+      className="relative rounded-xl p-3 text-center transition"
       style={{
         background: isOwned ? "var(--surface-2)" : "var(--surface)",
         border: `1px solid ${isOwned ? color : "var(--border)"}`,
         opacity: isOwned ? 1 : 0.5,
-        minHeight: 188,
       }}
     >
       <ElixirDrop cost={card.elixir} />
@@ -63,7 +62,7 @@ export default function CardTile({ card, owned, onChange }: Props) {
 
 
       {isOwned ? (
-        <div className="mt-auto flex flex-col items-center gap-1.5 pt-2">
+        <div className="mt-2 flex flex-col items-center gap-1.5">
           <div className="flex items-center gap-1">
             <label className="text-[10px]" style={{ color: "var(--muted)" }}>
               lvl
@@ -117,7 +116,7 @@ export default function CardTile({ card, owned, onChange }: Props) {
       ) : (
         <button
           onClick={() => onChange({})}
-          className="mt-auto rounded px-3 py-0.5 text-[12px] font-semibold"
+          className="mt-2 rounded px-3 py-0.5 text-[12px] font-semibold"
           style={{ background: "var(--surface-2)", color: "var(--foreground)", border: "1px solid var(--border)" }}
         >
           + Own

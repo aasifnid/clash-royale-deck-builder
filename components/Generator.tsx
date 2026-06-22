@@ -32,14 +32,32 @@ interface EnrichedPick {
   winCondition: string;
   avgElixir: number;
   fieldable: boolean;
+  source: "curated" | "meta";
+  usage: number;
   substitutions: { role: string; from: string; to: string }[];
   powerCards: { key: string; name: string; evolved: boolean; hero: boolean }[];
   cards: PickCard[];
 }
+interface BattleInsights {
+  games: number;
+  wins: number;
+  losses: number;
+  meta: Record<string, number>;
+  threats: Record<string, number>;
+}
 interface GenerateResponse {
   aiUsed: boolean;
+  insights?: BattleInsights | null;
   picks: EnrichedPick[];
   shortlist: EnrichedPick[];
+}
+
+function topEntries(rec: Record<string, number>, n = 3): string {
+  return Object.entries(rec)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, n)
+    .map(([k, v]) => `${k} (${v})`)
+    .join(", ");
 }
 
 const ARCHETYPES = ["auto", ...archetypes()];
@@ -51,23 +69,41 @@ const EASES: { value: EasePreference; label: string }[] = [
 
 function DeckCards({ cards }: { cards: PickCard[] }) {
   return (
-    <div className="flex flex-wrap gap-1.5">
+    <div className="flex flex-wrap gap-2">
       {cards.map((c, i) => {
         const card = c.key ? cardByKey(c.key) : undefined;
         const color = card ? RARITY_COLOR[card.rarity] : "var(--border)";
         return (
           <div
             key={i}
-            className="rounded px-2 py-1 text-center"
-            style={{ background: "var(--surface-2)", border: `1px solid ${color}`, minWidth: 72 }}
-            title={c.role}
+            className="text-center"
+            style={{ width: 68 }}
+            title={`${c.name ?? c.role}${card ? ` · ${card.elixir} elixir` : ""}${c.isSubstitute ? " · substitute" : ""}`}
           >
-            <div className="truncate text-[11px] font-semibold" style={{ color }}>
-              {c.name ?? "—"}
+            <div className="relative overflow-hidden rounded-lg" style={{ border: `2px solid ${color}` }}>
+              {card && (
+                <span
+                  className="absolute left-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-extrabold text-white"
+                  style={{ backgroundColor: "#b5179e" }}
+                >
+                  {card.elixir}
+                </span>
+              )}
+              {card?.iconUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={card.iconUrl} alt={c.name ?? ""} loading="lazy" className="w-full" />
+              ) : (
+                <div className="flex h-16 items-center justify-center text-[10px]" style={{ color: "var(--muted)" }}>
+                  {c.name ?? c.role}
+                </div>
+              )}
             </div>
-            <div className="text-[10px]" style={{ color: "var(--muted)" }}>
-              {card ? `${card.elixir}⚡ · lvl ${c.level}` : c.role}
-              {c.isSubstitute ? " · sub" : ""}
+            <div className="mt-1 text-[10px] font-medium leading-tight" style={{ color }}>
+              {c.name ?? c.role}
+              {c.isSubstitute ? " (sub)" : ""}
+            </div>
+            <div className="text-[9px]" style={{ color: "var(--muted)" }}>
+              lvl {c.level}
             </div>
           </div>
         );
@@ -193,6 +229,27 @@ export default function Generator({ collection, onSave }: Props) {
 
       {result && (
         <div className="flex flex-col gap-4">
+          {result.insights && result.insights.games > 0 && (
+            <div
+              className="rounded-lg p-3 text-sm"
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
+            >
+              <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
+                Your ladder meta · last {result.insights.games} games ({result.insights.wins}W / {result.insights.losses}L)
+              </div>
+              <div>
+                <span style={{ color: "var(--muted)" }}>Facing most:</span> {topEntries(result.insights.meta)}
+              </div>
+              {Object.keys(result.insights.threats).length > 0 && (
+                <div>
+                  <span style={{ color: "#f87171" }}>Losing most to:</span> {topEntries(result.insights.threats)}
+                </div>
+              )}
+              <div className="mt-1 text-xs" style={{ color: "var(--muted)" }}>
+                Decks below are scored to counter what beats you.
+              </div>
+            </div>
+          )}
           {result.picks.length === 0 && (
             <p className="text-sm" style={{ color: "var(--muted)" }}>
               No fieldable decks found. Try a different archetype or add more cards.
@@ -210,6 +267,15 @@ export default function Generator({ collection, onSave }: Props) {
                   <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold" style={{ background: "var(--background)", color: "var(--muted)" }}>
                     {pick.archetype}
                   </span>
+                  {pick.source === "meta" && (
+                    <span
+                      className="rounded px-1.5 py-0.5 text-[10px] font-bold"
+                      style={{ background: "var(--accent)", color: "#fff" }}
+                      title={`Run by ${pick.usage} sampled top-ladder players this season`}
+                    >
+                      META{pick.usage > 1 ? ` ×${pick.usage}` : ""}
+                    </span>
+                  )}
                   <span
                     className="rounded px-1.5 py-0.5 text-[10px] font-bold"
                     style={{ background: "var(--background)", color: difficultyColor(pick.coach.difficulty) }}
