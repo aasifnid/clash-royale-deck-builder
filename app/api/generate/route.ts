@@ -27,7 +27,8 @@ function personalizedSummary(cand: DeckCandidate): string {
   const wcNote = wc ? ` Win condition ${cardByKey(wc.chosenKey!)?.name ?? wc.canonicalKey} is at level ${wc.level}.` : "";
 
   if (!cand.fieldable) {
-    return `Closest ${cand.deck.archetype} deck to what you own — missing ${cand.missingRoles.length} card(s).`;
+    const missing = cand.missingRoles.map((k) => cardByKey(k)?.name ?? k);
+    return `Closest ${cand.deck.archetype} deck to what you own — you're missing ${missing.join(", ")}.`;
   }
   if (cand.substitutions.length > 0) {
     return `A ${cand.deck.archetype} deck you can field, using ${cand.substitutions.length} substitute(s) for cards you don't own.${wcNote}`;
@@ -84,16 +85,19 @@ function enrichCandidate(cand: DeckCandidate) {
     evolutionSlots: cand.evolutionSlots,
     heroSlots: cand.heroSlots,
     extras: cand.extras,
-    cards: cand.slots.map((s) => ({
-      role: s.role,
-      key: s.chosenKey,
-      name: s.chosenKey ? (cardByKey(s.chosenKey)?.name ?? s.chosenKey) : null,
-      level: s.level,
-      isSubstitute: s.isSubstitute,
-      isMissing: s.isMissing,
-      evolved: s.chosenKey ? evoKeys.has(s.chosenKey) : false,
-      hero: s.chosenKey ? heroKeys.has(s.chosenKey) : false,
-    })),
+    cards: cand.slots.map((s) => {
+      const need = s.isMissing ? cardByKey(s.canonicalKey) : null;
+      return {
+        role: s.role,
+        key: s.chosenKey ?? need?.key ?? null,
+        name: s.chosenKey ? (cardByKey(s.chosenKey)?.name ?? s.chosenKey) : (need?.name ?? s.canonicalKey),
+        level: s.level,
+        isSubstitute: s.isSubstitute,
+        isMissing: s.isMissing,
+        evolved: s.chosenKey ? evoKeys.has(s.chosenKey) : false,
+        hero: s.chosenKey ? heroKeys.has(s.chosenKey) : false,
+      };
+    }),
   };
 }
 
@@ -150,5 +154,9 @@ export async function POST(request: Request) {
     insights,
     picks: enrichedPicks,
     shortlist: shortlist.map(enrichCandidate),
+    // Debug-only: full ranked list with sub-scores, for the weight-sensitivity audit.
+    debugRanked: (body as { debug?: boolean }).debug
+      ? ranked.map((c) => ({ name: c.deck.name, source: c.deck.source ?? "curated", fieldable: c.fieldable, scores: c.scores }))
+      : undefined,
   });
 }

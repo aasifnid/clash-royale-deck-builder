@@ -7,6 +7,7 @@ import provenDecks from "@/data/proven-decks.json";
 import { cardByKey } from "./cards";
 import { metaFitScore } from "./archetypes";
 import { META_DECKS } from "./meta-decks";
+import { cardsWithRole, ANTI_AIR } from "./roles";
 import type { Card, Collection, ProvenDeck } from "./types";
 
 const CURATED = (provenDecks as ProvenDeck[]).map((d) => ({ ...d, source: "curated" as const }));
@@ -75,15 +76,6 @@ function targetLevel(collection: Collection): number {
   return levels[Math.floor(0.7 * (levels.length - 1))];
 }
 
-// Cards that can hit air — used to check a resolved deck isn't defenceless against air.
-const ANTI_AIR = new Set<string>([
-  "musketeer", "archers", "mega-minion", "minions", "minion-horde", "baby-dragon",
-  "inferno-dragon", "electro-dragon", "electro-wizard", "wizard", "witch", "mother-witch",
-  "firecracker", "dart-goblin", "princess", "hunter", "magic-archer", "executioner", "bats",
-  "spear-goblins", "zappies", "phoenix", "flying-machine", "electro-spirit", "ice-wizard",
-  "tesla", "inferno-tower", "archer-queen", "skeleton-dragons", "super-archers",
-  "arrows", "zap", "lightning", "fireball", "rocket", "giant-snowball", "poison",
-]);
 
 function ownedLevelOf(collection: Collection, key: string): number | null {
   const card = cardByKey(key);
@@ -94,16 +86,18 @@ function ownedLevelOf(collection: Collection, key: string): number | null {
 
 /** Resolve one slot to the card the player would actually field. Keeps the canonical card
  *  when the player owns it at a competitive level; otherwise picks the highest-level owned
- *  alternate (so a level-9 canonical is swapped for, say, a level-13 substitute you own). */
+ *  alternate. `used` holds cards already placed in other slots — never reuse one (a deck
+ *  must have 8 distinct cards). */
 function resolveSlot(
   slot: ProvenDeck["slots"][number],
   collection: Collection,
   target: number,
+  used: Set<string>,
 ): ResolvedSlot {
   const floor = Math.max(1, target - COMPETITIVE_GAP);
-  const canonicalLevel = ownedLevelOf(collection, slot.cardKey);
+  const canonicalLevel = used.has(slot.cardKey) ? null : ownedLevelOf(collection, slot.cardKey);
 
-  // Keep the canonical card if it's owned and competitive — preserves deck integrity.
+  // Keep the canonical card if it's owned, unused, and competitive — preserves deck integrity.
   if (canonicalLevel !== null && canonicalLevel >= floor) {
     return {
       role: slot.role,
@@ -115,13 +109,27 @@ function resolveSlot(
     };
   }
 
-  // Otherwise pick the best-leveled owned option (canonical or any substitute).
+  // Otherwise pick the best-leveled owned option (canonical or substitute) not already used.
   let best: { key: string; level: number; canonical: boolean } | null =
     canonicalLevel !== null ? { key: slot.cardKey, level: canonicalLevel, canonical: true } : null;
   for (const sub of slot.substitutes) {
+    if (used.has(sub)) continue;
     const lvl = ownedLevelOf(collection, sub);
     if (lvl !== null && (!best || lvl > best.level)) {
       best = { key: sub, level: lvl, canonical: false };
+    }
+  }
+
+  // Personalization fallback: if neither the canonical nor a listed substitute is owned,
+  // fill this slot from ANY owned card that plays the same role (best-leveled). Win-condition
+  // and champion slots are NOT generalized — swapping them would make it a different deck.
+  if (!best && slot.role !== "win-condition" && slot.role !== "champion") {
+    for (const key of cardsWithRole(slot.role)) {
+      if (used.has(key)) continue;
+      const lvl = ownedLevelOf(collection, key);
+      if (lvl !== null && (!best || lvl > best.level)) {
+        best = { key, level: lvl, canonical: false };
+      }
     }
   }
 
@@ -158,7 +166,16 @@ function scoreDeck(
   threats: Record<string, number>,
 ): DeckCandidate {
   const target = targetLevel(collection);
-  const slots = deck.slots.map((s) => resolveSlot(s, collection, target));
+  // Resolve important slots first (win condition / champion) so they claim their preferred
+  // card; later slots take what's left. `used` guarantees 8 distinct cards.
+  const used = new Set<string>();
+  const order = deck.slots.map((_, i) => i).sort((a, b) => slotWeight(deck.slots[b].role) - slotWeight(deck.slots[a].role));
+  const slots: ResolvedSlot[] = [];
+  for (const i of order) {
+    const r = resolveSlot(deck.slots[i], collection, target, used);
+    if (r.chosenKey) used.add(r.chosenKey);
+    slots[i] = r;
+  }
   const levelFloor = Math.max(1, target - COMPETITIVE_GAP);
 
   // Ownership: weighted fraction of slots the player can fill.

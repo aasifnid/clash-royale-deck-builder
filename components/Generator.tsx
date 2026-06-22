@@ -87,9 +87,12 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
           >
             <div
               className="relative overflow-hidden rounded-lg"
-              style={{ border: `2px solid ${c.evolved ? "#ec4899" : c.hero ? "#facc15" : color}` }}
+              style={{
+                border: `2px solid ${c.isMissing ? "#6b7280" : c.evolved ? "#ec4899" : c.hero ? "#facc15" : color}`,
+                opacity: c.isMissing ? 0.5 : 1,
+              }}
             >
-              {card && (
+              {card && !c.isMissing && (
                 <span
                   className="absolute left-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-extrabold text-white"
                   style={{ backgroundColor: "#b5179e" }}
@@ -97,33 +100,35 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
                   {card.elixir}
                 </span>
               )}
-              {(c.evolved || c.hero) && (
-                <span
-                  className="absolute right-0 top-0 px-1 text-[8px] font-bold"
-                  style={{
-                    background: c.evolved ? "#ec4899" : "#facc15",
-                    color: c.evolved ? "#fff" : "#3a2e00",
-                    borderBottomLeftRadius: 4,
-                  }}
-                >
-                  {c.evolved ? "EVO" : "HERO"}
+              {c.isMissing ? (
+                <span className="absolute right-0 top-0 bg-[#6b7280] px-1 text-[8px] font-bold text-white" style={{ borderBottomLeftRadius: 4 }}>
+                  NEED
                 </span>
+              ) : (
+                (c.evolved || c.hero) && (
+                  <span
+                    className="absolute right-0 top-0 px-1 text-[8px] font-bold"
+                    style={{ background: c.evolved ? "#ec4899" : "#facc15", color: c.evolved ? "#fff" : "#3a2e00", borderBottomLeftRadius: 4 }}
+                  >
+                    {c.evolved ? "EVO" : "HERO"}
+                  </span>
+                )
               )}
               {card?.iconUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={card.iconUrl} alt={c.name ?? ""} loading="lazy" className="w-full" />
+                <img src={card.iconUrl} alt={c.name ?? ""} loading="lazy" className="w-full" style={{ filter: c.isMissing ? "grayscale(1)" : "none" }} />
               ) : (
                 <div className="flex h-16 items-center justify-center text-[10px]" style={{ color: "var(--muted)" }}>
                   {c.name ?? c.role}
                 </div>
               )}
             </div>
-            <div className="mt-1 text-[10px] font-medium leading-tight" style={{ color }}>
+            <div className="mt-1 text-[10px] font-medium leading-tight" style={{ color: c.isMissing ? "var(--muted)" : color }}>
               {c.name ?? c.role}
               {c.isSubstitute ? " (sub)" : ""}
             </div>
             <div className="text-[9px]" style={{ color: "var(--muted)" }}>
-              lvl {c.level}
+              {c.isMissing ? "don't have" : `lvl ${c.level}`}
             </div>
           </div>
         );
