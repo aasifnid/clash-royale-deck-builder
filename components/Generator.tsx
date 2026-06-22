@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Collection } from "@/lib/types";
-import { archetypes, type EasePreference } from "@/lib/fieldability";
+import type { EasePreference } from "@/lib/fieldability";
 import { cardByKey } from "@/lib/cards";
 import { deckLink } from "@/lib/deck";
 import { difficultyColor, RARITY_COLOR } from "@/lib/ui";
@@ -72,7 +72,9 @@ function topEntries(rec: Record<string, number>, n = 3): string {
     .join(", ");
 }
 
-const ARCHETYPES = ["auto", ...archetypes()];
+// Mirrors the archetype set the engine produces (lib/fieldability). Hardcoded so the client
+// bundle doesn't have to import the whole deck library + scoring engine just for this list.
+const ARCHETYPES = ["auto", "Bait", "Beatdown", "Bridge Spam", "Control", "Cycle", "Siege"];
 const EASES: { value: EasePreference; label: string }[] = [
   { value: "any", label: "Strongest (meta)" },
   { value: "forgiving", label: "Easy to play" },

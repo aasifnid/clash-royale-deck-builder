@@ -47,11 +47,6 @@ export default function CollectionDashboard({ collection, onCardChange, onMetaCh
           </span>
         </h2>
         <div className="flex flex-wrap items-center gap-3">
-          {collection.experienceLevel != null && (
-            <span className="text-sm" style={{ color: "var(--muted)" }} title="Account experience level (star badge)">
-              Exp lvl {collection.experienceLevel}
-            </span>
-          )}
           <label className="flex items-center gap-1.5 text-sm">
             <span style={{ color: "var(--muted)" }} title="King Tower level (the API doesn't provide this; estimated from your cards, edit if needed)">
               King Tower

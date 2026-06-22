@@ -120,12 +120,8 @@ export default function Home() {
       )}
 
       <footer className="mt-8 text-center text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
-        Decks drawn from the current top-ladder meta (official Clash Royale API) plus proven archetypes. Card data and
-        art via RoyaleAPI. A personal experiment by{" "}
-        <a href="https://aasifanwar.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>
-          Aasif Anwar
-        </a>
-        , not affiliated with Supercell.
+        Decks from the current top-ladder meta (official Clash Royale API) and proven archetypes. Card data and art via
+        RoyaleAPI. Not affiliated with Supercell.
       </footer>
     </main>
   );
