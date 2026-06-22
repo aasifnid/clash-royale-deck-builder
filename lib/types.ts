@@ -12,18 +12,37 @@ export interface Card {
   type: CardType;
   rarity: Rarity;
   arena: number; // arena the card unlocks in
-  hasEvolution: boolean; // evolution exists for this card (hint; data source may lag)
+  hasEvolution: boolean; // an Evolution form exists for this card
+  hasHero: boolean; // a Hero form exists for this card (separate, stronger final form)
+  iconUrl?: string | null; // default card art
+  evolutionUrl?: string | null; // evolution art (if hasEvolution)
+  heroUrl?: string | null; // hero art (if hasHero)
 }
 
 /** The current cap for card and king-tower levels in Clash Royale. */
 export const MAX_LEVEL = 15;
 
-/** A card the player owns, with their progression on it. */
+/** A card the player owns, with their progression on it. `evolved`/`hero` are decoded from
+ *  the API's evolutionLevel bitmask on sync, and remain editable for manual entry. */
 export interface OwnedCard {
   id: number;
   level: number; // 1..MAX_LEVEL
-  evolved: boolean; // player has unlocked the evolution
-  starLevel: number; // 0 = none, 1..3 = star level
+  evolved: boolean; // player has unlocked this card's Evolution
+  hero: boolean; // player has unlocked this card's Hero form
+}
+
+/** Master data for a tower troop (support card). */
+export interface TowerTroop {
+  id: number;
+  name: string;
+  rarity: Rarity;
+  iconUrl?: string | null;
+}
+
+/** A tower troop the player owns, with its level. */
+export interface OwnedTowerTroop {
+  id: number;
+  level: number; // 1..MAX_LEVEL
 }
 
 /** A player's full account state — the source of truth the generator reasons over. */
@@ -32,8 +51,11 @@ export interface Collection {
   name: string | null; // player name if synced
   trophies: number | null;
   arena: number | null; // current arena number
-  kingLevel: number; // 1..MAX_LEVEL
+  experienceLevel: number | null; // account XP level (the star-badge number); NOT the king tower level
+  kingLevel: number; // king tower level, 1..MAX_LEVEL (API doesn't expose this; derived/editable)
   owned: Record<number, OwnedCard>; // keyed by card id
+  towerTroops: Record<number, OwnedTowerTroop>; // owned tower troops, keyed by id
+  activeTowerTroop: number | null; // id of the tower troop in the current deck
   syncedAt: string | null; // ISO timestamp of last successful sync
 }
 

@@ -1,0 +1,147 @@
+{
+  "hog-2.6": {
+    "gameplan": "Defend efficiently with your cheap cards, then send the Hog the moment their main counter (a building or Mini PEKKA) is out of rotation. Your faster cycle lets you send Hog again before they can answer.",
+    "counters": "Buildings and swarms slow the Hog. Watch for Tornado pulling it to the middle, and beatdown decks that out-value your cheap cards if you over-defend.",
+    "playTips": "Never overcommit. Win on small chip and tower trades, not one big push."
+  },
+  "hog-eq": {
+    "gameplan": "Same Hog pressure, but Earthquake resets their defensive building and chips the tower under the Hog. Pair them when they drop a Cannon or Tombstone.",
+    "counters": "Air decks and high-HP buildings still trouble you. Respect Balloon and Lava Hound on defense.",
+    "playTips": "Hold Earthquake for their building, not for swarms. The Log handles ground swarms."
+  },
+  "xbow-2.9": {
+    "gameplan": "Place the X-Bow defensively just over the river to lock onto the tower while Tesla and cheap cards defend. Cycle fast so you always have an X-Bow ready.",
+    "counters": "Rocket and Earthquake on the X-Bow hurt. Heavy beatdown and buildings that pull the X-Bow are your toughest matchups.",
+    "playTips": "This is the hardest deck in the game to pilot. Drill X-Bow placement before laddering with it."
+  },
+  "mortar-bait": {
+    "gameplan": "Chip with Mortar from the bridge and defend cheaply. Bait their small spell with Goblin Gang, then your Mortar and bait cards run free.",
+    "counters": "Buildings and a well-timed swarm on the Mortar shut down your chip. Respect Rocket-cycle decks.",
+    "playTips": "Place Mortar so it also helps defend. It doubles as an anti-push building."
+  },
+  "golem-nw": {
+    "gameplan": "Build Golem in the back when ahead on elixir, stack Night Witch and air behind it, and save spells for their defensive swarm.",
+    "counters": "Inferno Tower and Inferno Dragon melt the Golem. Fast cycle decks that rush the other lane punish a slow start.",
+    "playTips": "Do not start Golem when low on elixir. Defend first, then build the counter-push."
+  },
+  "lavaloon": {
+    "gameplan": "Air beatdown. Lava Hound soaks tower fire while Balloon does the damage. Commit on a counter-push when their air defense is busy.",
+    "counters": "Strong air defense (Musketeer, Mega Minion, Tesla) and reset cards stop the Balloon. A fast ground rush in the other lane is dangerous.",
+    "playTips": "Send Balloon behind the Lava Hound, never in front. Let the Hound eat the first hits."
+  },
+  "lava-miner": {
+    "gameplan": "Lava Hound pulls fire while Miner chips behind it. Patient air control that wins slowly on chip and defense.",
+    "counters": "Air defense and reset cards. Heavy ground beatdown can out-tank your slower plan.",
+    "playTips": "Use Miner to tank for Bats or to kill their support, not just to face-tank the tower."
+  },
+  "egiant": {
+    "gameplan": "Electro Giant tanks and punishes anything that hits it. Tornado pulls troops into its zap aura, and Lightning clears key defenders.",
+    "counters": "Buildings that pull it off the tower, and units that out-range the zap (Princess, Dart Goblin). Inferno melts it.",
+    "playTips": "Tornado is your MVP. Bunch their troops into the Electro Giant's aura on defense."
+  },
+  "pekka-bs": {
+    "gameplan": "Defend with PEKKA, then immediately counter-push across the bridge with Bandit, Battle Ram, and Ghost while they are low on elixir.",
+    "counters": "Swarms and Inferno cards eat the PEKKA. Buildings slow your bridge spam. Poison their defensive swarm.",
+    "playTips": "Never start PEKKA in the back. She is a defensive anchor that turns into offense."
+  },
+  "ramrider-bs": {
+    "gameplan": "Ram Rider snares their key defender so Bandit and Battle Ram connect. Apply constant pressure at the bridge.",
+    "counters": "Big spells on your support and strong single-target defense. Respect beatdown that ignores your chip.",
+    "playTips": "Use Ram Rider's snare on their highest-DPS troop to free your other threats."
+  },
+  "gy-poison": {
+    "gameplan": "Defend strongly, then drop Graveyard behind a tank and Poison their counter-swarm. Win on chip and superior defense.",
+    "counters": "Buildings and ground swarms that survive Poison. Splash like Valkyrie or Bowler shuts you down.",
+    "playTips": "Place Graveyard slightly behind the tower so skeletons spawn on it, not in front of it."
+  },
+  "miner-poison": {
+    "gameplan": "Chip with Miner and Poison while defending efficiently. Win on small positive trades over time, not big pushes.",
+    "counters": "Beatdown that out-values your cheap chip. Respect anything that punishes a lone Miner.",
+    "playTips": "Use Miner on their support or Princess, not always the tower. Poison pairs with it for chip."
+  },
+  "miner-wb": {
+    "gameplan": "Pair Miner with Wall Breakers for chip from two angles. Defend with Bomb Tower and swarm, then chip when they are tapped out.",
+    "counters": "Buildings and splash that clear Wall Breakers. Fast cycle that out-paces your chip.",
+    "playTips": "Send Wall Breakers when their swarm and small spell are out of cycle."
+  },
+  "log-bait": {
+    "gameplan": "Bait their small spell with Goblin Gang and Princess, then land Goblin Barrel for free damage. Defend with Inferno Tower and Knight.",
+    "counters": "Decks with two small spells, or splash that clears your bait. Heavy beatdown if you over-defend.",
+    "playTips": "Track their spell. Only send the Barrel once their answer is out of rotation. This is a heavy-tracking deck."
+  },
+  "rg-fisherman": {
+    "gameplan": "Place Royal Giant at the bridge, support it with Fisherman and Mother Witch, and pull their threats away with the Fisherman hook.",
+    "counters": "Buildings and high-DPS air (Inferno Dragon, Mega Minion). Tornado pulls your RG off the tower.",
+    "playTips": "Hook tanks away from your tower with Fisherman, then let RG chip. A very forgiving deck to learn."
+  },
+  "royal-hogs-eq": {
+    "gameplan": "Split Royal Hogs across both lanes to overwhelm, chip with Earthquake, and defend with cheap support.",
+    "counters": "Splash and buildings stop the Hogs. Respect beatdown that out-values your cheap cards.",
+    "playTips": "Split the Hogs from the back so they hit both princess towers if undefended."
+  },
+  "mega-knight-bait": {
+    "gameplan": "Mega Knight resets and clears pushes on defense, then jumps to the bridge. Bait their spells with Bats and Goblin Gang.",
+    "counters": "Single-target high DPS (Inferno, PEKKA, Mini PEKKA) and buildings. Kiting pulls the Mega Knight.",
+    "playTips": "Drop Mega Knight on top of their swarm or support for max value. A forgiving, beginner-friendly deck."
+  },
+  "goblin-giant-sparky": {
+    "gameplan": "Goblin Giant tanks for Sparky while the spear goblins on its back add chip. Protect Sparky from swarms and resets.",
+    "counters": "Zap, Electro Wizard, and any reset stop Sparky. Swarms overwhelm if Sparky is not charged.",
+    "playTips": "Wait for their reset card to be out of cycle before committing Sparky behind the Goblin Giant."
+  },
+  "three-musketeers": {
+    "gameplan": "Build a Pump, then split Three Musketeers behind a tank to threaten both lanes. Punish their big spell with positive elixir trades.",
+    "counters": "Big spells (Lightning, Rocket, Fireball plus Snowball) that hit all three. Strong air swarm.",
+    "playTips": "Never drop all three in one lane against a Lightning deck. Split them across the back."
+  },
+  "balloon-cycle": {
+    "gameplan": "Cheap Balloon cycle. Send the Balloon behind an Ice Golem when their air defense is down, then out-cycle their answer.",
+    "counters": "Strong air defense and reset cards. Buildings that distract the Ice Golem.",
+    "playTips": "Pair Balloon with Ice Golem so the Golem tanks the first air-defense hits."
+  },
+  "giant-double-prince": {
+    "gameplan": "Giant tanks while Prince and Dark Prince deal heavy damage behind it. A forgiving, straightforward push deck.",
+    "counters": "Buildings and swarms that stop the Princes. Inferno on the Giant.",
+    "playTips": "Keep the Princes behind the Giant so they connect. An easy archetype to learn."
+  },
+  "goblin-drill": {
+    "gameplan": "Goblin Drill spawns goblins right at the tower. Mother Witch and Miner add chip and turn their pushes against them.",
+    "counters": "Buildings and splash that clear the drill goblins. A fast punish in the other lane.",
+    "playTips": "Drill near the tower for instant chip, or near their counter to bait it out."
+  },
+  "sparky-giant": {
+    "gameplan": "Giant tanks for Sparky. Bait out their reset card (Zap, Electro Wizard) before committing Sparky.",
+    "counters": "Any reset card neutralizes Sparky. Swarms if Sparky has not fired.",
+    "playTips": "Patience wins. Do not commit Sparky until their reset is gone."
+  },
+  "elixir-golem": {
+    "gameplan": "Cheap beatdown. Battle Healer sustains the push while support floods behind the Elixir Golem.",
+    "counters": "They gain elixir from killing your Golem parts, so do not feed it into a clean defense. Inferno melts the push.",
+    "playTips": "Only commit the Elixir Golem when you can fully back it up, or you just hand them elixir."
+  },
+  "aq-miner": {
+    "gameplan": "Archer Queen's cloak makes her a defensive monster. Chip with Miner and Poison, and grind value over the match.",
+    "counters": "Beatdown that out-values chip. Respect anything that trades up on the Archer Queen.",
+    "playTips": "Use the Archer Queen's invisibility ability defensively to reset aggro and survive."
+  },
+  "golden-knight-bs": {
+    "gameplan": "Golden Knight dashes through swarms and chains kills. Apply constant bridge pressure with Battle Ram, Bandit, and Ghost.",
+    "counters": "High single-target DPS and buildings. A big spell on your support.",
+    "playTips": "Save the Golden Knight's dash for a line of troops to chain through them onto the tower."
+  },
+  "skeleton-king-gy": {
+    "gameplan": "Skeleton King clears swarms and collects souls on defense, then powers a Graveyard counter-push. Defend first, punish second.",
+    "counters": "Splash that clears the Graveyard, and buildings. Respect beatdown.",
+    "playTips": "Use the Skeleton King's ability after he has soaked deaths on defense for a full skeleton army."
+  },
+  "monk-rg": {
+    "gameplan": "Monk reflects spells and tanks while Royal Giant chips. A sturdy, forgiving control-beatdown.",
+    "counters": "High DPS that ignores the Monk's block, and buildings on the RG.",
+    "playTips": "Use the Monk's ability to reflect their big spell or block a key hit on defense."
+  },
+  "mighty-miner-bs": {
+    "gameplan": "Mighty Miner is a relentless lane-switching defensive tank. Defend with him, then punish with Battle Ram and Bandit.",
+    "counters": "Swarms and resets, and buildings on your Ram. Respect beatdown.",
+    "playTips": "Use the Mighty Miner's bomb dash to escape, switch lanes, and deal a burst on exit."
+  }
+}

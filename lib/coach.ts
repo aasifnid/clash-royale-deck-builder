@@ -85,10 +85,15 @@ function describeCandidate(cand: DeckCandidate): string {
       return `  - [${s.role}] ${name} lvl ${s.level}${sub}`;
     })
     .join("\n");
+  const power =
+    cand.powerCards.length > 0
+      ? cand.powerCards.map((p) => `${p.name} (${[p.evolved && "Evo", p.hero && "Hero"].filter(Boolean).join("+")})`).join(", ")
+      : "none";
   return [
     `id: ${cand.deck.id}`,
     `name: ${cand.deck.name} | archetype: ${cand.deck.archetype} | win condition: ${cand.deck.winCondition}`,
     `skill floor: ${cand.deck.skillFloor}/5 | avg elixir: ${cand.avgElixir} | fieldable: ${cand.fieldable}`,
+    `power cards this player owns (Evolution/Hero forms — strong advantage): ${power}`,
     `gameplan hint: ${cand.deck.notes ?? ""}`,
     `cards (with this player's levels):\n${cards}`,
   ].join("\n");

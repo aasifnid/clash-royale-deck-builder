@@ -20,15 +20,23 @@ export interface ResolvedSlot {
   level: number; // 0 if missing
 }
 
+export interface PowerCard {
+  key: string;
+  name: string;
+  evolved: boolean; // player has this card's Evolution
+  hero: boolean; // player has this card's Hero form
+}
+
 export interface DeckCandidate {
   deck: ProvenDeck;
   slots: ResolvedSlot[];
   cards: Card[]; // the resolved 8 (or fewer, if slots are missing)
   missingRoles: string[]; // roles with no owned card
   substitutions: { role: string; from: string; to: string }[];
+  powerCards: PowerCard[]; // deck cards the player has in Evolution/Hero form
   avgElixir: number;
   fieldable: boolean; // all 8 slots filled from owned cards
-  scores: { ownership: number; level: number; skill: number; arena: number; total: number };
+  scores: { ownership: number; level: number; skill: number; arena: number; edge: number; total: number };
 }
 
 interface RankOptions {
@@ -115,6 +123,24 @@ function scoreDeck(deck: ProvenDeck, collection: Collection, ease: EasePreferenc
   const ownership = ownedWeight / totalWeight;
   const level = levelWeightTotal > 0 ? levelWeighted / levelWeightTotal : 0;
 
+  // Edge: does the player own Evolution/Hero ("power") forms of this deck's cards?
+  // Weighted toward the win condition. Surfaces decks that leverage the player's strengths.
+  let edgeWeighted = 0;
+  let edgeWeightTotal = 0;
+  const powerCards: PowerCard[] = [];
+  for (const s of slots) {
+    if (s.isMissing || !s.chosenKey) continue;
+    const card = cardByKey(s.chosenKey);
+    const o = card ? collection.owned[card.id] : undefined;
+    const w = slotWeight(s.role);
+    edgeWeightTotal += w;
+    if (card && o && (o.evolved || o.hero)) {
+      edgeWeighted += w;
+      powerCards.push({ key: s.chosenKey, name: card.name, evolved: o.evolved, hero: o.hero });
+    }
+  }
+  const edge = edgeWeightTotal > 0 ? edgeWeighted / edgeWeightTotal : 0;
+
   // Skill fit vs the player's stated ease preference (skillFloor 1 = easy .. 5 = hard).
   let skill: number;
   if (ease === "forgiving") skill = (6 - deck.skillFloor) / 5;
@@ -128,7 +154,7 @@ function scoreDeck(deck: ProvenDeck, collection: Collection, ease: EasePreferenc
   const fieldable = slots.every((s) => !s.isMissing);
 
   let total =
-    (0.45 * ownership + 0.3 * level + 0.15 * skill + 0.1 * arena) * 100;
+    (0.42 * ownership + 0.27 * level + 0.13 * skill + 0.1 * arena + 0.08 * edge) * 100;
   // A deck you can't field a full 8 for is a poor recommendation — discount hard.
   if (!fieldable) total *= 0.5;
 
@@ -146,6 +172,7 @@ function scoreDeck(deck: ProvenDeck, collection: Collection, ease: EasePreferenc
     substitutions: slots
       .filter((s) => s.isSubstitute && s.chosenKey)
       .map((s) => ({ role: s.role, from: s.canonicalKey, to: s.chosenKey! })),
+    powerCards,
     avgElixir,
     fieldable,
     scores: {
@@ -153,6 +180,7 @@ function scoreDeck(deck: ProvenDeck, collection: Collection, ease: EasePreferenc
       level: Math.round(level * 100),
       skill: Math.round(skill * 100),
       arena: Math.round(arena * 100),
+      edge: Math.round(edge * 100),
       total: Math.round(total),
     },
   };

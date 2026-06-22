@@ -1,8 +1,10 @@
 // Client-side persistence (localStorage). Single-user hobby app — no backend DB.
 
-import type { Collection, OwnedCard } from "./types";
+import type { Collection, OwnedCard, OwnedTowerTroop } from "./types";
 
-const COLLECTION_KEY = "crdb:collection";
+// v2: evolution unlock is now a manual, persisted flag (the API can't provide it
+// reliably). Bumping the key discards stale caches that had API-derived evolved flags.
+const COLLECTION_KEY = "crdb:collection:v2";
 const DECKS_KEY = "crdb:decks";
 
 export interface SavedDeck {
@@ -21,8 +23,11 @@ export function emptyCollection(): Collection {
     name: null,
     trophies: null,
     arena: null,
+    experienceLevel: null,
     kingLevel: 11,
     owned: {},
+    towerTroops: {},
+    activeTowerTroop: null,
     syncedAt: null,
   };
 }
@@ -73,8 +78,29 @@ export function setOwned(
   if (patch === null) {
     delete owned[cardId];
   } else {
-    const existing = owned[cardId] ?? { id: cardId, level: collection.kingLevel, evolved: false, starLevel: 0 };
+    const existing = owned[cardId] ?? {
+      id: cardId,
+      level: collection.kingLevel,
+      evolved: false,
+      hero: false,
+    };
     owned[cardId] = { ...existing, ...patch, id: cardId };
   }
   return { ...collection, owned };
+}
+
+/** Set or clear an owned tower troop (manual editing). */
+export function setTowerTroop(
+  collection: Collection,
+  troopId: number,
+  patch: Partial<OwnedTowerTroop> | null,
+): Collection {
+  const towerTroops = { ...collection.towerTroops };
+  if (patch === null) {
+    delete towerTroops[troopId];
+  } else {
+    const existing = towerTroops[troopId] ?? { id: troopId, level: collection.kingLevel };
+    towerTroops[troopId] = { ...existing, ...patch, id: troopId };
+  }
+  return { ...collection, towerTroops };
 }

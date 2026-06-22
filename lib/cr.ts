@@ -2,10 +2,17 @@
 // fixed IP can be allowlisted on the token (Vercel's egress IPs are dynamic).
 // Server-side only — never import this into a client component.
 
-import { MAX_LEVEL, type Collection, type OwnedCard } from "./types";
+import { MAX_LEVEL, type Collection, type OwnedCard, type OwnedTowerTroop } from "./types";
 import { cardById } from "./cards";
+import { arenaNumberFor } from "./arenas";
 
 const PROXY_BASE = "https://proxy.royaleapi.dev/v1";
+
+// The official API reports a rarity-relative `maxLevel` (common 16, rare 14, epic 11,
+// legendary 8, champion 6). A card's in-game displayed level is the API level shifted by
+// the gap to the common baseline. Verified against a real account: a level-15 common has
+// apiLevel 15 / apiMaxLevel 16, and a level-15 champion has apiLevel 5 / apiMaxLevel 6.
+const API_BASE_MAX_LEVEL = 16;
 
 /** Normalize a user-entered tag: strip '#', uppercase, fix the common O->0 typo. */
 export function normalizeTag(input: string): string {
@@ -20,11 +27,17 @@ export function normalizeTag(input: string): string {
 interface ApiCard {
   id: number;
   name: string;
-  level: number; // rarity-relative, 1..maxLevel
-  maxLevel: number; // rarity-relative max (Common 15 ... Champion 5)
-  starLevel?: number;
-  evolutionLevel?: number; // present (>=1) when the player has the evolution
+  level: number; // rarity-relative
+  maxLevel: number; // rarity-relative base (Common 16, Rare 14, Epic 11, Legendary 8, Champion 6)
+  evolutionLevel?: number; // 1..maxEvolutionLevel when the player has the evolution
   count: number;
+}
+
+interface ApiSupportCard {
+  id: number;
+  name: string;
+  level: number;
+  maxLevel: number;
 }
 
 interface ApiPlayer {
@@ -34,11 +47,13 @@ interface ApiPlayer {
   expLevel: number; // king tower level
   arena?: { id: number; name: string };
   cards: ApiCard[];
+  supportCards?: ApiSupportCard[]; // owned tower troops
+  currentDeckSupportCards?: ApiSupportCard[]; // active tower troop(s)
 }
 
-/** Convert the API's rarity-relative level to the in-game displayed level. */
+/** Convert the API's rarity-relative level to the in-game displayed level (max 15). */
 export function displayedLevel(apiLevel: number, apiMaxLevel: number): number {
-  return apiLevel + (MAX_LEVEL - apiMaxLevel);
+  return apiLevel + (API_BASE_MAX_LEVEL - apiMaxLevel);
 }
 
 export class CrApiError extends Error {
@@ -80,21 +95,38 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
   for (const c of data.cards) {
     // Skip cards not in our master data (e.g. brand-new cards before a data refresh).
     if (!cardById(c.id)) continue;
+    // evolutionLevel is a bitmask: bit 1 (value 1) = Evolution unlocked, bit 2 (value 2)
+    // = Hero unlocked. Verified against a real account (e.g. Knight=3 → both, Giant=2 → hero,
+    // Musketeer=1 → evolution).
+    const evoMask = c.evolutionLevel ?? 0;
     owned[c.id] = {
       id: c.id,
       level: displayedLevel(c.level, c.maxLevel),
-      evolved: (c.evolutionLevel ?? 0) >= 1,
-      starLevel: c.starLevel ?? 0,
+      evolved: (evoMask & 1) === 1,
+      hero: (evoMask & 2) === 2,
     };
   }
+
+  const towerTroops: Record<number, OwnedTowerTroop> = {};
+  for (const t of data.supportCards ?? []) {
+    towerTroops[t.id] = { id: t.id, level: displayedLevel(t.level, t.maxLevel) };
+  }
+
+  // The API doesn't expose the King Tower level, so estimate it from the player's
+  // highest card level (a good proxy) — the user can override it manually.
+  const levels = Object.values(owned).map((o) => o.level);
+  const kingLevel = levels.length ? Math.min(MAX_LEVEL, Math.max(...levels)) : 11;
 
   return {
     tag: data.tag,
     name: data.name,
     trophies: data.trophies,
-    arena: data.arena?.id ?? null,
-    kingLevel: data.expLevel,
+    arena: arenaNumberFor(data.arena?.id),
+    experienceLevel: data.expLevel,
+    kingLevel,
     owned,
+    towerTroops,
+    activeTowerTroop: data.currentDeckSupportCards?.[0]?.id ?? null,
     syncedAt: new Date().toISOString(),
   };
 }

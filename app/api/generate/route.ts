@@ -1,14 +1,57 @@
 // POST /api/generate
 // Body: { collection: Collection, archetype?: string, ease?: "forgiving"|"any"|"challenge" }
-// Runs the deterministic fieldability engine, then has the coach rank + explain the shortlist.
+// Runs the deterministic fieldability engine and attaches pro-authored coaching from the
+// deck library. Fully free, no API key required. If ANTHROPIC_API_KEY is set, an optional
+// AI layer re-ranks/rephrases instead — but the static path is the default experience.
 
 import { NextResponse } from "next/server";
 import type { Collection } from "@/lib/types";
 import { rankDecks, type DeckCandidate, type EasePreference } from "@/lib/fieldability";
 import { coachDecks, CoachError, type CoachPick } from "@/lib/coach";
+import { coachingFor } from "@/lib/coaching";
 import { cardByKey } from "@/lib/cards";
 
 const SHORTLIST_SIZE = 6;
+const MAX_PICKS = 3;
+
+function difficultyFor(skillFloor: number): CoachPick["difficulty"] {
+  if (skillFloor <= 2) return "Easy";
+  if (skillFloor >= 4) return "Hard";
+  return "Medium";
+}
+
+/** A one-line, personalized "why this deck for you" using the player's real state. */
+function personalizedSummary(cand: DeckCandidate): string {
+  const wc = cand.slots.find((s) => s.role === "win-condition" && !s.isMissing) ?? cand.slots.find((s) => !s.isMissing);
+  const wcNote = wc ? ` Win condition ${cardByKey(wc.chosenKey!)?.name ?? wc.canonicalKey} is at level ${wc.level}.` : "";
+
+  if (!cand.fieldable) {
+    return `Closest ${cand.deck.archetype} deck to what you own — missing ${cand.missingRoles.length} card(s).`;
+  }
+  if (cand.substitutions.length > 0) {
+    return `A ${cand.deck.archetype} deck you can field, using ${cand.substitutions.length} substitute(s) for cards you don't own.${wcNote}`;
+  }
+  return `You own all 8 cards for this ${cand.deck.archetype} deck.${wcNote}`;
+}
+
+/** Build coached picks from the deck library — no LLM. Prefers fully-fieldable decks. */
+function buildStaticPicks(shortlist: DeckCandidate[]): CoachPick[] {
+  const fieldable = shortlist.filter((c) => c.fieldable);
+  const chosen = (fieldable.length > 0 ? fieldable : shortlist).slice(0, MAX_PICKS);
+
+  return chosen.map((cand) => {
+    const c = coachingFor(cand.deck.id);
+    return {
+      deckId: cand.deck.id,
+      summary: personalizedSummary(cand),
+      gameplan: c?.gameplan ?? cand.deck.notes ?? "",
+      winCondition: cand.deck.winCondition,
+      counters: c?.counters ?? "",
+      playTips: c?.playTips ?? "",
+      difficulty: difficultyFor(cand.deck.skillFloor),
+    };
+  });
+}
 
 /** Flatten a candidate into the resolved 8-card list (with levels) for the client. */
 function enrichCandidate(cand: DeckCandidate) {
@@ -23,6 +66,7 @@ function enrichCandidate(cand: DeckCandidate) {
     scores: cand.scores,
     substitutions: cand.substitutions,
     missingRoles: cand.missingRoles,
+    powerCards: cand.powerCards,
     cards: cand.slots.map((s) => ({
       role: s.role,
       key: s.chosenKey,
@@ -51,36 +95,25 @@ export async function POST(request: Request) {
   const shortlist = ranked.slice(0, SHORTLIST_SIZE);
 
   if (shortlist.length === 0) {
-    return NextResponse.json({ picks: [], shortlist: [], note: "No proven decks matched your filters." });
+    return NextResponse.json({ aiUsed: false, picks: [], shortlist: [], note: "No proven decks matched your filters." });
   }
 
   const byId = new Map(shortlist.map((c) => [c.deck.id, c]));
 
+  // Optional AI enhancement — only if a key is configured. The free static path is the default.
   let picks: CoachPick[] = [];
-  let coachUsed = true;
-  try {
-    picks = await coachDecks(collection, shortlist, ease);
-  } catch (err) {
-    coachUsed = false;
-    if (!(err instanceof CoachError)) console.error("Coach error:", err);
+  let aiUsed = false;
+  if (process.env.ANTHROPIC_API_KEY) {
+    try {
+      picks = await coachDecks(collection, shortlist, ease);
+      aiUsed = picks.length > 0;
+    } catch (err) {
+      if (!(err instanceof CoachError)) console.error("Coach error:", err);
+    }
   }
 
-  // Fallback: if the coach is unavailable or returned nothing usable, surface the
-  // deterministic top pick so the tool still works without the AI layer.
   if (picks.length === 0) {
-    const top = shortlist[0];
-    picks = [
-      {
-        deckId: top.deck.id,
-        summary: `Your best fieldable ${top.deck.archetype} deck right now.`,
-        gameplan: top.deck.notes ?? "",
-        winCondition: top.deck.winCondition,
-        counters: "",
-        playTips: "",
-        difficulty: top.deck.skillFloor <= 2 ? "Easy" : top.deck.skillFloor >= 4 ? "Hard" : "Medium",
-      },
-    ];
-    coachUsed = false;
+    picks = buildStaticPicks(shortlist);
   }
 
   const enrichedPicks = picks
@@ -91,7 +124,7 @@ export async function POST(request: Request) {
     .filter(Boolean);
 
   return NextResponse.json({
-    coachUsed,
+    aiUsed,
     picks: enrichedPicks,
     shortlist: shortlist.map(enrichCandidate),
   });

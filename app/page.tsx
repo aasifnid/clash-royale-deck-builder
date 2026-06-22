@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Collection, OwnedCard } from "@/lib/types";
+import type { Collection, OwnedCard, OwnedTowerTroop } from "@/lib/types";
 import {
   emptyCollection,
   loadCollection,
@@ -9,10 +9,12 @@ import {
   loadDecks,
   saveDecks,
   setOwned,
+  setTowerTroop,
   type SavedDeck,
 } from "@/lib/store";
 import SyncBar from "@/components/SyncBar";
 import CollectionDashboard from "@/components/CollectionDashboard";
+import TowerTroops from "@/components/TowerTroops";
 import Generator from "@/components/Generator";
 import SavedDecks from "@/components/SavedDecks";
 
@@ -41,7 +43,21 @@ export default function Home() {
     updateCollection({ ...collection, ...patch });
   }
 
+  function handleTroopChange(troopId: number, patch: Partial<OwnedTowerTroop> | null) {
+    let next = setTowerTroop(collection, troopId, patch);
+    // Clearing the active troop also clears the active selection.
+    if (patch === null && next.activeTowerTroop === troopId) {
+      next = { ...next, activeTowerTroop: null };
+    }
+    updateCollection(next);
+  }
+
+  function handleSetActive(troopId: number | null) {
+    updateCollection({ ...collection, activeTowerTroop: troopId });
+  }
+
   function handleSynced(synced: Collection) {
+    // Evolution/Hero unlocks are decoded accurately from the API on sync, so it's authoritative.
     updateCollection(synced);
   }
 
@@ -76,6 +92,11 @@ export default function Home() {
             collection={collection}
             onCardChange={handleCardChange}
             onMetaChange={handleMetaChange}
+          />
+          <TowerTroops
+            collection={collection}
+            onTroopChange={handleTroopChange}
+            onSetActive={handleSetActive}
           />
           <Generator collection={collection} onSave={handleSave} />
           <SavedDecks decks={decks} onDelete={handleDelete} />

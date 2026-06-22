@@ -3,13 +3,17 @@
 import { useState } from "react";
 import type { Collection } from "@/lib/types";
 
+// Owner's default tag — pre-filled so syncing is one click. Once you've synced, the
+// last-used tag (collection.tag) takes over.
+const DEFAULT_TAG = "#20P8U02YJG";
+
 interface Props {
   collection: Collection;
   onSynced: (c: Collection) => void;
 }
 
 export default function SyncBar({ collection, onSynced }: Props) {
-  const [tag, setTag] = useState("");
+  const [tag, setTag] = useState(collection.tag || DEFAULT_TAG);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,7 +57,9 @@ export default function SyncBar({ collection, onSynced }: Props) {
         {collection.syncedAt && collection.name && (
           <span className="text-sm" style={{ color: "var(--muted)" }}>
             Synced <strong style={{ color: "var(--foreground)" }}>{collection.name}</strong>
-            {collection.trophies != null ? ` · ${collection.trophies} 🏆` : ""} · King {collection.kingLevel}
+            {collection.trophies != null ? ` · ${collection.trophies} 🏆` : ""}
+            {collection.arena != null ? ` · Arena ${collection.arena}` : ""}
+            {collection.experienceLevel != null ? ` · Exp ${collection.experienceLevel}` : ""}
           </span>
         )}
       </div>

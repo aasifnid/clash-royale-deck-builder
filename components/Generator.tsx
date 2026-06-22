@@ -33,10 +33,11 @@ interface EnrichedPick {
   avgElixir: number;
   fieldable: boolean;
   substitutions: { role: string; from: string; to: string }[];
+  powerCards: { key: string; name: string; evolved: boolean; hero: boolean }[];
   cards: PickCard[];
 }
 interface GenerateResponse {
-  coachUsed: boolean;
+  aiUsed: boolean;
   picks: EnrichedPick[];
   shortlist: EnrichedPick[];
 }
@@ -192,11 +193,6 @@ export default function Generator({ collection, onSave }: Props) {
 
       {result && (
         <div className="flex flex-col gap-4">
-          {!result.coachUsed && (
-            <p className="text-xs" style={{ color: "var(--muted)" }}>
-              AI coaching was unavailable, showing the best deck the engine found for your collection.
-            </p>
-          )}
           {result.picks.length === 0 && (
             <p className="text-sm" style={{ color: "var(--muted)" }}>
               No fieldable decks found. Try a different archetype or add more cards.
@@ -259,6 +255,14 @@ export default function Generator({ collection, onSave }: Props) {
                 {pick.coach.playTips && <Field label="Play tips" value={pick.coach.playTips} />}
               </div>
 
+              {pick.powerCards.length > 0 && (
+                <p className="mt-2 text-xs">
+                  <span style={{ color: "var(--accent-2)" }}>Power cards you own:</span>{" "}
+                  {pick.powerCards
+                    .map((p) => `${p.name} (${[p.evolved && "Evo", p.hero && "Hero"].filter(Boolean).join("+")})`)
+                    .join(", ")}
+                </p>
+              )}
               {pick.substitutions.length > 0 && (
                 <p className="mt-2 text-xs" style={{ color: "var(--muted)" }}>
                   Substitutions:{" "}

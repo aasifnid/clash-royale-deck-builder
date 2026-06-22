@@ -47,8 +47,15 @@ export default function CollectionDashboard({ collection, onCardChange, onMetaCh
           </span>
         </h2>
         <div className="flex flex-wrap items-center gap-3">
+          {collection.experienceLevel != null && (
+            <span className="text-sm" style={{ color: "var(--muted)" }} title="Account experience level (star badge)">
+              Exp lvl {collection.experienceLevel}
+            </span>
+          )}
           <label className="flex items-center gap-1.5 text-sm">
-            <span style={{ color: "var(--muted)" }}>King lvl</span>
+            <span style={{ color: "var(--muted)" }} title="King Tower level (the API doesn't provide this; estimated from your cards, edit if needed)">
+              King Tower
+            </span>
             <select
               value={collection.kingLevel}
               onChange={(e) => onMetaChange({ kingLevel: Number(e.target.value) })}
@@ -116,8 +123,8 @@ export default function CollectionDashboard({ collection, onCardChange, onMetaCh
       </div>
 
       <div
-        className="grid gap-2"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(96px, 1fr))" }}
+        className="grid gap-4"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(128px, 1fr))" }}
       >
         {visible.map((card) => (
           <CardTile

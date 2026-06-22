@@ -1,0 +1,397 @@
+[
+  {
+    "id": 54000000,
+    "number": 0,
+    "name": "Training Camp"
+  },
+  {
+    "id": 54000001,
+    "number": 1,
+    "name": "Arena 1"
+  },
+  {
+    "id": 54000002,
+    "number": 2,
+    "name": "Arena 2"
+  },
+  {
+    "id": 54000003,
+    "number": 3,
+    "name": "Arena 3"
+  },
+  {
+    "id": 54000004,
+    "number": 4,
+    "name": "Arena 4"
+  },
+  {
+    "id": 54000005,
+    "number": 5,
+    "name": "Arena 5"
+  },
+  {
+    "id": 54000006,
+    "number": 6,
+    "name": "Arena 6"
+  },
+  {
+    "id": 54000007,
+    "number": 10,
+    "name": "Arena 10"
+  },
+  {
+    "id": 54000008,
+    "number": 7,
+    "name": "Arena 7"
+  },
+  {
+    "id": 54000009,
+    "number": 8,
+    "name": "Arena 8"
+  },
+  {
+    "id": 54000010,
+    "number": 9,
+    "name": "Arena 9"
+  },
+  {
+    "id": 54000011,
+    "number": 12,
+    "name": "Arena 12"
+  },
+  {
+    "id": 54000012,
+    "number": 15,
+    "name": "Arena 15"
+  },
+  {
+    "id": 54000013,
+    "number": 16,
+    "name": "Arena 16"
+  },
+  {
+    "id": 54000014,
+    "number": 17,
+    "name": "Arena 17"
+  },
+  {
+    "id": 54000015,
+    "number": 18,
+    "name": "Arena 18"
+  },
+  {
+    "id": 54000016,
+    "number": 19,
+    "name": "Arena 19"
+  },
+  {
+    "id": 54000017,
+    "number": 20,
+    "name": "Arena 20"
+  },
+  {
+    "id": 54000018,
+    "number": 21,
+    "name": "Arena 21"
+  },
+  {
+    "id": 54000019,
+    "number": 22,
+    "name": "Arena 22"
+  },
+  {
+    "id": 54000020,
+    "number": 23,
+    "name": "Arena 23"
+  },
+  {
+    "id": 54000021,
+    "number": 0,
+    "name": "Training Camp"
+  },
+  {
+    "id": 54000022,
+    "number": 0,
+    "name": "Training Camp"
+  },
+  {
+    "id": 54000023,
+    "number": 0,
+    "name": "Touchdown Arena"
+  },
+  {
+    "id": 54000024,
+    "number": 11,
+    "name": "Arena 11"
+  },
+  {
+    "id": 54000025,
+    "number": 0,
+    "name": "King of the Hill Arena"
+  },
+  {
+    "id": 54000026,
+    "number": 0,
+    "name": "King of the Hill Arena"
+  },
+  {
+    "id": 54000027,
+    "number": 10,
+    "name": "Clan League"
+  },
+  {
+    "id": 54000028,
+    "number": 10,
+    "name": "Clan League"
+  },
+  {
+    "id": 54000029,
+    "number": 10,
+    "name": "Clan League"
+  },
+  {
+    "id": 54000030,
+    "number": 10,
+    "name": "Clan League"
+  },
+  {
+    "id": 54000031,
+    "number": 24,
+    "name": "Ultimate Champion"
+  },
+  {
+    "id": 54000032,
+    "number": 0,
+    "name": "Touchdown Arena"
+  },
+  {
+    "id": 54000033,
+    "number": 0,
+    "name": "Fisherman's Float"
+  },
+  {
+    "id": 54000034,
+    "number": 0,
+    "name": "Fisherman's Float"
+  },
+  {
+    "id": 54000035,
+    "number": 0,
+    "name": "Shipwreck Island"
+  },
+  {
+    "id": 54000036,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000037,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000038,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000039,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000040,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000041,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000042,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000043,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000044,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000045,
+    "number": 0,
+    "name": "Shipwreck Island"
+  },
+  {
+    "id": 54000046,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000047,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000048,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000049,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000050,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000051,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000052,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000053,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000054,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000055,
+    "number": 13,
+    "name": "Arena 13"
+  },
+  {
+    "id": 54000056,
+    "number": 14,
+    "name": "Arena 14"
+  },
+  {
+    "id": 54000057,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000058,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000059,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000060,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000061,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000062,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000063,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000064,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000065,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000066,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000067,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000068,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000069,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000070,
+    "number": 0,
+    "name": "Battleground Arena"
+  },
+  {
+    "id": 54000071,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000072,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000073,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000074,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000075,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000076,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000077,
+    "number": 0,
+    "name": "Legendary Arena"
+  },
+  {
+    "id": 54000078,
+    "number": 0,
+    "name": "Legendary Arena"
+  }
+]
