@@ -23,6 +23,10 @@ interface EnrichedPick {
     deckId: string;
     summary: string;
     gameplan: string;
+    opening?: string;
+    defense?: string;
+    combos?: string;
+    doubleElixir?: string;
     winCondition: string;
     counters: string;
     playTips: string;
@@ -87,46 +91,49 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
             style={{ width: 92 }}
             title={`${c.name ?? c.role}${card ? ` · ${card.elixir} elixir` : ""}${c.isSubstitute ? " · substitute" : ""}`}
           >
-            <div
-              className="relative rounded-lg p-0.5"
-              style={{ background: "linear-gradient(180deg, #33446c, #1a2342)", border: `2px solid ${frame}`, boxShadow: glow, opacity: c.isMissing ? 0.55 : 1 }}
-            >
+            <div className="relative" style={{ opacity: c.isMissing ? 0.55 : 1 }}>
               {card && !c.isMissing && (
                 <span
-                  className="absolute -left-1.5 -top-1.5 z-10 flex h-5 w-5 items-center justify-center"
+                  className="absolute -left-1.5 -top-1.5 z-20 flex h-5 w-5 items-center justify-center"
                   style={{ background: "radial-gradient(circle at 35% 30%, #f06ee0, #a01f8f)", borderRadius: "0 50% 50% 50%", transform: "rotate(45deg)", border: "1.5px solid rgba(255,255,255,0.5)" }}
                 >
                   <span className="text-[11px] font-extrabold text-white" style={{ transform: "rotate(-45deg)" }}>{card.elixir}</span>
                 </span>
               )}
-              {c.isMissing ? (
-                <span className="absolute right-0 top-0 z-10 bg-[#6b7280] px-1 text-[10px] font-bold text-white" style={{ borderBottomLeftRadius: 4 }}>NEED</span>
-              ) : (
-                (c.evolved || c.hero) && (
-                  <span className="absolute right-0 top-0 z-10 px-1 text-[10px] font-bold" style={{ background: c.evolved ? "#ec4899" : "#facc15", color: c.evolved ? "#fff" : "#3a2e00", borderBottomLeftRadius: 4 }}>
-                    {c.evolved ? "EVO" : "HERO"}
-                  </span>
-                )
-              )}
-              <div className="relative overflow-hidden rounded">
+              <div
+                className="relative overflow-hidden rounded-lg"
+                style={{ border: `2px solid ${frame}`, boxShadow: glow, background: "#1a2342" }}
+              >
+                {c.isMissing ? (
+                  <span className="absolute right-0 top-0 z-10 bg-[#6b7280] px-1 text-[10px] font-bold text-white" style={{ borderBottomLeftRadius: 4 }}>NEED</span>
+                ) : (
+                  (c.evolved || c.hero) && (
+                    <span className="absolute right-0 top-0 z-10 px-1 text-[10px] font-bold" style={{ background: c.evolved ? "#ec4899" : "#facc15", color: c.evolved ? "#fff" : "#3a2e00", borderBottomLeftRadius: 4 }}>
+                      {c.evolved ? "EVO" : "HERO"}
+                    </span>
+                  )
+                )}
                 {card?.iconUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={card.iconUrl} alt={c.name ?? ""} loading="lazy" className="block w-full" style={{ marginTop: "-16%", filter: c.isMissing ? "grayscale(1)" : "none" }} />
+                  <img src={card.iconUrl} alt={c.name ?? ""} loading="lazy" className="block w-full" style={{ marginTop: "-14%", filter: c.isMissing ? "grayscale(1)" : "none" }} />
                 ) : (
-                  <div className="flex h-20 items-center justify-center text-[11px]" style={{ color: "var(--muted)" }}>{c.name ?? c.role}</div>
+                  <div className="flex h-24 items-center justify-center text-[11px]" style={{ color: "var(--muted)" }}>{c.name ?? c.role}</div>
                 )}
-                {!c.isMissing && (
-                  <div className="absolute inset-x-0 bottom-0 text-[11px] font-extrabold text-white" style={{ background: "rgba(0,0,0,0.74)", textShadow: "0 1px 1px rgba(0,0,0,1)" }}>
-                    Lv {c.level}
+                {/* Nameplate inside the frame: name + level (or "don't have"), never floating. */}
+                <div
+                  className="absolute inset-x-0 bottom-0 px-1 pb-0.5 pt-3 text-center"
+                  style={{ background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 55%)" }}
+                >
+                  <div className="truncate text-[10px] font-bold leading-tight text-white" style={{ textShadow: "0 1px 2px rgba(0,0,0,1)" }} title={c.name ?? c.role}>
+                    {c.name ?? c.role}
+                    {c.isSubstitute ? " (sub)" : ""}
                   </div>
-                )}
+                  <div className="text-[10px] font-extrabold" style={{ color: c.isMissing ? "#f3a0a0" : "#fff", textShadow: "0 1px 1px rgba(0,0,0,1)" }}>
+                    {c.isMissing ? "don't have" : `Lv ${c.level}`}
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="mt-1 text-[12px] font-medium leading-tight" style={{ color: c.isMissing ? "var(--muted)" : rarity }}>
-              {c.name ?? c.role}
-              {c.isSubstitute ? " (sub)" : ""}
-            </div>
-            {c.isMissing && <div className="text-[11px]" style={{ color: "var(--muted)" }}>don&apos;t have</div>}
           </div>
         );
       })}
@@ -336,9 +343,21 @@ export default function Generator({ collection, onSave }: Props) {
                 <DeckCards cards={pick.cards} />
               </div>
 
+              {pick.coach.gameplan && (
+                <div className="mb-2 rounded-lg p-3" style={{ background: "var(--background)", borderLeft: "3px solid var(--accent-2)" }}>
+                  <div className="text-[11px] font-bold uppercase tracking-wide" style={{ color: "var(--accent-2)" }}>
+                    Game plan
+                  </div>
+                  <div className="mt-1 text-sm" style={{ color: "var(--foreground)" }}>{pick.coach.gameplan}</div>
+                </div>
+              )}
+
               <div className="grid gap-2 text-sm sm:grid-cols-2">
-                {pick.coach.gameplan && <Field label="Gameplan" value={pick.coach.gameplan} />}
                 {pick.coach.winCondition && <Field label="Win condition" value={pick.coach.winCondition} />}
+                {pick.coach.opening && <Field label="First minute" value={pick.coach.opening} />}
+                {pick.coach.defense && <Field label="On defense" value={pick.coach.defense} />}
+                {pick.coach.combos && <Field label="Best combos" value={pick.coach.combos} />}
+                {pick.coach.doubleElixir && <Field label="Double elixir" value={pick.coach.doubleElixir} />}
                 {pick.coach.counters && <Field label="Watch out for" value={pick.coach.counters} />}
                 {pick.coach.playTips && <Field label="Play tips" value={pick.coach.playTips} />}
               </div>

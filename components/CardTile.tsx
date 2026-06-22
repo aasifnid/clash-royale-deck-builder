@@ -44,99 +44,108 @@ export default function CardTile({ card, owned, onChange }: Props) {
         : "none";
 
   return (
-    <div
-      className="relative rounded-xl p-1.5 text-center transition"
-      style={{
-        background: isOwned ? "linear-gradient(180deg, #33446c, #1a2342)" : "linear-gradient(180deg, #222c4d, #151c33)",
-        border: `2px solid ${isOwned ? color : "var(--border)"}`,
-        boxShadow: glow,
-        opacity: isOwned ? 1 : 0.55,
-      }}
-    >
+    <div className="relative text-center transition" style={{ opacity: isOwned ? 1 : 0.55 }}>
       <ElixirDrop cost={card.elixir} />
 
-      {/* Full card art, with the in-game "Level N" banner overlaid at the bottom. */}
-      <div className="relative overflow-hidden rounded-lg" style={{ boxShadow: "inset 0 2px 6px rgba(0,0,0,0.45)" }}>
-        {card.iconUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={card.iconUrl}
-            alt={card.name}
-            loading="lazy"
-            className="block w-full"
-            style={{ marginTop: "-16%", filter: isOwned ? "none" : "grayscale(0.7) brightness(0.85)" }}
-          />
-        ) : (
-          <div className="h-24 w-full" />
-        )}
-        {isOwned && (
+      {/* One cohesive card: art, the name+level nameplate, and the controls all live inside
+          the same frame, so nothing reads as a floating label outside the card. */}
+      <div
+        className="overflow-hidden rounded-xl"
+        style={{
+          border: `2px solid ${isOwned ? color : "var(--border)"}`,
+          boxShadow: glow,
+          background: isOwned ? "linear-gradient(180deg, #33446c, #1a2342)" : "linear-gradient(180deg, #222c4d, #151c33)",
+        }}
+      >
+        <div className="relative">
+          {card.iconUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={card.iconUrl}
+              alt={card.name}
+              loading="lazy"
+              className="block w-full"
+              style={{ marginTop: "-14%", filter: isOwned ? "none" : "grayscale(0.7) brightness(0.85)" }}
+            />
+          ) : (
+            <div className="h-28 w-full" />
+          )}
+          {/* Nameplate band fades up from the art bottom, holding the name + editable level. */}
           <div
-            className="absolute inset-x-0 bottom-0 flex justify-center py-0.5"
-            style={{ background: "rgba(0,0,0,0.74)" }}
+            className="absolute inset-x-0 bottom-0 px-1 pb-0.5 pt-3 text-center"
+            style={{ background: "linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 55%)" }}
           >
-            <select
-              value={owned!.level}
-              onChange={(e) => onChange({ level: Number(e.target.value) })}
-              className="cursor-pointer appearance-none bg-transparent text-center text-[12px] font-extrabold text-white outline-none"
-              style={{ textShadow: "0 1px 1px rgba(0,0,0,1)" }}
-              title="Edit level"
+            <div
+              className="truncate text-[11px] font-bold leading-tight text-white"
+              style={{ textShadow: "0 1px 2px rgba(0,0,0,1)" }}
+              title={card.name}
             >
-              {Array.from({ length: MAX_LEVEL }, (_, i) => i + 1).map((l) => (
-                <option key={l} value={l} style={{ color: "#000" }}>
-                  Level {l}
-                </option>
-              ))}
-            </select>
+              {card.name}
+            </div>
+            {isOwned && (
+              <select
+                value={owned!.level}
+                onChange={(e) => onChange({ level: Number(e.target.value) })}
+                className="cursor-pointer appearance-none bg-transparent text-center text-[11px] font-extrabold text-white outline-none"
+                style={{ textShadow: "0 1px 1px rgba(0,0,0,1)" }}
+                title="Edit level"
+              >
+                {Array.from({ length: MAX_LEVEL }, (_, i) => i + 1).map((l) => (
+                  <option key={l} value={l} style={{ color: "#000" }}>
+                    Level {l}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+        </div>
+
+        {/* Controls sit on the card's metallic footer, inside the frame. */}
+        {isOwned ? (
+          (card.hasEvolution || card.hasHero) && (
+            <div className="flex flex-wrap justify-center gap-1.5 px-1 py-1.5">
+              {card.hasEvolution && (
+                <button
+                  onClick={() => onChange({ evolved: !isEvolved })}
+                  className="rounded px-1.5 py-0.5 text-[10px] font-semibold"
+                  style={{
+                    background: isEvolved ? "#ec4899" : "transparent",
+                    color: isEvolved ? "#fff" : "var(--muted)",
+                    border: `1px solid ${isEvolved ? "#ec4899" : "var(--border)"}`,
+                  }}
+                  title={isEvolved ? "Evolution unlocked" : "Has an Evolution (not unlocked)"}
+                >
+                  Evo
+                </button>
+              )}
+              {card.hasHero && (
+                <button
+                  onClick={() => onChange({ hero: !isHero })}
+                  className="rounded px-1.5 py-0.5 text-[10px] font-semibold"
+                  style={{
+                    background: isHero ? "#facc15" : "transparent",
+                    color: isHero ? "#3a2e00" : "var(--muted)",
+                    border: `1px solid ${isHero ? "#facc15" : "var(--border)"}`,
+                  }}
+                  title={isHero ? "Hero unlocked" : "Has a Hero form (not unlocked)"}
+                >
+                  Hero
+                </button>
+              )}
+            </div>
+          )
+        ) : (
+          <div className="px-1.5 py-1.5">
+            <button
+              onClick={() => onChange({})}
+              className="w-full rounded px-3 py-0.5 text-[12px] font-semibold"
+              style={{ background: "var(--surface-2)", color: "var(--foreground)", border: "1px solid var(--border)" }}
+            >
+              + Own
+            </button>
           </div>
         )}
       </div>
-
-      <div className="mt-1 truncate text-[12px] font-semibold" style={{ color }} title={card.name}>
-        {card.name}
-      </div>
-
-      {isOwned ? (
-        (card.hasEvolution || card.hasHero) && (
-          <div className="mt-1.5 flex flex-wrap justify-center gap-1.5">
-            {card.hasEvolution && (
-              <button
-                onClick={() => onChange({ evolved: !isEvolved })}
-                className="rounded px-1.5 py-0.5 text-[10px] font-semibold"
-                style={{
-                  background: isEvolved ? "#ec4899" : "transparent",
-                  color: isEvolved ? "#fff" : "var(--muted)",
-                  border: `1px solid ${isEvolved ? "#ec4899" : "var(--border)"}`,
-                }}
-                title={isEvolved ? "Evolution unlocked" : "Has an Evolution (not unlocked)"}
-              >
-                Evo
-              </button>
-            )}
-            {card.hasHero && (
-              <button
-                onClick={() => onChange({ hero: !isHero })}
-                className="rounded px-1.5 py-0.5 text-[10px] font-semibold"
-                style={{
-                  background: isHero ? "#facc15" : "transparent",
-                  color: isHero ? "#3a2e00" : "var(--muted)",
-                  border: `1px solid ${isHero ? "#facc15" : "var(--border)"}`,
-                }}
-                title={isHero ? "Hero unlocked" : "Has a Hero form (not unlocked)"}
-              >
-                Hero
-              </button>
-            )}
-          </div>
-        )
-      ) : (
-        <button
-          onClick={() => onChange({})}
-          className="mt-1.5 rounded px-3 py-0.5 text-[12px] font-semibold"
-          style={{ background: "var(--surface-2)", color: "var(--foreground)", border: "1px solid var(--border)" }}
-        >
-          + Own
-        </button>
-      )}
     </div>
   );
 }

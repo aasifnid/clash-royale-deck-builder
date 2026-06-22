@@ -16,6 +16,10 @@ export interface CoachPick {
   deckId: string;
   summary: string; // one line: why this deck suits this player
   gameplan: string;
+  opening: string; // what to do in the first minute
+  defense: string; // how to defend their pushes
+  combos: string; // which cards to play together
+  doubleElixir: string; // how to play once elixir doubles
   winCondition: string;
   counters: string; // what beats it and how to play around that
   playTips: string;
@@ -35,6 +39,10 @@ const OUTPUT_SCHEMA = {
           deckId: { type: "string" },
           summary: { type: "string" },
           gameplan: { type: "string" },
+          opening: { type: "string" },
+          defense: { type: "string" },
+          combos: { type: "string" },
+          doubleElixir: { type: "string" },
           winCondition: { type: "string" },
           counters: { type: "string" },
           playTips: { type: "string" },
@@ -44,6 +52,10 @@ const OUTPUT_SCHEMA = {
           "deckId",
           "summary",
           "gameplan",
+          "opening",
+          "defense",
+          "combos",
+          "doubleElixir",
           "winCondition",
           "counters",
           "playTips",
@@ -59,8 +71,18 @@ const SYSTEM = `You are the best Clash Royale coach in the world — a top-ladde
 
 You are given that player's account state and a SHORTLIST of proven, fieldable decks already filtered to cards they own at their level. Your job: rank the best 2-3 for THIS player and coach them on each.
 
+For each deck you pick, write a detailed game plan so the player fully understands how to win:
+- gameplan: the core plan to win, naming the deck's actual cards.
+- opening: what to do in the first minute before elixir doubles.
+- defense: how to defend their main pushes, naming which of your cards to use.
+- combos: which cards to play together, and in what order.
+- doubleElixir: how to play once elixir doubles in the second half.
+- counters: what beats this deck and how to play around it.
+- playTips: the one or two habits that matter most.
+
 Hard rules:
 - ONLY choose decks from the provided shortlist, by their exact "id". Never invent decks or cards.
+- Name the player's ACTUAL cards in the advice. Never use vague words like "support" or "your spell" without naming the real card.
 - Favor decks that are non-failing: proven to win, fully owned at a competitive level, and easy to pilot — unless the player's ease preference says otherwise.
 - Keep advice concrete and specific to this player's arena and card levels. No filler.
 - Plain, simple language. No em-dashes. Short sentences.`;

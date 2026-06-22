@@ -46,13 +46,17 @@ function buildStaticPicks(shortlist: DeckCandidate[]): CoachPick[] {
       .filter((s) => s.chosenKey)
       .map((s) => {
         const card = cardByKey(s.chosenKey!);
-        return { name: card?.name ?? s.chosenKey!, type: card?.type ?? "Troop", role: s.role };
+        return { name: card?.name ?? s.chosenKey!, type: card?.type ?? "Troop", role: s.role, elixir: card?.elixir };
       });
     const c = coachingForDeck(cand.deck, deckCards);
     return {
       deckId: cand.deck.id,
       summary: personalizedSummary(cand),
       gameplan: c.gameplan,
+      opening: c.opening,
+      defense: c.defense,
+      combos: c.combos,
+      doubleElixir: c.doubleElixir,
       winCondition: cand.deck.winCondition,
       counters: c.counters,
       playTips: c.playTips,
