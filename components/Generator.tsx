@@ -73,7 +73,6 @@ function topEntries(rec: Record<string, number>, n = 3): string {
 }
 
 interface Filters {
-  styles: string[];
   archetypes: string[];
 }
 const EASES: { value: EasePreference; label: string }[] = [
@@ -160,13 +159,13 @@ export default function Generator({ collection, onSave }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
-  const [filters, setFilters] = useState<Filters>({ styles: [], archetypes: [] });
+  const [filters, setFilters] = useState<Filters>({ archetypes: [] });
 
-  // Load the available deck-filter options (play styles + named archetypes) from the server.
+  // Load the available named archetypes for the deck-type dropdown from the server.
   useEffect(() => {
     fetch("/api/filters")
       .then((r) => r.json())
-      .then((f: Filters) => setFilters({ styles: f.styles ?? [], archetypes: f.archetypes ?? [] }))
+      .then((f: Filters) => setFilters({ archetypes: f.archetypes ?? [] }))
       .catch(() => {});
   }, []);
 
@@ -234,24 +233,11 @@ export default function Generator({ collection, onSave }: Props) {
               style={{ border: "1px solid var(--border)" }}
             >
               <option value="auto">Best for me</option>
-              {filters.styles.length > 0 && (
-                <optgroup label="Play style">
-                  {filters.styles.map((s) => (
-                    <option key={`s-${s}`} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-              {filters.archetypes.length > 0 && (
-                <optgroup label="Archetype">
-                  {filters.archetypes.map((a) => (
-                    <option key={`a-${a}`} value={a}>
-                      {a}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
+              {filters.archetypes.map((a) => (
+                <option key={a} value={a}>
+                  {a}
+                </option>
+              ))}
             </select>
             <span className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center" style={{ color: "var(--muted)" }}>
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
