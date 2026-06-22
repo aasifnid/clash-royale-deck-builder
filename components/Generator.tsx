@@ -39,8 +39,8 @@ interface EnrichedPick {
   substitutions: { role: string; from: string; to: string }[];
   powerCards: { key: string; name: string; evolved: boolean; hero: boolean }[];
   evolutionSlots: string[];
-  evolutionExtras: string[];
   heroSlots: string[];
+  extras: string[];
   cards: PickCard[];
 }
 interface BattleInsights {
@@ -341,26 +341,27 @@ export default function Generator({ collection, onSave }: Props) {
                 {pick.coach.playTips && <Field label="Play tips" value={pick.coach.playTips} />}
               </div>
 
-              {(pick.evolutionSlots.length > 0 || pick.heroSlots.length > 0) && (
+              {(pick.evolutionSlots.length > 0 || pick.heroSlots.length > 0 || pick.extras.length > 0) && (
                 <div className="mt-2 flex flex-col gap-1 rounded p-2 text-xs" style={{ background: "var(--background)" }}>
                   <div>
                     <span className="font-bold" style={{ color: "#ec4899" }}>Evolution slots (2):</span>{" "}
                     {pick.evolutionSlots.length > 0 ? (
                       <>
                         {pick.evolutionSlots.join(" + ")}
-                        {pick.evolutionSlots.length < 2 && <span style={{ color: "var(--muted)" }}> (1 slot open — no other evolved card in this deck)</span>}
+                        {pick.evolutionSlots.length < 2 && (
+                          <span style={{ color: "var(--muted)" }}> ({2 - pick.evolutionSlots.length} open — no other evolved card here)</span>
+                        )}
                       </>
                     ) : (
-                      <span style={{ color: "var(--muted)" }}>none of this deck&apos;s cards are evolved in your account</span>
-                    )}
-                    {pick.evolutionExtras.length > 0 && (
-                      <span style={{ color: "var(--muted)" }}> · also have: {pick.evolutionExtras.join(", ")}</span>
+                      <span style={{ color: "var(--muted)" }}>no evolved card in this deck</span>
                     )}
                   </div>
-                  {pick.heroSlots.length > 0 && (
-                    <div>
-                      <span className="font-bold" style={{ color: "#ca8a04" }}>Hero:</span> {pick.heroSlots.join(", ")}
-                    </div>
+                  <div>
+                    <span className="font-bold" style={{ color: "#ca8a04" }}>Hero slot (1):</span>{" "}
+                    {pick.heroSlots.length > 0 ? pick.heroSlots[0] : <span style={{ color: "var(--muted)" }}>no hero card in this deck</span>}
+                  </div>
+                  {pick.extras.length > 0 && (
+                    <div style={{ color: "var(--muted)" }}>Also unlocked (no slot free): {pick.extras.join(", ")}</div>
                   )}
                 </div>
               )}
