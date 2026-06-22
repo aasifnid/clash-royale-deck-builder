@@ -41,20 +41,18 @@ body {
   font-family: var(--font-body), system-ui, sans-serif;
 }
 
-/* Chunky display font for headings, buttons, labels, selects — the game's voice */
-h1,
-h2,
-h3,
-h4,
-button,
-select {
-  font-family: var(--font-display), system-ui, sans-serif;
-  letter-spacing: 0.01em;
-}
-
+/* Chunky display font ONLY on large headings — it's hard to read at small sizes, so all
+   buttons, selects, labels, card names, and body text use the readable body font. */
 h1,
 h2 {
+  font-family: var(--font-display), system-ui, sans-serif;
+  letter-spacing: 0.01em;
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+}
+
+/* Buttons stay game-y via weight + bevel, but readable */
+button {
+  font-weight: 700;
 }
 
 /* Beveled, slightly 3D buttons like the game */

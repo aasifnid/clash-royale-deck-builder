@@ -41,7 +41,13 @@ function buildStaticPicks(shortlist: DeckCandidate[]): CoachPick[] {
   const chosen = (fieldable.length > 0 ? fieldable : shortlist).slice(0, MAX_PICKS);
 
   return chosen.map((cand) => {
-    const c = coachingForDeck(cand.deck);
+    const deckCards = cand.slots
+      .filter((s) => s.chosenKey)
+      .map((s) => {
+        const card = cardByKey(s.chosenKey!);
+        return { name: card?.name ?? s.chosenKey!, type: card?.type ?? "Troop", role: s.role };
+      });
+    const c = coachingForDeck(cand.deck, deckCards);
     return {
       deckId: cand.deck.id,
       summary: personalizedSummary(cand),

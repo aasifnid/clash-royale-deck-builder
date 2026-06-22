@@ -1,6 +1,6 @@
 // Coaching text per deck. Curated decks have hand-authored entries; any deck without one
-// (e.g. pulled meta decks) gets coaching generated from its archetype + win condition, so
-// every suggestion reads distinctly instead of sharing a generic blurb.
+// (e.g. pulled meta decks) gets coaching generated from its archetype, win condition, and
+// its actual cards — in plain language, naming real cards instead of vague "support".
 
 import data from "@/data/deck-coaching.json";
 import type { ProvenDeck } from "./types";
@@ -11,60 +11,71 @@ export interface Coaching {
   playTips: string;
 }
 
+/** A resolved card in the deck, used to make coaching specific. */
+export interface DeckCardRef {
+  name: string;
+  type: "Troop" | "Building" | "Spell";
+  role: string;
+}
+
 const MAP = data as Record<string, Coaching>;
 
-// Archetype playbooks — gameplan + play tip interpolate the deck's actual win condition.
-const PLAYBOOK: Record<
-  string,
-  { gameplan: (wc: string) => string; counters: string; playTips: (wc: string) => string }
-> = {
-  Beatdown: {
-    gameplan: (wc) =>
-      `Build ${wc} from the back when you are ahead on elixir, stack support behind it, and save your spells for their defensive swarm.`,
-    counters: "High single-target DPS (Inferno Tower, Inferno Dragon, Mini PEKKA) melts the tank, and fast cycle decks punish a slow start.",
-    playTips: (wc) => `Do not start ${wc} when low on elixir. Defend first, then build the counter-push behind it.`,
-  },
-  Cycle: {
-    gameplan: (wc) =>
-      `Defend cheaply, then send ${wc} the moment their main counter is out of rotation, and out-cycle them to send it again before they answer.`,
-    counters: "Buildings and swarms slow the win condition, and beatdown decks out-value you if you over-defend.",
-    playTips: (wc) => `Never overcommit. Win on chip and small tower trades with ${wc}, not one big push.`,
-  },
-  Control: {
-    gameplan: (wc) =>
-      `Win on defense and steady chip with ${wc}. Make efficient trades, then punish when they are low on elixir.`,
-    counters: "Beatdown that out-values your chip, and fast pressure in the lane you are not defending.",
-    playTips: (wc) => `Use ${wc} for value, not just the tower. Patience and positive elixir trades win the long game.`,
-  },
-  "Bridge Spam": {
-    gameplan: (wc) =>
-      `Defend, then immediately counter-push across the bridge with ${wc} and fast support while they are tapped out.`,
-    counters: "Strong single-target defense and big spells on your support, plus heavy beatdown if you over-extend.",
-    playTips: (wc) => `Apply constant bridge pressure. Send ${wc} when their key defender is out of cycle.`,
-  },
-  Siege: {
-    gameplan: (wc) =>
-      `Place ${wc} defensively to lock onto the tower while your cheap cards defend, and cycle fast to keep one ready.`,
-    counters: "Rocket or Earthquake on the siege building, and fast bridge pressure that rushes you down.",
-    playTips: (wc) => `Placement is everything with ${wc}. Drill it before laddering, and protect it on defense.`,
-  },
-  Bait: {
-    gameplan: (wc) =>
-      `Bait out their small spell with your swarms, then land ${wc} for free damage. Defend with your building and mini-tank.`,
-    counters: "Decks with two small spells, or heavy splash that clears your bait cards.",
-    playTips: (wc) => `Track their spell. Only commit ${wc} once you know their answer is out of rotation.`,
-  },
+function context(cards: DeckCardRef[]) {
+  const troops = cards
+    .filter((c) => c.type === "Troop" && c.role !== "win-condition" && c.role !== "champion")
+    .map((c) => c.name);
+  const spells = cards.filter((c) => c.type === "Spell").map((c) => c.name);
+  const building = cards.find((c) => c.type === "Building")?.name;
+  return {
+    support: troops.slice(0, 2).join(" and ") || "your other troops",
+    spell: spells[0] || "your spell",
+    building: building || "your building",
+  };
+}
+
+type Builder = (wc: string, c: ReturnType<typeof context>) => Coaching;
+
+const PLAYBOOK: Record<string, Builder> = {
+  Beatdown: (wc, c) => ({
+    gameplan: `Place ${wc} at the back of your side, behind your towers, so it walks up slowly and you have time to line up ${c.support} behind it as one big push. Keep ${c.spell} ready for the troops they drop to defend.`,
+    counters: `Buildings and high-damage single-target cards (like Inferno Tower or Mini PEKKA) chew through ${wc}, and fast decks can rush the other lane while you are busy building up.`,
+    playTips: `Do not send ${wc} when you are low on elixir. Defend first, let your defenders survive, then push with ${wc} and them together.`,
+  }),
+  Cycle: (wc, c) => ({
+    gameplan: `${wc} is cheap, so play your other cards to get back to it quickly. Send ${wc} at the bridge the moment their main answer to it has just been used, and keep chipping the tower.`,
+    counters: `Buildings that pull ${wc} away and swarms that block it. Heavy decks out-value you if you spend too much defending.`,
+    playTips: `Do not overcommit elixir. Win slowly through chip damage and small even trades, not one big attack.`,
+  }),
+  Control: (wc, c) => ({
+    gameplan: `Win on defense first. Use ${c.support} to defend cheaply, then chip the tower with ${wc} and ${c.spell} once they are low on elixir.`,
+    counters: `Heavy beatdown decks that out-trade you, and quick pressure in the lane you are not defending.`,
+    playTips: `Use ${wc} for value (killing their troops or chipping), not just blind damage. Patience and good trades win the long game.`,
+  }),
+  "Bridge Spam": (wc, c) => ({
+    gameplan: `Defend their push, then immediately send ${wc} with ${c.support} across the bridge while they have little elixir left to react.`,
+    counters: `Strong single-target defenders and big spells that wipe your support. Do not over-extend into a heavy beatdown deck.`,
+    playTips: `Keep constant pressure at the bridge. Send ${wc} when their best defender for it is unavailable.`,
+  }),
+  Siege: (wc, c) => ({
+    gameplan: `Place ${wc} just over the river so it locks onto their tower, and protect it with ${c.support} and ${c.building}. Cycle fast so you always have another ${wc} ready.`,
+    counters: `Big spells like Rocket on ${wc}, and fast decks that rush you down before it does enough damage.`,
+    playTips: `Placement is everything. Practice exactly where you drop ${wc} so it hits the tower and helps you defend at the same time.`,
+  }),
+  Bait: (wc, c) => ({
+    gameplan: `Force out their small spell with cheap troops like ${c.support}, and once it is used, drop ${wc} for free damage. Defend with ${c.building}.`,
+    counters: `Decks carrying two small spells, or splash damage that clears your cheap bait cards.`,
+    playTips: `Keep track of their small spell. Only commit ${wc} after you have seen them use it.`,
+  }),
 };
 
-/** Coaching for a deck — the hand-authored entry if it exists, else generated from the
- *  deck's archetype and win condition so meta decks read distinctly. */
-export function coachingForDeck(deck: Pick<ProvenDeck, "id" | "archetype" | "winCondition">): Coaching {
+/** Coaching for a deck — hand-authored entry if curated, else generated in plain language
+ *  from the deck's archetype, win condition, and actual cards. */
+export function coachingForDeck(
+  deck: Pick<ProvenDeck, "id" | "archetype" | "winCondition">,
+  cards: DeckCardRef[] = [],
+): Coaching {
   const exact = MAP[deck.id];
   if (exact) return exact;
-  const pb = PLAYBOOK[deck.archetype] ?? PLAYBOOK.Beatdown;
-  return {
-    gameplan: pb.gameplan(deck.winCondition),
-    counters: pb.counters,
-    playTips: pb.playTips(deck.winCondition),
-  };
+  const build = PLAYBOOK[deck.archetype] ?? PLAYBOOK.Beatdown;
+  return build(deck.winCondition, context(cards));
 }
