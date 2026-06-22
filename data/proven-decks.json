@@ -1,0 +1,553 @@
+[
+  {
+    "id": "hog-2.6",
+    "name": "Hog 2.6 Cycle",
+    "archetype": "Cycle",
+    "winCondition": "Hog Rider",
+    "skillFloor": 4,
+    "minArena": 7,
+    "notes": "Cheap, fast cycle. Defend, then send Hog the moment a key counter is out of cycle.",
+    "slots": [
+      { "cardKey": "hog-rider", "role": "win-condition", "substitutes": ["ram-rider", "battle-ram"] },
+      { "cardKey": "musketeer", "role": "support", "substitutes": ["archers", "magic-archer"] },
+      { "cardKey": "ice-golem", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "cannon", "role": "building", "substitutes": ["tesla", "tombstone"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "ice-spirit", "role": "cycle", "substitutes": ["electro-spirit", "skeletons"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel", "giant-snowball"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] }
+    ]
+  },
+  {
+    "id": "hog-eq",
+    "name": "Hog Earthquake",
+    "archetype": "Cycle",
+    "winCondition": "Hog Rider",
+    "skillFloor": 3,
+    "minArena": 7,
+    "notes": "Earthquake resets buildings and chips towers; more forgiving than 2.6.",
+    "slots": [
+      { "cardKey": "hog-rider", "role": "win-condition", "substitutes": ["ram-rider"] },
+      { "cardKey": "earthquake", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "musketeer", "role": "support", "substitutes": ["archers"] },
+      { "cardKey": "ice-golem", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "ice-spirit", "role": "cycle", "substitutes": ["electro-spirit"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
+      { "cardKey": "cannon", "role": "building", "substitutes": ["tesla"] }
+    ]
+  },
+  {
+    "id": "xbow-2.9",
+    "name": "X-Bow 2.9",
+    "archetype": "Siege",
+    "winCondition": "X-Bow",
+    "skillFloor": 5,
+    "minArena": 8,
+    "notes": "Place X-Bow defensively to lock the tower. Highest skill ceiling in the game.",
+    "slots": [
+      { "cardKey": "x-bow", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "tesla", "role": "building", "substitutes": ["cannon"] },
+      { "cardKey": "ice-golem", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "archers", "role": "support", "substitutes": ["musketeer"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "ice-spirit", "role": "cycle", "substitutes": ["electro-spirit"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["rocket"] }
+    ]
+  },
+  {
+    "id": "mortar-bait",
+    "name": "Mortar Cycle",
+    "archetype": "Siege",
+    "winCondition": "Mortar",
+    "skillFloor": 4,
+    "minArena": 8,
+    "notes": "Chip with Mortar from the bridge, defend cheaply, out-cycle their counter.",
+    "slots": [
+      { "cardKey": "mortar", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "knight", "role": "mini-tank", "substitutes": ["valkyrie"] },
+      { "cardKey": "bomber", "role": "support", "substitutes": ["dart-goblin"] },
+      { "cardKey": "ice-spirit", "role": "cycle", "substitutes": ["electro-spirit"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["bats"] },
+      { "cardKey": "goblin-gang", "role": "support", "substitutes": ["spear-goblins"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "rocket", "role": "spell-big", "substitutes": ["fireball"] }
+    ]
+  },
+  {
+    "id": "golem-nw",
+    "name": "Golem Night Witch",
+    "archetype": "Beatdown",
+    "winCondition": "Golem",
+    "skillFloor": 4,
+    "minArena": 10,
+    "notes": "Build Golem from the back, stack support behind it, save spells for swarms.",
+    "slots": [
+      { "cardKey": "golem", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "night-witch", "role": "support", "substitutes": ["witch"] },
+      { "cardKey": "baby-dragon", "role": "air", "substitutes": ["inferno-dragon"] },
+      { "cardKey": "mega-minion", "role": "air-defense", "substitutes": ["minions"] },
+      { "cardKey": "lumberjack", "role": "support", "substitutes": ["electro-dragon"] },
+      { "cardKey": "lightning", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "tornado", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "barbarian-barrel", "role": "spell-small", "substitutes": ["the-log"] }
+    ]
+  },
+  {
+    "id": "lavaloon",
+    "name": "LavaLoon",
+    "archetype": "Beatdown",
+    "winCondition": "Balloon",
+    "skillFloor": 4,
+    "minArena": 11,
+    "notes": "Air beatdown. Lava Hound soaks, Balloon kills. Commit on a counter-push.",
+    "slots": [
+      { "cardKey": "lava-hound", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "balloon", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "inferno-dragon", "role": "air", "substitutes": ["baby-dragon"] },
+      { "cardKey": "mega-minion", "role": "air-defense", "substitutes": ["minions"] },
+      { "cardKey": "minions", "role": "support", "substitutes": ["bats"] },
+      { "cardKey": "tombstone", "role": "building", "substitutes": ["cannon"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["lightning"] },
+      { "cardKey": "zap", "role": "spell-small", "substitutes": ["arrows"] }
+    ]
+  },
+  {
+    "id": "lava-miner",
+    "name": "Lava Miner",
+    "archetype": "Beatdown",
+    "winCondition": "Miner",
+    "skillFloor": 4,
+    "minArena": 11,
+    "notes": "Lava Hound pulls fire, Miner chips chip the tower behind it. Patient air control.",
+    "slots": [
+      { "cardKey": "lava-hound", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "miner", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "inferno-dragon", "role": "air", "substitutes": ["baby-dragon"] },
+      { "cardKey": "mega-minion", "role": "air-defense", "substitutes": ["minions"] },
+      { "cardKey": "bats", "role": "support", "substitutes": ["minions"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] },
+      { "cardKey": "zap", "role": "spell-small", "substitutes": ["arrows"] },
+      { "cardKey": "tombstone", "role": "building", "substitutes": ["cannon"] }
+    ]
+  },
+  {
+    "id": "egiant",
+    "name": "Electro Giant",
+    "archetype": "Beatdown",
+    "winCondition": "Electro Giant",
+    "skillFloor": 3,
+    "minArena": 12,
+    "notes": "Tanky reflect-damage win condition. Tornado pulls troops into the zap aura.",
+    "slots": [
+      { "cardKey": "electro-giant", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "tornado", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "lightning", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "baby-dragon", "role": "air", "substitutes": ["electro-dragon"] },
+      { "cardKey": "hunter", "role": "support", "substitutes": ["bowler"] },
+      { "cardKey": "fisherman", "role": "support", "substitutes": ["knight"] },
+      { "cardKey": "dart-goblin", "role": "support", "substitutes": ["spear-goblins"] },
+      { "cardKey": "electro-spirit", "role": "cycle", "substitutes": ["ice-spirit"] }
+    ]
+  },
+  {
+    "id": "pekka-bs",
+    "name": "PEKKA Bridge Spam",
+    "archetype": "Bridge Spam",
+    "winCondition": "Battle Ram",
+    "skillFloor": 4,
+    "minArena": 10,
+    "notes": "Defend with PEKKA, then counter-push across the bridge with fast threats.",
+    "slots": [
+      { "cardKey": "pekka", "role": "mini-tank", "substitutes": ["mega-knight"] },
+      { "cardKey": "battle-ram", "role": "win-condition", "substitutes": ["ram-rider"] },
+      { "cardKey": "bandit", "role": "support", "substitutes": ["royal-ghost"] },
+      { "cardKey": "royal-ghost", "role": "support", "substitutes": ["bandit"] },
+      { "cardKey": "electro-wizard", "role": "support", "substitutes": ["magic-archer"] },
+      { "cardKey": "magic-archer", "role": "support", "substitutes": ["electro-wizard"] },
+      { "cardKey": "zap", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] }
+    ]
+  },
+  {
+    "id": "ramrider-bs",
+    "name": "Ram Rider Bridge Spam",
+    "archetype": "Bridge Spam",
+    "winCondition": "Ram Rider",
+    "skillFloor": 4,
+    "minArena": 11,
+    "notes": "Snare key defenders with Ram Rider; punish with Bandit and Battle Ram.",
+    "slots": [
+      { "cardKey": "ram-rider", "role": "win-condition", "substitutes": ["battle-ram"] },
+      { "cardKey": "battle-ram", "role": "win-condition", "substitutes": ["hog-rider"] },
+      { "cardKey": "bandit", "role": "support", "substitutes": ["royal-ghost"] },
+      { "cardKey": "royal-ghost", "role": "support", "substitutes": ["bandit"] },
+      { "cardKey": "magic-archer", "role": "support", "substitutes": ["electro-wizard"] },
+      { "cardKey": "electro-wizard", "role": "support", "substitutes": ["magic-archer"] },
+      { "cardKey": "giant-snowball", "role": "spell-small", "substitutes": ["zap"] },
+      { "cardKey": "lightning", "role": "spell-big", "substitutes": ["poison"] }
+    ]
+  },
+  {
+    "id": "gy-poison",
+    "name": "Graveyard Poison",
+    "archetype": "Control",
+    "winCondition": "Graveyard",
+    "skillFloor": 4,
+    "minArena": 11,
+    "notes": "Tank the tower, drop Graveyard, Poison their counter-swarm. Strong defense first.",
+    "slots": [
+      { "cardKey": "graveyard", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "knight", "role": "mini-tank", "substitutes": ["valkyrie"] },
+      { "cardKey": "ice-wizard", "role": "support", "substitutes": ["electro-wizard"] },
+      { "cardKey": "tombstone", "role": "building", "substitutes": ["cannon"] },
+      { "cardKey": "baby-dragon", "role": "air", "substitutes": ["bowler"] },
+      { "cardKey": "barbarian-barrel", "role": "spell-small", "substitutes": ["the-log"] },
+      { "cardKey": "musketeer", "role": "support", "substitutes": ["archers"] }
+    ]
+  },
+  {
+    "id": "miner-poison",
+    "name": "Miner Poison Control",
+    "archetype": "Control",
+    "winCondition": "Miner",
+    "skillFloor": 3,
+    "minArena": 10,
+    "notes": "Chip with Miner + Poison, win on defense and small positive trades.",
+    "slots": [
+      { "cardKey": "miner", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "musketeer", "role": "support", "substitutes": ["archers"] },
+      { "cardKey": "valkyrie", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "bats", "role": "support", "substitutes": ["minions"] },
+      { "cardKey": "inferno-tower", "role": "building", "substitutes": ["tesla"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] }
+    ]
+  },
+  {
+    "id": "miner-wb",
+    "name": "Miner Wall Breakers",
+    "archetype": "Control",
+    "winCondition": "Miner",
+    "skillFloor": 3,
+    "minArena": 10,
+    "notes": "Pair Miner with Wall Breakers for chip; defend with Bomb Tower and swarm.",
+    "slots": [
+      { "cardKey": "miner", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "wall-breakers", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "valkyrie", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "bomb-tower", "role": "building", "substitutes": ["tombstone"] },
+      { "cardKey": "bats", "role": "support", "substitutes": ["minions"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] }
+    ]
+  },
+  {
+    "id": "log-bait",
+    "name": "Goblin Barrel Log Bait",
+    "archetype": "Bait",
+    "winCondition": "Goblin Barrel",
+    "skillFloor": 5,
+    "minArena": 9,
+    "notes": "Bait out their small spell, then land Goblin Barrel for free. Heavy tracking.",
+    "slots": [
+      { "cardKey": "goblin-barrel", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "princess", "role": "support", "substitutes": ["dart-goblin"] },
+      { "cardKey": "goblin-gang", "role": "support", "substitutes": ["spear-goblins"] },
+      { "cardKey": "knight", "role": "mini-tank", "substitutes": ["valkyrie"] },
+      { "cardKey": "inferno-tower", "role": "building", "substitutes": ["tesla"] },
+      { "cardKey": "rocket", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
+      { "cardKey": "ice-spirit", "role": "cycle", "substitutes": ["skeletons"] }
+    ]
+  },
+  {
+    "id": "rg-fisherman",
+    "name": "Royal Giant Fisherman",
+    "archetype": "Beatdown",
+    "winCondition": "Royal Giant",
+    "skillFloor": 2,
+    "minArena": 7,
+    "notes": "Very forgiving. Place Royal Giant at the bridge, support it, pull threats with Fisherman.",
+    "slots": [
+      { "cardKey": "royal-giant", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "fisherman", "role": "support", "substitutes": ["knight"] },
+      { "cardKey": "mother-witch", "role": "support", "substitutes": ["witch"] },
+      { "cardKey": "phoenix", "role": "air", "substitutes": ["baby-dragon"] },
+      { "cardKey": "lightning", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "electro-spirit", "role": "cycle", "substitutes": ["ice-spirit"] }
+    ]
+  },
+  {
+    "id": "royal-hogs-eq",
+    "name": "Royal Hogs Earthquake",
+    "archetype": "Cycle",
+    "winCondition": "Royal Hogs",
+    "skillFloor": 3,
+    "minArena": 10,
+    "notes": "Split Royal Hogs on both lanes, chip with Earthquake, defend with cheap support.",
+    "slots": [
+      { "cardKey": "royal-hogs", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "earthquake", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "musketeer", "role": "support", "substitutes": ["flying-machine"] },
+      { "cardKey": "valkyrie", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "flying-machine", "role": "air-defense", "substitutes": ["mega-minion"] },
+      { "cardKey": "bats", "role": "support", "substitutes": ["minions"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "giant-snowball", "role": "spell-small", "substitutes": ["zap"] }
+    ]
+  },
+  {
+    "id": "mega-knight-bait",
+    "name": "Mega Knight Bait",
+    "archetype": "Bait",
+    "winCondition": "Mega Knight",
+    "skillFloor": 2,
+    "minArena": 10,
+    "notes": "Forgiving bait deck. Mega Knight resets pushes; bait spells with the swarms.",
+    "slots": [
+      { "cardKey": "mega-knight", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "bandit", "role": "support", "substitutes": ["royal-ghost"] },
+      { "cardKey": "electro-wizard", "role": "support", "substitutes": ["magic-archer"] },
+      { "cardKey": "bats", "role": "support", "substitutes": ["minions"] },
+      { "cardKey": "goblin-gang", "role": "support", "substitutes": ["spear-goblins"] },
+      { "cardKey": "inferno-dragon", "role": "air", "substitutes": ["baby-dragon"] },
+      { "cardKey": "zap", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] }
+    ]
+  },
+  {
+    "id": "goblin-giant-sparky",
+    "name": "Goblin Giant Sparky",
+    "archetype": "Beatdown",
+    "winCondition": "Goblin Giant",
+    "skillFloor": 3,
+    "minArena": 12,
+    "notes": "Goblin Giant tanks for Sparky. Protect Sparky from swarms and spells.",
+    "slots": [
+      { "cardKey": "goblin-giant", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "sparky", "role": "support", "substitutes": [] },
+      { "cardKey": "electro-wizard", "role": "support", "substitutes": ["zappies"] },
+      { "cardKey": "rascals", "role": "support", "substitutes": ["witch"] },
+      { "cardKey": "baby-dragon", "role": "air", "substitutes": ["inferno-dragon"] },
+      { "cardKey": "tornado", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "zap", "role": "spell-small", "substitutes": ["arrows"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] }
+    ]
+  },
+  {
+    "id": "three-musketeers",
+    "name": "Three Musketeers",
+    "archetype": "Beatdown",
+    "winCondition": "Three Musketeers",
+    "skillFloor": 4,
+    "minArena": 9,
+    "notes": "Split Three Musketeers behind a tank on a pump. Punish their big spell.",
+    "slots": [
+      { "cardKey": "three-musketeers", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "battle-ram", "role": "support", "substitutes": ["hog-rider"] },
+      { "cardKey": "heal-spirit", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "minion-horde", "role": "air-defense", "substitutes": ["minions"] },
+      { "cardKey": "ice-golem", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "dark-prince", "role": "support", "substitutes": ["valkyrie"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["zap"] },
+      { "cardKey": "elixir-collector", "role": "support", "substitutes": ["fireball"] }
+    ]
+  },
+  {
+    "id": "balloon-cycle",
+    "name": "Balloon Cycle",
+    "archetype": "Cycle",
+    "winCondition": "Balloon",
+    "skillFloor": 4,
+    "minArena": 8,
+    "notes": "Cheap Balloon cycle. Send Balloon behind an Ice Golem when their air defense is down.",
+    "slots": [
+      { "cardKey": "balloon", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "ice-golem", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "musketeer", "role": "support", "substitutes": ["archers"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "ice-spirit", "role": "cycle", "substitutes": ["electro-spirit"] },
+      { "cardKey": "bomb-tower", "role": "building", "substitutes": ["tombstone"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] }
+    ]
+  },
+  {
+    "id": "giant-double-prince",
+    "name": "Giant Double Prince",
+    "archetype": "Beatdown",
+    "winCondition": "Giant",
+    "skillFloor": 2,
+    "minArena": 7,
+    "notes": "Forgiving beatdown. Giant tanks, Prince and Dark Prince deal the damage.",
+    "slots": [
+      { "cardKey": "giant", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "prince", "role": "support", "substitutes": ["mini-pekka"] },
+      { "cardKey": "dark-prince", "role": "support", "substitutes": ["valkyrie"] },
+      { "cardKey": "electro-wizard", "role": "support", "substitutes": ["musketeer"] },
+      { "cardKey": "mega-minion", "role": "air-defense", "substitutes": ["minions"] },
+      { "cardKey": "baby-dragon", "role": "air", "substitutes": ["phoenix"] },
+      { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "zap", "role": "spell-small", "substitutes": ["giant-snowball"] }
+    ]
+  },
+  {
+    "id": "goblin-drill",
+    "name": "Goblin Drill Control",
+    "archetype": "Control",
+    "winCondition": "Goblin Drill",
+    "skillFloor": 4,
+    "minArena": 11,
+    "notes": "Drill spawns goblins at the tower. Mother Witch and Miner add chip and defense.",
+    "slots": [
+      { "cardKey": "goblin-drill", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "miner", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "mother-witch", "role": "support", "substitutes": ["witch"] },
+      { "cardKey": "valkyrie", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "bats", "role": "support", "substitutes": ["minions"] },
+      { "cardKey": "electro-spirit", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] }
+    ]
+  },
+  {
+    "id": "sparky-giant",
+    "name": "Giant Sparky",
+    "archetype": "Beatdown",
+    "winCondition": "Giant",
+    "skillFloor": 3,
+    "minArena": 12,
+    "notes": "Giant tanks for Sparky. Bait out their reset (Zap/E-Wiz) before committing Sparky.",
+    "slots": [
+      { "cardKey": "giant", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "sparky", "role": "support", "substitutes": [] },
+      { "cardKey": "electro-wizard", "role": "support", "substitutes": ["zappies"] },
+      { "cardKey": "mega-minion", "role": "air-defense", "substitutes": ["minions"] },
+      { "cardKey": "baby-dragon", "role": "air", "substitutes": ["inferno-dragon"] },
+      { "cardKey": "zap", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] },
+      { "cardKey": "ice-spirit", "role": "cycle", "substitutes": ["electro-spirit"] }
+    ]
+  },
+  {
+    "id": "elixir-golem",
+    "name": "Elixir Golem Battle Healer",
+    "archetype": "Beatdown",
+    "winCondition": "Elixir Golem",
+    "skillFloor": 3,
+    "minArena": 11,
+    "notes": "Cheap beatdown. Battle Healer sustains the push; flood support behind the Golem.",
+    "slots": [
+      { "cardKey": "elixir-golem", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "battle-healer", "role": "support", "substitutes": ["witch"] },
+      { "cardKey": "battle-ram", "role": "support", "substitutes": ["hog-rider"] },
+      { "cardKey": "electro-dragon", "role": "air", "substitutes": ["baby-dragon"] },
+      { "cardKey": "mega-minion", "role": "air-defense", "substitutes": ["minions"] },
+      { "cardKey": "tornado", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "barbarian-barrel", "role": "spell-small", "substitutes": ["the-log"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["lightning"] }
+    ]
+  },
+  {
+    "id": "aq-miner",
+    "name": "Archer Queen Miner Control",
+    "archetype": "Control",
+    "winCondition": "Miner",
+    "skillFloor": 3,
+    "minArena": 16,
+    "notes": "Archer Queen's cloak makes her a defensive monster. Chip with Miner, grind value.",
+    "slots": [
+      { "cardKey": "archer-queen", "role": "champion", "substitutes": [] },
+      { "cardKey": "miner", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "valkyrie", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "inferno-tower", "role": "building", "substitutes": ["tesla"] },
+      { "cardKey": "bats", "role": "support", "substitutes": ["minions"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] }
+    ]
+  },
+  {
+    "id": "golden-knight-bs",
+    "name": "Golden Knight Bridge Spam",
+    "archetype": "Bridge Spam",
+    "winCondition": "Golden Knight",
+    "skillFloor": 4,
+    "minArena": 16,
+    "notes": "Golden Knight dashes through swarms. Apply constant bridge pressure with fast troops.",
+    "slots": [
+      { "cardKey": "golden-knight", "role": "champion", "substitutes": [] },
+      { "cardKey": "battle-ram", "role": "win-condition", "substitutes": ["ram-rider"] },
+      { "cardKey": "bandit", "role": "support", "substitutes": ["royal-ghost"] },
+      { "cardKey": "royal-ghost", "role": "support", "substitutes": ["bandit"] },
+      { "cardKey": "electro-wizard", "role": "support", "substitutes": ["magic-archer"] },
+      { "cardKey": "magic-archer", "role": "support", "substitutes": ["electro-wizard"] },
+      { "cardKey": "zap", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] }
+    ]
+  },
+  {
+    "id": "skeleton-king-gy",
+    "name": "Skeleton King Graveyard",
+    "archetype": "Control",
+    "winCondition": "Graveyard",
+    "skillFloor": 4,
+    "minArena": 16,
+    "notes": "Skeleton King's ability clears swarms and refills from deaths on defense, then Graveyard punishes.",
+    "slots": [
+      { "cardKey": "skeleton-king", "role": "champion", "substitutes": [] },
+      { "cardKey": "graveyard", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "knight", "role": "mini-tank", "substitutes": ["valkyrie"] },
+      { "cardKey": "tombstone", "role": "building", "substitutes": ["cannon"] },
+      { "cardKey": "baby-dragon", "role": "air", "substitutes": ["bowler"] },
+      { "cardKey": "barbarian-barrel", "role": "spell-small", "substitutes": ["the-log"] },
+      { "cardKey": "musketeer", "role": "support", "substitutes": ["archers"] }
+    ]
+  },
+  {
+    "id": "monk-rg",
+    "name": "Monk Royal Giant",
+    "archetype": "Beatdown",
+    "winCondition": "Royal Giant",
+    "skillFloor": 3,
+    "minArena": 16,
+    "notes": "Monk reflects spells and tanks; pair with Royal Giant for forgiving, sturdy pressure.",
+    "slots": [
+      { "cardKey": "monk", "role": "champion", "substitutes": [] },
+      { "cardKey": "royal-giant", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "fisherman", "role": "support", "substitutes": ["knight"] },
+      { "cardKey": "mother-witch", "role": "support", "substitutes": ["witch"] },
+      { "cardKey": "lightning", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "electro-spirit", "role": "cycle", "substitutes": ["ice-spirit"] }
+    ]
+  },
+  {
+    "id": "mighty-miner-bs",
+    "name": "Mighty Miner Bridge Spam",
+    "archetype": "Bridge Spam",
+    "winCondition": "Battle Ram",
+    "skillFloor": 3,
+    "minArena": 16,
+    "notes": "Mighty Miner is a relentless defensive tank that switches lanes; punish with Battle Ram.",
+    "slots": [
+      { "cardKey": "mighty-miner", "role": "champion", "substitutes": [] },
+      { "cardKey": "battle-ram", "role": "win-condition", "substitutes": ["ram-rider"] },
+      { "cardKey": "bandit", "role": "support", "substitutes": ["royal-ghost"] },
+      { "cardKey": "magic-archer", "role": "support", "substitutes": ["electro-wizard"] },
+      { "cardKey": "electro-wizard", "role": "support", "substitutes": ["magic-archer"] },
+      { "cardKey": "zap", "role": "spell-small", "substitutes": ["giant-snowball"] },
+      { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] },
+      { "cardKey": "ice-spirit", "role": "cycle", "substitutes": ["electro-spirit"] }
+    ]
+  }
+]

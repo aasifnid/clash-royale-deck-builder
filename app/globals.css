@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0f1320;
+  --surface: #181d2e;
+  --surface-2: #212740;
+  --border: #2c3450;
+  --foreground: #e7e9f3;
+  --muted: #939bbd;
+  --accent: #5b8cff;
+  --accent-2: #ffd34e;
+
+  /* rarity colors */
+  --r-common: #b8c0d9;
+  --r-rare: #ffb02e;
+  --r-epic: #c06cff;
+  --r-legendary: #3fd5e0;
+  --r-champion: #ffd34e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #1a2240 0%, transparent 60%),
+    var(--background);
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Thin scrollbars for the card grid */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
