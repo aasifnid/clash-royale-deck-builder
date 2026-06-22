@@ -45,6 +45,11 @@ export interface DeckCandidate {
   missingRoles: string[]; // roles with no owned card
   substitutions: { role: string; from: string; to: string }[];
   powerCards: PowerCard[]; // deck cards the player has in Evolution/Hero form
+  evolutionSlots: string[]; // up to 2 card names to run evolved
+  heroSlots: string[]; // up to 1 card name to run as hero
+  evolutionSlotKeys: string[];
+  heroSlotKeys: string[];
+  extras: string[]; // owned Evo/Hero forms with no slot free
   avgElixir: number;
   fieldable: boolean; // all 8 slots filled from owned cards
   scores: { ownership: number; level: number; skill: number; arena: number; edge: number; meta: number; coverage: number; total: number };
@@ -178,23 +183,38 @@ function scoreDeck(
   const ownership = ownedWeight / totalWeight;
   const level = levelWeightTotal > 0 ? levelWeighted / levelWeightTotal : 0;
 
-  // Edge: does the player own Evolution/Hero ("power") forms of this deck's cards?
-  // Weighted toward the win condition. Surfaces decks that leverage the player's strengths.
-  let edgeWeighted = 0;
-  let edgeWeightTotal = 0;
+  // Which of this deck's cards the player owns in Evolution / Hero form.
   const powerCards: PowerCard[] = [];
   for (const s of slots) {
     if (s.isMissing || !s.chosenKey) continue;
     const card = cardByKey(s.chosenKey);
     const o = card ? collection.owned[card.id] : undefined;
-    const w = slotWeight(s.role);
-    edgeWeightTotal += w;
     if (card && o && (o.evolved || o.hero)) {
-      edgeWeighted += w;
       powerCards.push({ key: s.chosenKey, name: card.name, role: s.role, evolved: o.evolved, hero: o.hero });
     }
   }
-  const edge = edgeWeightTotal > 0 ? edgeWeighted / edgeWeightTotal : 0;
+
+  // Assign the 2 evolution slots + 1 hero slot (win condition / champion first).
+  const isKeyRole = (role: string) => role === "win-condition" || role === "champion";
+  const keyFirst = (a: PowerCard, b: PowerCard) => Number(isKeyRole(b.role)) - Number(isKeyRole(a.role));
+  const evolvedPCs = [...powerCards.filter((p) => p.evolved)].sort(keyFirst);
+  const evoTop = evolvedPCs.slice(0, 2);
+  const evoKeySet = new Set(evoTop.map((p) => p.key));
+  const heroPCs = powerCards.filter((p) => p.hero && !evoKeySet.has(p.key)).sort(keyFirst);
+  const heroTop = heroPCs.slice(0, 1);
+
+  const evolutionSlots = evoTop.map((p) => p.name);
+  const heroSlots = heroTop.map((p) => p.name);
+  const evolutionSlotKeys = evoTop.map((p) => p.key);
+  const heroSlotKeys = heroTop.map((p) => p.key);
+  const extras = [
+    ...evolvedPCs.slice(2).map((p) => `${p.name} (Evo)`),
+    ...heroPCs.slice(1).map((p) => `${p.name} (Hero)`),
+  ];
+
+  // Edge = how well the deck fills your special slots. Evolutions weigh more (2 slots,
+  // bigger power swing) than the single hero slot. Empty evolution slots score low.
+  const edge = 0.7 * (evoTop.length / 2) + 0.3 * heroTop.length;
 
   // Skill fit vs the player's stated ease preference (skillFloor 1 = easy .. 5 = hard).
   let skill: number;
@@ -221,10 +241,11 @@ function scoreDeck(
   if (!hasAntiAir) coverage *= 0.82;
   if (!hasSpell) coverage *= 0.9;
 
-  // Card level dominates: an expert wouldn't run under-leveled cards at this arena. Past-loss
-  // meta is only a minor nudge (the user asked not to drive suggestions off recent failures).
+  // Card level dominates, but using your evolution/hero slots matters a lot at this level —
+  // a deck that leaves both evolution slots empty is a real disadvantage. Past-loss meta is
+  // only a minor nudge (the user asked not to drive suggestions off recent failures).
   let total =
-    (0.3 * ownership + 0.45 * level + 0.06 * skill + 0.05 * arena + 0.06 * edge + 0.08 * meta) * 100;
+    (0.26 * ownership + 0.4 * level + 0.05 * skill + 0.04 * arena + 0.17 * edge + 0.08 * meta) * 100;
   total *= coverage;
   // A deck you can't field a full 8 for is a poor recommendation — discount hard.
   if (!fieldable) total *= 0.5;
@@ -244,6 +265,11 @@ function scoreDeck(
       .filter((s) => s.isSubstitute && s.chosenKey)
       .map((s) => ({ role: s.role, from: s.canonicalKey, to: s.chosenKey! })),
     powerCards,
+    evolutionSlots,
+    heroSlots,
+    evolutionSlotKeys,
+    heroSlotKeys,
+    extras,
     avgElixir,
     fieldable,
     scores: {

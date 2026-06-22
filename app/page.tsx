@@ -88,6 +88,10 @@ export default function Home() {
       {ready && (
         <div className="flex flex-col gap-5">
           <SyncBar collection={collection} onSynced={handleSynced} />
+          {/* Primary action first */}
+          <Generator collection={collection} onSave={handleSave} />
+          <SavedDecks decks={decks} onDelete={handleDelete} />
+          {/* Your collection */}
           <CollectionDashboard
             collection={collection}
             onCardChange={handleCardChange}
@@ -98,8 +102,6 @@ export default function Home() {
             onTroopChange={handleTroopChange}
             onSetActive={handleSetActive}
           />
-          <Generator collection={collection} onSave={handleSave} />
-          <SavedDecks decks={decks} onDelete={handleDelete} />
         </div>
       )}
 

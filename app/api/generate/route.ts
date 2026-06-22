@@ -63,30 +63,9 @@ function buildStaticPicks(shortlist: DeckCandidate[]): CoachPick[] {
 /** Flatten a candidate into the resolved 8-card list (with levels) for the client,
  *  plus explicit Evolution-slot (2) and Hero/Champion-slot recommendations. */
 function enrichCandidate(cand: DeckCandidate) {
-  // Clash Royale allows exactly 2 evolution slots and 1 hero slot per deck.
-  const EVO_SLOTS = 2;
-  const HERO_SLOTS = 1;
-  const isKey = (role: string) => role === "win-condition" || role === "champion";
-  const byKeyFirst = (a: { role: string }, b: { role: string }) =>
-    Number(isKey(b.role)) - Number(isKey(a.role));
-
-  // Up to 2 evolutions (win condition / champion first).
-  const evolved = [...cand.powerCards.filter((p) => p.evolved)].sort(byKeyFirst);
-  const evoTop = evolved.slice(0, EVO_SLOTS);
-  const evoKeys = new Set(evoTop.map((p) => p.key));
-  const evolutionSlots = evoTop.map((p) => p.name);
-
-  // 1 hero (win condition first), never a card already taken by an evolution slot.
-  const heroes = cand.powerCards.filter((p) => p.hero && !evoKeys.has(p.key)).sort(byKeyFirst);
-  const heroTop = heroes.slice(0, HERO_SLOTS);
-  const heroKeys = new Set(heroTop.map((p) => p.key));
-  const heroSlots = heroTop.map((p) => p.name);
-
-  // Owned but no slot free for them.
-  const extras = [
-    ...evolved.slice(EVO_SLOTS).map((p) => `${p.name} (Evo)`),
-    ...heroes.slice(HERO_SLOTS).map((p) => `${p.name} (Hero)`),
-  ];
+  // Slot recommendations (2 evolutions + 1 hero) are computed in the engine.
+  const evoKeys = new Set(cand.evolutionSlotKeys);
+  const heroKeys = new Set(cand.heroSlotKeys);
 
   return {
     deckId: cand.deck.id,
@@ -102,9 +81,9 @@ function enrichCandidate(cand: DeckCandidate) {
     substitutions: cand.substitutions,
     missingRoles: cand.missingRoles,
     powerCards: cand.powerCards,
-    evolutionSlots,
-    heroSlots,
-    extras,
+    evolutionSlots: cand.evolutionSlots,
+    heroSlots: cand.heroSlots,
+    extras: cand.extras,
     cards: cand.slots.map((s) => ({
       role: s.role,
       key: s.chosenKey,
