@@ -1,6 +1,7 @@
-// Pulls the CURRENT top-ladder meta: the decks the best Path of Legends players are
-// running right now. Aggregates them into data/meta-decks.json so the suggestion engine
-// can draw from this season's real meta, not just the curated archetype library.
+// Pulls the CURRENT top-ladder meta: the decks the best Path of Legends players are running
+// right now. Samples a LARGE set of top players (so usage counts are meaningful, not noise),
+// aggregates decks by their 8-card set, and for each popular deck records the evolutions and
+// tower troop those top players actually run. Output -> data/meta-decks.json.
 //
 // Run: node scripts/refresh-meta.mjs   (needs CR_API_TOKEN; proxy IP allowlisted)
 
@@ -11,8 +12,10 @@ import { dirname, join } from "node:path";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "data", "meta-decks.json");
 const BASE = "https://proxy.royaleapi.dev/v1";
-const TOP_PLAYERS = 80; // how many top players to sample
-const KEEP_DECKS = 24; // how many of the most popular decks to keep
+const TOP_PLAYERS = 1000; // sample size — the whole top-ladder leaderboard
+const CONCURRENCY = 12;
+const MIN_USAGE = 4; // keep only decks run by at least this many top players (drop noise/brews)
+const KEEP_DECKS = 40;
 
 const token =
   process.env.CR_API_TOKEN ||
@@ -32,7 +35,6 @@ const cards = JSON.parse(readFileSync(join(ROOT, "data", "cards.json"), "utf8"))
 const keyById = new Map(cards.map((c) => [c.id, c.key]));
 const elixirByKey = new Map(cards.map((c) => [c.key, c.elixir]));
 
-// Win-condition -> archetype (priority order), mirrors lib/archetypes.ts.
 const WIN_CONDITIONS = [
   ["x-bow", "Siege"], ["mortar", "Siege"],
   ["golem", "Beatdown"], ["lava-hound", "Beatdown"], ["electro-giant", "Beatdown"],
@@ -50,7 +52,6 @@ function classify(keys) {
   return "Control";
 }
 
-// Find the latest season that actually has rankings.
 async function latestSeason() {
   const seasons = (await get("/locations/global/seasons")).items
     .map((s) => s.id)
@@ -66,7 +67,6 @@ async function latestSeason() {
   throw new Error("No season with rankings found");
 }
 
-// Map a concurrency-limited fetch over items.
 async function mapLimit(items, limit, fn) {
   const out = [];
   let i = 0;
@@ -89,23 +89,41 @@ const season = await latestSeason();
 console.log("Using season:", season);
 const ranking = await get(`/locations/global/pathoflegend/${season}/rankings/players?limit=${TOP_PLAYERS}`);
 const tags = ranking.items.map((p) => p.tag.replace("#", ""));
-console.log("Top players:", tags.length);
+console.log("Top players on leaderboard:", tags.length);
 
-const players = await mapLimit(tags, 8, (tag) => get(`/players/%23${tag}`));
+const players = await mapLimit(tags, CONCURRENCY, (tag) => get(`/players/%23${tag}`));
+const ok = players.filter(Boolean).length;
+console.log(`Fetched ${ok}/${tags.length} player profiles`);
 
-// Aggregate current decks by their card-set.
-const decks = new Map(); // signature -> { keys, count }
+// Aggregate current decks by their 8-card set. For each deck also tally which cards players
+// run as evolutions (evolutionLevel > 0) and which tower troop they bring.
+const decks = new Map(); // sig -> { keys, count, evo: Map<key,count>, tower: Map<key,count> }
 for (const p of players) {
   if (!p?.currentDeck || p.currentDeck.length !== 8) continue;
   const keys = p.currentDeck.map((c) => keyById.get(c.id)).filter(Boolean);
   if (keys.length !== 8) continue;
   const sig = [...keys].sort().join(",");
-  const entry = decks.get(sig) ?? { keys, count: 0 };
+  const entry = decks.get(sig) ?? { keys, count: 0, evo: new Map(), tower: new Map() };
   entry.count++;
+  for (const c of p.currentDeck) {
+    if ((c.evolutionLevel ?? 0) > 0) {
+      const k = keyById.get(c.id);
+      if (k) entry.evo.set(k, (entry.evo.get(k) ?? 0) + 1);
+    }
+  }
+  const support = p.currentDeckSupportCards?.[0];
+  if (support) {
+    const k = keyById.get(support.id);
+    if (k) entry.tower.set(k, (entry.tower.get(k) ?? 0) + 1);
+  }
   decks.set(sig, entry);
 }
 
+const topByCount = (m, n) =>
+  [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, n).map(([key, count]) => ({ key, count }));
+
 const ranked = [...decks.values()]
+  .filter((d) => d.count >= MIN_USAGE)
   .sort((a, b) => b.count - a.count)
   .slice(0, KEEP_DECKS)
   .map((d, i) => {
@@ -117,9 +135,15 @@ const ranked = [...decks.values()]
       usage: d.count,
       avgElixir: Math.round(avg * 10) / 10,
       cards: ordered,
+      // The 2 evolutions top players most commonly run in this deck, and the popular tower troop.
+      evolutions: topByCount(d.evo, 2).map((e) => e.key),
+      towerTroop: topByCount(d.tower, 1)[0]?.key ?? null,
     };
   });
 
-writeFileSync(OUT, JSON.stringify({ season, refreshedFromTop: tags.length, decks: ranked }, null, 2) + "\n");
-console.log(`Wrote ${ranked.length} meta decks (from ${tags.length} top players) to ${OUT}`);
-console.log("Top 5:", ranked.slice(0, 5).map((d) => `${d.archetype} x${d.usage}`).join(", "));
+writeFileSync(
+  OUT,
+  JSON.stringify({ season, sampledPlayers: ok, minUsage: MIN_USAGE, decks: ranked }, null, 2) + "\n",
+);
+console.log(`Wrote ${ranked.length} meta decks (usage >= ${MIN_USAGE}) to ${OUT}`);
+console.log("Top 8:", ranked.slice(0, 8).map((d) => `${d.archetype} x${d.usage}`).join(", "));

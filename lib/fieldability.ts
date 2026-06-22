@@ -6,15 +6,33 @@
 import provenDecks from "@/data/proven-decks.json";
 import { cardByKey } from "./cards";
 import { metaFitScore } from "./archetypes";
+import { META_DECKS } from "./meta-decks";
 import { cardsWithRole, ANTI_AIR } from "./roles";
 import type { Card, Collection, ProvenDeck } from "./types";
 
-// Pool = the hand-curated library of established, proven archetypes ONLY. We deliberately do
-// NOT mix in the live top-ladder pull: that sample is small, so most "meta" decks were run by
-// just 1-2 players (individual brews, not popular proven decks), and they were ranking above
-// genuine archetypes purely on evolution-slot fit. Every suggestion must be a deck that is
-// actually proven to win, not one player's experiment.
-export const DECKS: ProvenDeck[] = (provenDecks as ProvenDeck[]).map((d) => ({ ...d, source: "curated" as const }));
+const sig = (d: ProvenDeck) => d.slots.map((s) => s.cardKey).sort().join(",");
+
+// Pool = the CURRENT top-ladder meta decks (primary — these are what is actually winning right
+// now, aggregated from ~1000 top players with real usage counts and the evolutions they run),
+// plus the curated archetype library as a fallback so low-level accounts that can't field a meta
+// deck still get sensible options. Curated decks that duplicate a meta deck are dropped.
+const META = META_DECKS;
+const metaSigs = new Set(META.map(sig));
+const CURATED = (provenDecks as ProvenDeck[])
+  .map((d) => ({ ...d, source: "curated" as const }))
+  .filter((d) => !metaSigs.has(sig(d)));
+export const DECKS: ProvenDeck[] = [...META, ...CURATED];
+
+// Strongest = run by the most top players. Normalize usage to [0,1] against the most popular
+// meta deck so it can drive ranking; curated decks (no usage) get a modest baseline so they
+// surface only when the player can't field a real meta deck.
+const MAX_USAGE = Math.max(1, ...META.map((d) => d.usage ?? 0));
+// Curated decks are a fallback only: give them a low baseline so a real meta deck the player can
+// field always beats them, but they still surface for accounts that can't field any meta deck.
+const CURATED_STRENGTH = 0.12;
+function strengthOf(deck: ProvenDeck): number {
+  return deck.usage != null ? Math.min(1, deck.usage / MAX_USAGE) : CURATED_STRENGTH;
+}
 
 export type EasePreference = "forgiving" | "any" | "challenge";
 
@@ -52,7 +70,7 @@ export interface DeckCandidate {
   fieldable: boolean; // all 8 slots filled from owned cards
   competitiveLevel: number; // the player's fielding level this deck was judged against
   weakCards: number; // count of owned-but-under-leveled cards in the resolved deck
-  scores: { ownership: number; level: number; skill: number; arena: number; edge: number; meta: number; coverage: number; total: number };
+  scores: { ownership: number; level: number; skill: number; arena: number; edge: number; meta: number; strength: number; coverage: number; total: number };
 }
 
 interface RankOptions {
@@ -212,13 +230,18 @@ function scoreDeck(
     }
   }
 
-  // Assign the 2 evolution slots + 1 hero slot (win condition / champion first).
+  // Assign the 2 evolution slots + 1 hero slot. Prefer the evolutions TOP PLAYERS actually run
+  // in this deck (from real meta usage), then win-condition / champion, so the recommendation
+  // matches the meta instead of "any evolved card you happen to own".
+  const metaEvoSet = new Set(deck.metaEvolutions ?? []);
   const isKeyRole = (role: string) => role === "win-condition" || role === "champion";
-  const keyFirst = (a: PowerCard, b: PowerCard) => Number(isKeyRole(b.role)) - Number(isKeyRole(a.role));
-  const evolvedPCs = [...powerCards.filter((p) => p.evolved)].sort(keyFirst);
+  const metaFirst = (a: PowerCard, b: PowerCard) =>
+    Number(metaEvoSet.has(b.key)) - Number(metaEvoSet.has(a.key)) ||
+    Number(isKeyRole(b.role)) - Number(isKeyRole(a.role));
+  const evolvedPCs = [...powerCards.filter((p) => p.evolved)].sort(metaFirst);
   const evoTop = evolvedPCs.slice(0, 2);
   const evoKeySet = new Set(evoTop.map((p) => p.key));
-  const heroPCs = powerCards.filter((p) => p.hero && !evoKeySet.has(p.key)).sort(keyFirst);
+  const heroPCs = powerCards.filter((p) => p.hero && !evoKeySet.has(p.key)).sort(metaFirst);
   const heroTop = heroPCs.slice(0, 1);
 
   const evolutionSlots = evoTop.map((p) => p.name);
@@ -259,17 +282,22 @@ function scoreDeck(
   if (!hasAntiAir) coverage *= 0.82;
   if (!hasSpell) coverage *= 0.9;
 
-  // Card level dominates, but using your evolution/hero slots matters a lot at this level —
-  // a deck that leaves both evolution slots empty is a real disadvantage. Past-loss meta is
-  // only a minor nudge (the user asked not to drive suggestions off recent failures).
+  // Meta strength (how many top players run this deck) and card-level fit are the two big
+  // drivers: we want the STRONGEST decks the player can actually field at level. Ownership and
+  // evolution-slot fit matter, ease-of-play is a small factor by default (handled below for the
+  // "forgiving" mode), and recent-loss meta is only a minor nudge.
+  const strength = strengthOf(deck);
+  // Meta strength leads: the player asked for the STRONGEST decks they can field. Level fit and
+  // ownership keep it fieldable, edge (using your evolutions) is a smaller nudge so it can't
+  // float a niche brew over a popular deck.
   let total =
-    (0.26 * ownership + 0.4 * level + 0.08 * skill + 0.04 * arena + 0.17 * edge + 0.05 * meta) * 100;
+    (0.18 * ownership + 0.26 * level + 0.36 * strength + 0.08 * edge + 0.04 * skill + 0.03 * arena + 0.05 * meta) * 100;
   total *= coverage;
   // A deck you can't field a full 8 for is a poor recommendation — discount hard.
   if (!fieldable) total *= 0.5;
-  // Every under-leveled card is a slot that loses its fight. One is a real liability; two is
-  // a losing deck. Discount steeply so a clean all-level deck always beats one with dead cards.
-  if (weakCards > 0) total *= Math.pow(0.8, weakCards);
+  // Under-leveled cards are a liability, but for a strong meta deck one slightly-low card should
+  // not bury it beneath a niche deck. Soft per-card discount, harsher as more pile up.
+  if (weakCards > 0) total *= Math.pow(0.9, weakCards);
   // "Forgiving" must mean it: a high-execution deck (Balloon beatdown, X-Bow, Graveyard) should
   // never be the top "easy" pick just because it fields well. This multiplicative penalty by
   // skill floor decisively sinks demanding decks for forgiving players, while leaving "any" and
@@ -311,6 +339,7 @@ function scoreDeck(
       arena: Math.round(arena * 100),
       edge: Math.round(edge * 100),
       meta: Math.round(meta * 100),
+      strength: Math.round(strength * 100),
       coverage: Math.round(coverage * 100),
       total: Math.round(total),
     },
@@ -319,7 +348,9 @@ function scoreDeck(
 
 /** Rank the proven-deck library for this player's collection. Best first. */
 export function rankDecks(collection: Collection, opts: RankOptions = {}): DeckCandidate[] {
-  const ease = opts.ease ?? "forgiving";
+  // Default to "any": surface the STRONGEST decks the player can field, not the easiest. Players
+  // who want low-misplay decks can still pick "forgiving" (which applies a skill-floor penalty).
+  const ease = opts.ease ?? "any";
   const pool =
     opts.archetype && opts.archetype !== "auto"
       ? DECKS.filter((d) => d.archetype === opts.archetype)

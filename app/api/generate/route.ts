@@ -116,7 +116,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const { collection, archetype, ease = "forgiving" } = body;
+  const { collection, archetype, ease = "any" } = body;
   if (!collection || typeof collection.kingLevel !== "number" || !collection.owned) {
     return NextResponse.json({ error: "Missing or invalid collection." }, { status: 400 });
   }

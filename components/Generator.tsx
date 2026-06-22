@@ -74,8 +74,8 @@ function topEntries(rec: Record<string, number>, n = 3): string {
 
 const ARCHETYPES = ["auto", ...archetypes()];
 const EASES: { value: EasePreference; label: string }[] = [
+  { value: "any", label: "Strongest (meta)" },
   { value: "forgiving", label: "Easy to play" },
-  { value: "any", label: "Any" },
   { value: "challenge", label: "High skill" },
 ];
 
@@ -152,7 +152,7 @@ interface Props {
 
 export default function Generator({ collection, onSave }: Props) {
   const [archetype, setArchetype] = useState("auto");
-  const [ease, setEase] = useState<EasePreference>("forgiving");
+  const [ease, setEase] = useState<EasePreference>("any");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<GenerateResponse | null>(null);

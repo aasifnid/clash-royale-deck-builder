@@ -14,6 +14,8 @@ interface RawMetaDeck {
   usage: number;
   avgElixir: number;
   cards: string[];
+  evolutions?: string[];
+  towerTroop?: string | null;
 }
 
 // cardKey -> {role, substitutes} learned from the curated decks (first occurrence wins),
@@ -75,6 +77,8 @@ export const META_DECKS: ProvenDeck[] = ((metaData as { decks: RawMetaDeck[] }).
       notes: `Run by ${d.usage} of the sampled top-ladder players this season.`,
       source: "meta",
       usage: d.usage,
+      metaEvolutions: d.evolutions ?? [],
+      metaTowerTroop: d.towerTroop ?? null,
     } satisfies ProvenDeck;
   },
 );
