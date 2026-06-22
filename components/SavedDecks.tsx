@@ -16,7 +16,7 @@ export default function SavedDecks({ decks, onDelete }: Props) {
 
   if (decks.length === 0) {
     return (
-      <section className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+      <section className="rounded-xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
         <h2 className="mb-1 text-lg font-bold">Saved Decks</h2>
         <p className="text-sm" style={{ color: "var(--muted)" }}>
           Decks you save will appear here.
@@ -34,7 +34,7 @@ export default function SavedDecks({ decks, onDelete }: Props) {
   }
 
   return (
-    <section className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+    <section className="rounded-xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
       <h2 className="mb-3 text-lg font-bold">Saved Decks</h2>
       <div className="flex flex-col gap-3">
         {decks.map((deck) => (

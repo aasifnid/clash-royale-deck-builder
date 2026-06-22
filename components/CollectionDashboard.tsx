@@ -38,10 +38,10 @@ export default function CollectionDashboard({ collection, onCardChange, onMetaCh
   }, [search, rarity, ownedOnly, collection.owned]);
 
   return (
-    <section className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+    <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-bold">
-          Your Collection{" "}
+          Your collection{" "}
           <span className="text-sm font-normal" style={{ color: "var(--muted)" }}>
             {ownedCount}/{CARDS.length} cards
           </span>
@@ -84,6 +84,11 @@ export default function CollectionDashboard({ collection, onCardChange, onMetaCh
           </label>
         </div>
       </div>
+
+      <p className="mb-3 text-sm" style={{ color: "var(--muted)" }}>
+        Auto-filled when you sync. Tap any card to edit its level or mark its Evolution or Hero form. These edits drive
+        the suggestions above.
+      </p>
 
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <input
@@ -140,6 +145,6 @@ export default function CollectionDashboard({ collection, onCardChange, onMetaCh
           No cards match your filters.
         </p>
       )}
-    </section>
+    </div>
   );
 }

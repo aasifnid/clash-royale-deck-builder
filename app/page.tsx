@@ -75,38 +75,57 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
-      <header className="mb-5">
-        <h1 className="text-2xl font-extrabold tracking-tight">
+    <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+      <header className="mb-8">
+        <div
+          className="mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--muted)" }}
+        >
+          🏆 An experiment by{" "}
+          <a href="https://aasifanwar.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>
+            Aasif Anwar
+          </a>
+        </div>
+        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
           Clash Royale <span style={{ color: "var(--accent-2)" }}>Deck Builder</span>
         </h1>
-        <p className="text-sm" style={{ color: "var(--muted)" }}>
-          Proven decks, filtered to the cards you actually own — coached like a pro.
+        <p className="mt-3 max-w-2xl text-base leading-relaxed" style={{ color: "var(--muted)" }}>
+          It reads your real card collection, levels and evolutions included, then gives you the strongest current
+          top-ladder decks you can actually field. No more generic lists that assume maxed cards you do not have.
         </p>
       </header>
 
       {ready && (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6">
           <SyncBar collection={collection} onSynced={handleSynced} />
           {/* Primary action first */}
           <Generator collection={collection} onSave={handleSave} />
           <SavedDecks decks={decks} onDelete={handleDelete} />
-          {/* Your collection */}
-          <CollectionDashboard
-            collection={collection}
-            onCardChange={handleCardChange}
-            onMetaChange={handleMetaChange}
-          />
-          <TowerTroops
-            collection={collection}
-            onTroopChange={handleTroopChange}
-            onSetActive={handleSetActive}
-          />
+          {/* Your account: cards + tower troops in one panel */}
+          <section className="rounded-xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+            <CollectionDashboard
+              collection={collection}
+              onCardChange={handleCardChange}
+              onMetaChange={handleMetaChange}
+            />
+            <div className="mt-6 border-t pt-5" style={{ borderColor: "var(--border)" }}>
+              <TowerTroops
+                collection={collection}
+                onTroopChange={handleTroopChange}
+                onSetActive={handleSetActive}
+              />
+            </div>
+          </section>
         </div>
       )}
 
-      <footer className="mt-8 text-center text-xs" style={{ color: "var(--muted)" }}>
-        Card data via RoyaleAPI. Not affiliated with Supercell.
+      <footer className="mt-8 text-center text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
+        Decks drawn from the current top-ladder meta (official Clash Royale API) plus proven archetypes. Card data and
+        art via RoyaleAPI. A personal experiment by{" "}
+        <a href="https://aasifanwar.vercel.app" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-2)" }}>
+          Aasif Anwar
+        </a>
+        , not affiliated with Supercell.
       </footer>
     </main>
   );

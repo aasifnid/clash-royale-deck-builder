@@ -12,8 +12,8 @@ interface Props {
 
 export default function TowerTroops({ collection, onTroopChange, onSetActive }: Props) {
   return (
-    <section className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-      <h2 className="mb-3 text-lg font-bold">Tower Troops</h2>
+    <div>
+      <h2 className="mb-3 text-lg font-bold">Tower troops</h2>
       <div className="grid gap-4" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(132px, 1fr))" }}>
         {TOWER_TROOPS.map((troop) => {
           const owned = collection.towerTroops[troop.id];
@@ -102,6 +102,6 @@ export default function TowerTroops({ collection, onTroopChange, onSetActive }: 
           );
         })}
       </div>
-    </section>
+    </div>
   );
 }

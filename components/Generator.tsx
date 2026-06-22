@@ -201,8 +201,13 @@ export default function Generator({ collection, onSave }: Props) {
   }
 
   return (
-    <section className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-      <h2 className="mb-3 text-lg font-bold">Generate a Deck</h2>
+    <section className="rounded-xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+      <h2 className="text-lg font-bold">
+        <span style={{ color: "var(--accent-2)" }}>Step 2</span> · Get your decks
+      </h2>
+      <p className="mb-3 mt-1 text-sm" style={{ color: "var(--muted)" }}>
+        Three real top-ladder decks, ranked by how well your cards fit, each with recommended evolutions and a game plan.
+      </p>
 
       <div className="mb-3 flex flex-wrap items-end gap-3">
         <label className="text-sm">
@@ -249,7 +254,7 @@ export default function Generator({ collection, onSave }: Props) {
         </button>
         {ownedCount === 0 && (
           <span className="text-xs" style={{ color: "var(--muted)" }}>
-            Add some owned cards first.
+            Sync your account in Step 1 first (or add cards by hand below).
           </span>
         )}
       </div>
