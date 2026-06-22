@@ -39,10 +39,6 @@ export default function Home() {
     updateCollection(setOwned(collection, cardId, patch));
   }
 
-  function handleMetaChange(patch: Partial<Pick<Collection, "kingLevel" | "arena">>) {
-    updateCollection({ ...collection, ...patch });
-  }
-
   function handleTroopChange(troopId: number, patch: Partial<OwnedTowerTroop> | null) {
     let next = setTowerTroop(collection, troopId, patch);
     // Clearing the active troop also clears the active selection.
@@ -103,11 +99,7 @@ export default function Home() {
           <SavedDecks decks={decks} onDelete={handleDelete} />
           {/* Your account: cards + tower troops in one panel */}
           <section className="rounded-xl p-6" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-            <CollectionDashboard
-              collection={collection}
-              onCardChange={handleCardChange}
-              onMetaChange={handleMetaChange}
-            />
+            <CollectionDashboard collection={collection} onCardChange={handleCardChange} />
             <div className="mt-6 border-t pt-5" style={{ borderColor: "var(--border)" }}>
               <TowerTroops
                 collection={collection}

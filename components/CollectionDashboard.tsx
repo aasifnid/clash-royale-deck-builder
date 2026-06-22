@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { CARDS } from "@/lib/cards";
-import { MAX_LEVEL, type Collection, type OwnedCard, type Rarity } from "@/lib/types";
+import { type Collection, type OwnedCard, type Rarity } from "@/lib/types";
 import CardTile from "./CardTile";
 
 const RARITIES: (Rarity | "All")[] = ["All", "Common", "Rare", "Epic", "Legendary", "Champion"];
@@ -17,10 +17,9 @@ const RARITY_ORDER: Record<Rarity, number> = {
 interface Props {
   collection: Collection;
   onCardChange: (cardId: number, patch: Partial<OwnedCard> | null) => void;
-  onMetaChange: (patch: Partial<Pick<Collection, "kingLevel" | "arena">>) => void;
 }
 
-export default function CollectionDashboard({ collection, onCardChange, onMetaChange }: Props) {
+export default function CollectionDashboard({ collection, onCardChange }: Props) {
   const [search, setSearch] = useState("");
   const [rarity, setRarity] = useState<Rarity | "All">("All");
   const [ownedOnly, setOwnedOnly] = useState(false);
@@ -46,37 +45,15 @@ export default function CollectionDashboard({ collection, onCardChange, onMetaCh
             {ownedCount}/{CARDS.length} cards
           </span>
         </h2>
-        <div className="flex flex-wrap items-center gap-3">
-          <label className="flex items-center gap-1.5 text-sm">
-            <span style={{ color: "var(--muted)" }} title="King Tower level (the API doesn't provide this; estimated from your cards, edit if needed)">
-              King Tower
-            </span>
-            <select
-              value={collection.kingLevel}
-              onChange={(e) => onMetaChange({ kingLevel: Number(e.target.value) })}
-              className="rounded bg-[var(--background)] px-2 py-1 text-sm outline-none"
-              style={{ border: "1px solid var(--border)" }}
-            >
-              {Array.from({ length: MAX_LEVEL }, (_, i) => i + 1).map((l) => (
-                <option key={l} value={l}>
-                  {l}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="flex items-center gap-1.5 text-sm">
-            <span style={{ color: "var(--muted)" }}>Arena</span>
-            <input
-              type="number"
-              min={0}
-              max={30}
-              value={collection.arena ?? ""}
-              placeholder="—"
-              onChange={(e) => onMetaChange({ arena: e.target.value === "" ? null : Number(e.target.value) })}
-              className="w-16 rounded bg-[var(--background)] px-2 py-1 text-sm outline-none"
-              style={{ border: "1px solid var(--border)" }}
-            />
-          </label>
+        {/* Read-only: King Tower is derived from your highest card level, Arena comes from the
+            synced account. Both update automatically on sync. */}
+        <div className="flex flex-wrap items-center gap-4 text-sm" style={{ color: "var(--muted)" }}>
+          <span title="Derived from your highest card level">
+            King Tower <strong style={{ color: "var(--foreground)" }}>{collection.kingLevel}</strong>
+          </span>
+          <span title="From your synced account">
+            Arena <strong style={{ color: "var(--foreground)" }}>{collection.arena ?? "—"}</strong>
+          </span>
         </div>
       </div>
 
