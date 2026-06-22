@@ -172,6 +172,14 @@ export default function Generator({ collection, onSave }: Props) {
 
   const ownedCount = Object.keys(collection.owned).length;
 
+  // Once you've generated once, changing the deck type or style re-generates automatically so
+  // the shown decks always reflect the current selection.
+  useEffect(() => {
+    if (!result) return;
+    generate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [archetype, ease]);
+
   async function generate() {
     setLoading(true);
     setError(null);
