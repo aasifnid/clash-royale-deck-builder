@@ -73,8 +73,8 @@ function topEntries(rec: Record<string, number>, n = 3): string {
 }
 
 interface Filters {
+  styles: string[];
   archetypes: string[];
-  winConditions: string[];
 }
 const EASES: { value: EasePreference; label: string }[] = [
   { value: "any", label: "Strongest (meta)" },
@@ -160,13 +160,13 @@ export default function Generator({ collection, onSave }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
-  const [filters, setFilters] = useState<Filters>({ archetypes: [], winConditions: [] });
+  const [filters, setFilters] = useState<Filters>({ styles: [], archetypes: [] });
 
-  // Load the available deck-filter options (styles + win conditions) from the server.
+  // Load the available deck-filter options (play styles + named archetypes) from the server.
   useEffect(() => {
     fetch("/api/filters")
       .then((r) => r.json())
-      .then((f: Filters) => setFilters({ archetypes: f.archetypes ?? [], winConditions: f.winConditions ?? [] }))
+      .then((f: Filters) => setFilters({ styles: f.styles ?? [], archetypes: f.archetypes ?? [] }))
       .catch(() => {});
   }, []);
 
@@ -234,20 +234,20 @@ export default function Generator({ collection, onSave }: Props) {
               style={{ border: "1px solid var(--border)" }}
             >
               <option value="auto">Best for me</option>
-              {filters.archetypes.length > 0 && (
+              {filters.styles.length > 0 && (
                 <optgroup label="Play style">
-                  {filters.archetypes.map((a) => (
-                    <option key={`a-${a}`} value={a}>
-                      {a}
+                  {filters.styles.map((s) => (
+                    <option key={`s-${s}`} value={s}>
+                      {s}
                     </option>
                   ))}
                 </optgroup>
               )}
-              {filters.winConditions.length > 0 && (
-                <optgroup label="Win condition">
-                  {filters.winConditions.map((w) => (
-                    <option key={`w-${w}`} value={w}>
-                      {w}
+              {filters.archetypes.length > 0 && (
+                <optgroup label="Archetype">
+                  {filters.archetypes.map((a) => (
+                    <option key={`a-${a}`} value={a}>
+                      {a}
                     </option>
                   ))}
                 </optgroup>

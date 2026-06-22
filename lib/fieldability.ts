@@ -352,12 +352,12 @@ export function rankDecks(collection: Collection, opts: RankOptions = {}): DeckC
   // Default to "any": surface the STRONGEST decks the player can field, not the easiest. Players
   // who want low-misplay decks can still pick "forgiving" (which applies a skill-floor penalty).
   const ease = opts.ease ?? "any";
-  // The filter value can be a broad style (e.g. "Beatdown") or a specific win condition
-  // (e.g. "X-Bow"); match either.
+  // The filter value can be a broad play style ("Beatdown") or a named archetype ("LavaLoon");
+  // match the style, the deck name, or the win condition.
   const sel = opts.archetype;
   const pool =
     sel && sel !== "auto"
-      ? DECKS.filter((d) => d.archetype === sel || d.winCondition === sel)
+      ? DECKS.filter((d) => d.archetype === sel || d.name === sel || d.winCondition === sel)
       : DECKS;
 
   const threats = opts.threats ?? {};
