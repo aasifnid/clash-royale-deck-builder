@@ -34,6 +34,11 @@ function strengthOf(deck: ProvenDeck): number {
   return deck.usage != null ? Math.min(1, deck.usage / MAX_USAGE) : CURATED_STRENGTH;
 }
 
+// Cards that serve as a win condition in some deck — they should NOT be used to fill ordinary
+// support slots, or decks pile up multiple win conditions and stop being coherent.
+const WIN_CONDITION_KEYS = new Set<string>();
+for (const d of DECKS) for (const s of d.slots) if (s.role === "win-condition") WIN_CONDITION_KEYS.add(s.cardKey);
+
 export type EasePreference = "forgiving" | "any" | "challenge";
 
 export interface ResolvedSlot {
@@ -134,6 +139,41 @@ function resolveIntended(
   return null;
 }
 
+/** Build-from-best-cards: fill a non-core slot with the player's STRONGEST owned card that plays
+ *  this role and sits at a similar elixir cost (so the deck keeps its curve/character). "Strongest"
+ *  = highest level, with a nudge for evolution/hero forms. This is what makes the deck a deck built
+ *  around the player's best cards rather than a fixed list filled with their downgraded copies. */
+function bestCardForSlot(
+  slot: ProvenDeck["slots"][number],
+  collection: Collection,
+  used: Set<string>,
+  deckCanonicals: Set<string>,
+): { chosenKey: string; level: number; isSubstitute: boolean } | null {
+  const canonical = cardByKey(slot.cardKey);
+  const targetElixir = canonical?.elixir ?? 4;
+  let best: { key: string; level: number; power: number; dist: number } | null = null;
+  for (const key of cardsWithRole(slot.role)) {
+    if (used.has(key)) continue;
+    // Don't steal another slot's canonical — that card belongs to its own slot, and grabbing it
+    // would leave that slot showing a duplicate "(missing)" copy.
+    if (key !== slot.cardKey && deckCanonicals.has(key)) continue;
+    const card = cardByKey(key);
+    const lvl = ownedLevelOf(collection, key);
+    if (!card || lvl === null) continue;
+    // Don't let a support slot grab a champion or another win condition — keeps the deck to a
+    // single, focused win condition instead of a pile of threats.
+    if (card.rarity === "Champion" || WIN_CONDITION_KEYS.has(key)) continue;
+    const dist = Math.abs(card.elixir - targetElixir);
+    if (dist > 1.5) continue; // keep this slot's cost character
+    const o = collection.owned[card.id];
+    const power = lvl + (o?.evolved ? 0.5 : 0) + (o?.hero ? 0.25 : 0);
+    if (!best || power > best.power || (power === best.power && dist < best.dist)) {
+      best = { key, level: lvl, power, dist };
+    }
+  }
+  return best ? { chosenKey: best.key, level: best.level, isSubstitute: best.key !== slot.cardKey } : null;
+}
+
 /** Pass 2: fill a still-empty slot from ANY owned card that plays its role (best-leveled). */
 function roleFill(
   slot: ProvenDeck["slots"][number],
@@ -166,14 +206,22 @@ function scoreDeck(
   // canonical slot into a false "missing". Pass 2 fills any still-empty non-win-condition
   // slots from owned role-mates. Guarantees 8 distinct cards.
   const used = new Set<string>();
+  const deckCanonicals = new Set(deck.slots.map((s) => s.cardKey));
   const slots: ResolvedSlot[] = new Array(deck.slots.length);
   const order = deck.slots.map((_, i) => i).sort((a, b) => slotWeight(deck.slots[b].role) - slotWeight(deck.slots[a].role));
   const pending: number[] = [];
   for (const i of order) {
-    const r = resolveIntended(deck.slots[i], collection, used);
+    const slot = deck.slots[i];
+    const isCore = slot.role === "win-condition" || slot.role === "champion";
+    // Core slots stay the deck's own card (the archetype anchor). Every other slot is filled with
+    // the player's STRONGEST role+cost-appropriate card, so the deck is built around their best
+    // cards instead of their downgraded copies of the canonical list.
+    const r = isCore
+      ? resolveIntended(slot, collection, used)
+      : bestCardForSlot(slot, collection, used, deckCanonicals) ?? resolveIntended(slot, collection, used);
     if (r) {
       used.add(r.chosenKey);
-      slots[i] = { role: deck.slots[i].role, canonicalKey: deck.slots[i].cardKey, chosenKey: r.chosenKey, isSubstitute: r.isSubstitute, isMissing: false, level: r.level, weak: false };
+      slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: r.chosenKey, isSubstitute: r.isSubstitute, isMissing: false, level: r.level, weak: false };
     } else {
       pending.push(i);
     }
@@ -292,7 +340,7 @@ function scoreDeck(
   // your level-10 cards). Meta popularity is the secondary tie-breaker, then ownership and your
   // evolution-slot fit. This is "the strongest real deck you can field at your levels".
   let total =
-    (0.15 * ownership + 0.42 * level + 0.22 * strength + 0.1 * edge + 0.03 * skill + 0.03 * arena + 0.05 * meta) * 100;
+    (0.13 * ownership + 0.4 * level + 0.12 * strength + 0.22 * edge + 0.03 * skill + 0.03 * arena + 0.07 * meta) * 100;
   total *= coverage;
   // A deck you can't field a full 8 for is a poor recommendation — discount hard.
   if (!fieldable) total *= 0.5;
