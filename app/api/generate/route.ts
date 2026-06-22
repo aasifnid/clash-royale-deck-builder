@@ -41,14 +41,14 @@ function buildStaticPicks(shortlist: DeckCandidate[]): CoachPick[] {
   const chosen = (fieldable.length > 0 ? fieldable : shortlist).slice(0, MAX_PICKS);
 
   return chosen.map((cand) => {
-    const c = coachingForDeck(cand.deck.id, cand.deck.archetype);
+    const c = coachingForDeck(cand.deck);
     return {
       deckId: cand.deck.id,
       summary: personalizedSummary(cand),
-      gameplan: c?.gameplan ?? cand.deck.notes ?? "",
+      gameplan: c.gameplan,
       winCondition: cand.deck.winCondition,
-      counters: c?.counters ?? "",
-      playTips: c?.playTips ?? "",
+      counters: c.counters,
+      playTips: c.playTips,
       difficulty: difficultyFor(cand.deck.skillFloor),
     };
   });
