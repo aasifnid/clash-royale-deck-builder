@@ -115,17 +115,11 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
     towerTroops[t.id] = { id: t.id, level: displayedLevel(t.level, t.maxLevel) };
   }
 
-  // The API has no King Tower level field, but the default Tower Princess troop levels in
-  // lockstep with the King Tower, so its level IS the King Tower level. Fall back to the
-  // highest card level only if the Tower Princess somehow isn't present.
-  const TOWER_PRINCESS_ID = 159000000;
-  const princess = (data.supportCards ?? []).find((t) => t.id === TOWER_PRINCESS_ID);
+  // The API does not expose the King Tower level and nothing in the payload reliably maps to
+  // it (the Tower Princess troop levels independently). We keep an internal estimate from the
+  // highest card level purely as a fallback for the ranking engine; it is not shown in the UI.
   const cardLevels = Object.values(owned).map((o) => o.level);
-  const kingLevel = princess
-    ? displayedLevel(princess.level, princess.maxLevel)
-    : cardLevels.length
-      ? Math.min(MAX_LEVEL, Math.max(...cardLevels))
-      : 11;
+  const kingLevel = cardLevels.length ? Math.min(MAX_LEVEL, Math.max(...cardLevels)) : 11;
 
   return {
     tag: data.tag,
