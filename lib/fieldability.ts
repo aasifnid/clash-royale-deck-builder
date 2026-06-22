@@ -287,17 +287,18 @@ function scoreDeck(
   // evolution-slot fit matter, ease-of-play is a small factor by default (handled below for the
   // "forgiving" mode), and recent-loss meta is only a minor nudge.
   const strength = strengthOf(deck);
-  // Meta strength leads: the player asked for the STRONGEST decks they can field. Level fit and
-  // ownership keep it fieldable, edge (using your evolutions) is a smaller nudge so it can't
-  // float a niche brew over a popular deck.
+  // Your card levels LEAD: from the pool of real top-player decks, surface the ones where YOUR
+  // cards are highest-leveled (so it's built from your best cards, not a pro list stuffed with
+  // your level-10 cards). Meta popularity is the secondary tie-breaker, then ownership and your
+  // evolution-slot fit. This is "the strongest real deck you can field at your levels".
   let total =
-    (0.18 * ownership + 0.26 * level + 0.36 * strength + 0.08 * edge + 0.04 * skill + 0.03 * arena + 0.05 * meta) * 100;
+    (0.15 * ownership + 0.42 * level + 0.22 * strength + 0.1 * edge + 0.03 * skill + 0.03 * arena + 0.05 * meta) * 100;
   total *= coverage;
   // A deck you can't field a full 8 for is a poor recommendation — discount hard.
   if (!fieldable) total *= 0.5;
-  // Under-leveled cards are a liability, but for a strong meta deck one slightly-low card should
-  // not bury it beneath a niche deck. Soft per-card discount, harsher as more pile up.
-  if (weakCards > 0) total *= Math.pow(0.9, weakCards);
+  // Under-leveled cards lose their fights. When the player has clean, fully-leveled real decks
+  // available, a deck carrying a sub-level card should rank below them — even a very popular one.
+  if (weakCards > 0) total *= Math.pow(0.78, weakCards);
   // "Forgiving" must mean it: a high-execution deck (Balloon beatdown, X-Bow, Graveyard) should
   // never be the top "easy" pick just because it fields well. This multiplicative penalty by
   // skill floor decisively sinks demanding decks for forgiving players, while leaving "any" and

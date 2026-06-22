@@ -36,10 +36,27 @@ function personalizedSummary(cand: DeckCandidate): string {
   return `You own all 8 cards for this ${cand.deck.archetype} deck.${wcNote}`;
 }
 
-/** Build coached picks from the deck library — no LLM. Prefers fully-fieldable decks. */
-function buildStaticPicks(shortlist: DeckCandidate[]): CoachPick[] {
-  const fieldable = shortlist.filter((c) => c.fieldable);
-  const chosen = (fieldable.length > 0 ? fieldable : shortlist).slice(0, MAX_PICKS);
+/** Build coached picks from the deck library — no LLM. Prefers fully-fieldable decks, and
+ *  diversifies the picks by win condition so the player never sees the same deck three times. */
+function buildStaticPicks(ranked: DeckCandidate[]): CoachPick[] {
+  const fieldable = ranked.filter((c) => c.fieldable);
+  const pool = fieldable.length > 0 ? fieldable : ranked;
+
+  // Pick best first, then the next-best decks with a DIFFERENT win condition, so the 3 picks
+  // are genuinely distinct archetypes (no two Balloon decks, etc.).
+  const chosen: DeckCandidate[] = [];
+  const seenWc = new Set<string>();
+  for (const cand of pool) {
+    if (chosen.length >= MAX_PICKS) break;
+    if (seenWc.has(cand.deck.winCondition)) continue;
+    seenWc.add(cand.deck.winCondition);
+    chosen.push(cand);
+  }
+  // If there weren't enough distinct win conditions, top up with the next best decks.
+  for (const cand of pool) {
+    if (chosen.length >= MAX_PICKS) break;
+    if (!chosen.includes(cand)) chosen.push(cand);
+  }
 
   return chosen.map((cand) => {
     const deckCards = cand.slots
@@ -131,7 +148,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ aiUsed: false, picks: [], shortlist: [], insights, note: "No proven decks matched your filters." });
   }
 
-  const byId = new Map(shortlist.map((c) => [c.deck.id, c]));
+  // Map over the full ranked list so diversified picks (which may reach past the shortlist) resolve.
+  const byId = new Map(ranked.map((c) => [c.deck.id, c]));
 
   // Optional AI enhancement — only if a key is configured. The free static path is the default.
   let picks: CoachPick[] = [];
@@ -146,7 +164,7 @@ export async function POST(request: Request) {
   }
 
   if (picks.length === 0) {
-    picks = buildStaticPicks(shortlist);
+    picks = buildStaticPicks(ranked);
   }
 
   const enrichedPicks = picks
