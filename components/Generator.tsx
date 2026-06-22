@@ -15,6 +15,8 @@ interface PickCard {
   level: number;
   isSubstitute: boolean;
   isMissing: boolean;
+  evolved: boolean;
+  hero: boolean;
 }
 interface EnrichedPick {
   coach: {
@@ -36,6 +38,9 @@ interface EnrichedPick {
   usage: number;
   substitutions: { role: string; from: string; to: string }[];
   powerCards: { key: string; name: string; evolved: boolean; hero: boolean }[];
+  evolutionSlots: string[];
+  evolutionExtras: string[];
+  heroSlots: string[];
   cards: PickCard[];
 }
 interface BattleInsights {
@@ -80,13 +85,28 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
             style={{ width: 68 }}
             title={`${c.name ?? c.role}${card ? ` · ${card.elixir} elixir` : ""}${c.isSubstitute ? " · substitute" : ""}`}
           >
-            <div className="relative overflow-hidden rounded-lg" style={{ border: `2px solid ${color}` }}>
+            <div
+              className="relative overflow-hidden rounded-lg"
+              style={{ border: `2px solid ${c.evolved ? "#ec4899" : c.hero ? "#facc15" : color}` }}
+            >
               {card && (
                 <span
                   className="absolute left-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-extrabold text-white"
                   style={{ backgroundColor: "#b5179e" }}
                 >
                   {card.elixir}
+                </span>
+              )}
+              {(c.evolved || c.hero) && (
+                <span
+                  className="absolute right-0 top-0 px-1 text-[8px] font-bold"
+                  style={{
+                    background: c.evolved ? "#ec4899" : "#facc15",
+                    color: c.evolved ? "#fff" : "#3a2e00",
+                    borderBottomLeftRadius: 4,
+                  }}
+                >
+                  {c.evolved ? "EVO" : "HERO"}
                 </span>
               )}
               {card?.iconUrl ? (
@@ -321,13 +341,28 @@ export default function Generator({ collection, onSave }: Props) {
                 {pick.coach.playTips && <Field label="Play tips" value={pick.coach.playTips} />}
               </div>
 
-              {pick.powerCards.length > 0 && (
-                <p className="mt-2 text-xs">
-                  <span style={{ color: "var(--accent-2)" }}>Power cards you own:</span>{" "}
-                  {pick.powerCards
-                    .map((p) => `${p.name} (${[p.evolved && "Evo", p.hero && "Hero"].filter(Boolean).join("+")})`)
-                    .join(", ")}
-                </p>
+              {(pick.evolutionSlots.length > 0 || pick.heroSlots.length > 0) && (
+                <div className="mt-2 flex flex-col gap-1 rounded p-2 text-xs" style={{ background: "var(--background)" }}>
+                  <div>
+                    <span className="font-bold" style={{ color: "#ec4899" }}>Evolution slots (2):</span>{" "}
+                    {pick.evolutionSlots.length > 0 ? (
+                      <>
+                        {pick.evolutionSlots.join(" + ")}
+                        {pick.evolutionSlots.length < 2 && <span style={{ color: "var(--muted)" }}> (1 slot open — no other evolved card in this deck)</span>}
+                      </>
+                    ) : (
+                      <span style={{ color: "var(--muted)" }}>none of this deck&apos;s cards are evolved in your account</span>
+                    )}
+                    {pick.evolutionExtras.length > 0 && (
+                      <span style={{ color: "var(--muted)" }}> · also have: {pick.evolutionExtras.join(", ")}</span>
+                    )}
+                  </div>
+                  {pick.heroSlots.length > 0 && (
+                    <div>
+                      <span className="font-bold" style={{ color: "#ca8a04" }}>Hero:</span> {pick.heroSlots.join(", ")}
+                    </div>
+                  )}
+                </div>
               )}
               {pick.substitutions.length > 0 && (
                 <p className="mt-2 text-xs" style={{ color: "var(--muted)" }}>

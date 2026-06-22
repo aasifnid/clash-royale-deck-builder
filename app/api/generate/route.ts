@@ -60,8 +60,26 @@ function buildStaticPicks(shortlist: DeckCandidate[]): CoachPick[] {
   });
 }
 
-/** Flatten a candidate into the resolved 8-card list (with levels) for the client. */
+/** Flatten a candidate into the resolved 8-card list (with levels) for the client,
+ *  plus explicit Evolution-slot (2) and Hero/Champion-slot recommendations. */
 function enrichCandidate(cand: DeckCandidate) {
+  const evolvedKeys = new Set(cand.powerCards.filter((p) => p.evolved).map((p) => p.key));
+  const heroKeys = new Set(cand.powerCards.filter((p) => p.hero).map((p) => p.key));
+
+  // Recommend up to 2 evolutions to slot, win condition / champion first.
+  const isKey = (role: string) => role === "win-condition" || role === "champion";
+  const evolved = [...cand.powerCards.filter((p) => p.evolved)].sort(
+    (a, b) => Number(isKey(b.role)) - Number(isKey(a.role)),
+  );
+  const evolutionSlots = evolved.slice(0, 2).map((p) => p.name);
+  const evolutionExtras = evolved.slice(2).map((p) => p.name); // owned but only 2 slots
+  // Hero forms you own — but not cards already assigned to an evolution slot (a card runs
+  // as one form at a time). Win condition first.
+  const heroSlots = cand.powerCards
+    .filter((p) => p.hero && !evolutionSlots.includes(p.name))
+    .sort((a, b) => Number(isKey(b.role)) - Number(isKey(a.role)))
+    .map((p) => p.name);
+
   return {
     deckId: cand.deck.id,
     name: cand.deck.name,
@@ -76,6 +94,9 @@ function enrichCandidate(cand: DeckCandidate) {
     substitutions: cand.substitutions,
     missingRoles: cand.missingRoles,
     powerCards: cand.powerCards,
+    evolutionSlots,
+    evolutionExtras,
+    heroSlots,
     cards: cand.slots.map((s) => ({
       role: s.role,
       key: s.chosenKey,
@@ -83,6 +104,8 @@ function enrichCandidate(cand: DeckCandidate) {
       level: s.level,
       isSubstitute: s.isSubstitute,
       isMissing: s.isMissing,
+      evolved: s.chosenKey ? evolvedKeys.has(s.chosenKey) : false,
+      hero: s.chosenKey ? heroKeys.has(s.chosenKey) : false,
     })),
   };
 }

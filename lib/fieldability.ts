@@ -33,6 +33,7 @@ export interface ResolvedSlot {
 export interface PowerCard {
   key: string;
   name: string;
+  role: string;
   evolved: boolean; // player has this card's Evolution
   hero: boolean; // player has this card's Hero form
 }
@@ -190,7 +191,7 @@ function scoreDeck(
     edgeWeightTotal += w;
     if (card && o && (o.evolved || o.hero)) {
       edgeWeighted += w;
-      powerCards.push({ key: s.chosenKey, name: card.name, evolved: o.evolved, hero: o.hero });
+      powerCards.push({ key: s.chosenKey, name: card.name, role: s.role, evolved: o.evolved, hero: o.hero });
     }
   }
   const edge = edgeWeightTotal > 0 ? edgeWeighted / edgeWeightTotal : 0;
