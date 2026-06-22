@@ -64,6 +64,9 @@ interface RankOptions {
 
 // A card this many levels below the player's competitive level is treated as unusable.
 const COMPETITIVE_GAP = 5;
+// Swap the canonical card for an owned substitute only if the sub is more than this many
+// levels higher — keeps deck integrity for close calls, fixes egregious under-leveling.
+const LEVEL_UPGRADE_TOLERANCE = 2;
 
 /** The player's realistic competitive level: the 70th percentile of their owned card
  *  levels. Robust to a few maxed outliers (unlike "highest card") and to a pile of low
@@ -84,74 +87,45 @@ function ownedLevelOf(collection: Collection, key: string): number | null {
   return owned ? owned.level : null;
 }
 
-/** Resolve one slot to the card the player would actually field. Keeps the canonical card
- *  when the player owns it at a competitive level; otherwise picks the highest-level owned
- *  alternate. `used` holds cards already placed in other slots — never reuse one (a deck
- *  must have 8 distinct cards). */
-function resolveSlot(
+/** Pass 1: the deck's INTENDED card for a slot — the canonical, upgraded to an owned
+ *  substitute only if it's meaningfully higher level. Returns null if neither the canonical
+ *  nor a listed substitute is owned (and unused). No role-pool fallback here. */
+function resolveIntended(
   slot: ProvenDeck["slots"][number],
   collection: Collection,
-  target: number,
   used: Set<string>,
-): ResolvedSlot {
-  const floor = Math.max(1, target - COMPETITIVE_GAP);
-  const canonicalLevel = used.has(slot.cardKey) ? null : ownedLevelOf(collection, slot.cardKey);
+): { chosenKey: string; isSubstitute: boolean; level: number } | null {
+  const lvlOf = (k: string) => (used.has(k) ? null : ownedLevelOf(collection, k));
+  const canonicalLevel = lvlOf(slot.cardKey);
 
-  // Keep the canonical card if it's owned, unused, and competitive — preserves deck integrity.
-  if (canonicalLevel !== null && canonicalLevel >= floor) {
-    return {
-      role: slot.role,
-      canonicalKey: slot.cardKey,
-      chosenKey: slot.cardKey,
-      isSubstitute: false,
-      isMissing: false,
-      level: canonicalLevel,
-    };
-  }
-
-  // Otherwise pick the best-leveled owned option (canonical or substitute) not already used.
-  let best: { key: string; level: number; canonical: boolean } | null =
-    canonicalLevel !== null ? { key: slot.cardKey, level: canonicalLevel, canonical: true } : null;
+  let alt: { key: string; level: number } | null = null;
   for (const sub of slot.substitutes) {
-    if (used.has(sub)) continue;
-    const lvl = ownedLevelOf(collection, sub);
-    if (lvl !== null && (!best || lvl > best.level)) {
-      best = { key: sub, level: lvl, canonical: false };
-    }
+    const lvl = lvlOf(sub);
+    if (lvl !== null && (!alt || lvl > alt.level)) alt = { key: sub, level: lvl };
   }
 
-  // Personalization fallback: if neither the canonical nor a listed substitute is owned,
-  // fill this slot from ANY owned card that plays the same role (best-leveled). Win-condition
-  // and champion slots are NOT generalized — swapping them would make it a different deck.
-  if (!best && slot.role !== "win-condition" && slot.role !== "champion") {
-    for (const key of cardsWithRole(slot.role)) {
-      if (used.has(key)) continue;
-      const lvl = ownedLevelOf(collection, key);
-      if (lvl !== null && (!best || lvl > best.level)) {
-        best = { key, level: lvl, canonical: false };
-      }
-    }
+  if (canonicalLevel !== null) {
+    return alt && alt.level > canonicalLevel + LEVEL_UPGRADE_TOLERANCE
+      ? { chosenKey: alt.key, isSubstitute: true, level: alt.level }
+      : { chosenKey: slot.cardKey, isSubstitute: false, level: canonicalLevel };
   }
+  if (alt) return { chosenKey: alt.key, isSubstitute: true, level: alt.level };
+  return null;
+}
 
-  if (best) {
-    return {
-      role: slot.role,
-      canonicalKey: slot.cardKey,
-      chosenKey: best.key,
-      isSubstitute: !best.canonical,
-      isMissing: false,
-      level: best.level,
-    };
+/** Pass 2: fill a still-empty slot from ANY owned card that plays its role (best-leveled). */
+function roleFill(
+  slot: ProvenDeck["slots"][number],
+  collection: Collection,
+  used: Set<string>,
+): { chosenKey: string; level: number } | null {
+  let best: { key: string; level: number } | null = null;
+  for (const key of cardsWithRole(slot.role)) {
+    if (used.has(key)) continue;
+    const lvl = ownedLevelOf(collection, key);
+    if (lvl !== null && (!best || lvl > best.level)) best = { key, level: lvl };
   }
-
-  return {
-    role: slot.role,
-    canonicalKey: slot.cardKey,
-    chosenKey: null,
-    isSubstitute: false,
-    isMissing: true,
-    level: 0,
-  };
+  return best ? { chosenKey: best.key, level: best.level } : null;
 }
 
 /** Higher weight for the cards that define the deck. */
@@ -166,15 +140,32 @@ function scoreDeck(
   threats: Record<string, number>,
 ): DeckCandidate {
   const target = targetLevel(collection);
-  // Resolve important slots first (win condition / champion) so they claim their preferred
-  // card; later slots take what's left. `used` guarantees 8 distinct cards.
+  // Two-pass resolution. Pass 1 places the deck's intended cards (important slots first), so
+  // a card always claims ITS slot before being borrowed to fill another — never starving a
+  // canonical slot into a false "missing". Pass 2 fills any still-empty non-win-condition
+  // slots from owned role-mates. Guarantees 8 distinct cards.
   const used = new Set<string>();
+  const slots: ResolvedSlot[] = new Array(deck.slots.length);
   const order = deck.slots.map((_, i) => i).sort((a, b) => slotWeight(deck.slots[b].role) - slotWeight(deck.slots[a].role));
-  const slots: ResolvedSlot[] = [];
+  const pending: number[] = [];
   for (const i of order) {
-    const r = resolveSlot(deck.slots[i], collection, target, used);
-    if (r.chosenKey) used.add(r.chosenKey);
-    slots[i] = r;
+    const r = resolveIntended(deck.slots[i], collection, used);
+    if (r) {
+      used.add(r.chosenKey);
+      slots[i] = { role: deck.slots[i].role, canonicalKey: deck.slots[i].cardKey, chosenKey: r.chosenKey, isSubstitute: r.isSubstitute, isMissing: false, level: r.level };
+    } else {
+      pending.push(i);
+    }
+  }
+  for (const i of pending) {
+    const slot = deck.slots[i];
+    const r = slot.role !== "win-condition" && slot.role !== "champion" ? roleFill(slot, collection, used) : null;
+    if (r) {
+      used.add(r.chosenKey);
+      slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: r.chosenKey, isSubstitute: true, isMissing: false, level: r.level };
+    } else {
+      slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: null, isSubstitute: false, isMissing: true, level: 0 };
+    }
   }
   const levelFloor = Math.max(1, target - COMPETITIVE_GAP);
 

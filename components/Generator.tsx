@@ -77,59 +77,56 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
     <div className="flex flex-wrap gap-2">
       {cards.map((c, i) => {
         const card = c.key ? cardByKey(c.key) : undefined;
-        const color = card ? RARITY_COLOR[card.rarity] : "var(--border)";
+        const rarity = card ? RARITY_COLOR[card.rarity] : "var(--border)";
+        const frame = c.isMissing ? "#6b7280" : c.evolved ? "#ec4899" : c.hero ? "#facc15" : rarity;
+        const glow = c.evolved ? "0 0 8px rgba(236,72,153,0.55)" : c.hero ? "0 0 8px rgba(250,204,21,0.5)" : "none";
         return (
           <div
             key={i}
             className="text-center"
-            style={{ width: 68 }}
+            style={{ width: 66 }}
             title={`${c.name ?? c.role}${card ? ` · ${card.elixir} elixir` : ""}${c.isSubstitute ? " · substitute" : ""}`}
           >
             <div
-              className="relative overflow-hidden rounded-lg"
-              style={{
-                border: `2px solid ${c.isMissing ? "#6b7280" : c.evolved ? "#ec4899" : c.hero ? "#facc15" : color}`,
-                opacity: c.isMissing ? 0.5 : 1,
-              }}
+              className="relative rounded-lg p-0.5"
+              style={{ background: "linear-gradient(180deg, #33446c, #1a2342)", border: `2px solid ${frame}`, boxShadow: glow, opacity: c.isMissing ? 0.55 : 1 }}
             >
               {card && !c.isMissing && (
                 <span
-                  className="absolute left-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-extrabold text-white"
-                  style={{ backgroundColor: "#b5179e" }}
+                  className="absolute -left-1 -top-1 z-10 flex h-4 w-4 items-center justify-center"
+                  style={{ background: "radial-gradient(circle at 35% 30%, #f06ee0, #a01f8f)", borderRadius: "0 50% 50% 50%", transform: "rotate(45deg)", border: "1px solid rgba(255,255,255,0.5)" }}
                 >
-                  {card.elixir}
+                  <span className="text-[9px] font-extrabold text-white" style={{ transform: "rotate(-45deg)" }}>{card.elixir}</span>
                 </span>
               )}
               {c.isMissing ? (
-                <span className="absolute right-0 top-0 bg-[#6b7280] px-1 text-[8px] font-bold text-white" style={{ borderBottomLeftRadius: 4 }}>
-                  NEED
-                </span>
+                <span className="absolute right-0 top-0 z-10 bg-[#6b7280] px-1 text-[8px] font-bold text-white" style={{ borderBottomLeftRadius: 4 }}>NEED</span>
               ) : (
                 (c.evolved || c.hero) && (
-                  <span
-                    className="absolute right-0 top-0 px-1 text-[8px] font-bold"
-                    style={{ background: c.evolved ? "#ec4899" : "#facc15", color: c.evolved ? "#fff" : "#3a2e00", borderBottomLeftRadius: 4 }}
-                  >
+                  <span className="absolute right-0 top-0 z-10 px-1 text-[8px] font-bold" style={{ background: c.evolved ? "#ec4899" : "#facc15", color: c.evolved ? "#fff" : "#3a2e00", borderBottomLeftRadius: 4 }}>
                     {c.evolved ? "EVO" : "HERO"}
                   </span>
                 )
               )}
-              {card?.iconUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={card.iconUrl} alt={c.name ?? ""} loading="lazy" className="w-full" style={{ filter: c.isMissing ? "grayscale(1)" : "none" }} />
-              ) : (
-                <div className="flex h-16 items-center justify-center text-[10px]" style={{ color: "var(--muted)" }}>
-                  {c.name ?? c.role}
-                </div>
-              )}
+              <div className="relative overflow-hidden rounded">
+                {card?.iconUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={card.iconUrl} alt={c.name ?? ""} loading="lazy" className="block w-full" style={{ marginTop: "-16%", filter: c.isMissing ? "grayscale(1)" : "none" }} />
+                ) : (
+                  <div className="flex h-14 items-center justify-center text-[9px]" style={{ color: "var(--muted)" }}>{c.name ?? c.role}</div>
+                )}
+                {!c.isMissing && (
+                  <div className="absolute inset-x-0 bottom-0 text-[9px] font-extrabold text-white" style={{ background: "rgba(0,0,0,0.74)", textShadow: "0 1px 1px rgba(0,0,0,1)" }}>
+                    Lv {c.level}
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="mt-1 text-[10px] font-medium leading-tight" style={{ color: c.isMissing ? "var(--muted)" : color }}>
+            <div className="mt-1 text-[10px] font-medium leading-tight" style={{ color: c.isMissing ? "var(--muted)" : rarity }}>
               {c.name ?? c.role}
               {c.isSubstitute ? " (sub)" : ""}
             </div>
-            <div className="text-[9px]" style={{ color: "var(--muted)" }}>
-              {c.isMissing ? "don't have" : `lvl ${c.level}`}
-            </div>
+            {c.isMissing && <div className="text-[9px]" style={{ color: "var(--muted)" }}>don&apos;t have</div>}
           </div>
         );
       })}

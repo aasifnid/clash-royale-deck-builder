@@ -15,8 +15,21 @@ const body = Nunito({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://clash-royale-deckbuilder.vercel.app"),
   title: "Clash Royale Deck Builder",
   description: "Personalized, proven decks built from the cards you actually own.",
+  openGraph: {
+    title: "Clash Royale Deck Builder",
+    description: "Personalized, proven decks built from the cards you actually own.",
+    url: "/",
+    siteName: "Clash Royale Deck Builder",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Clash Royale Deck Builder",
+    description: "Personalized, proven decks built from the cards you actually own.",
+  },
 };
 
 export default function RootLayout({

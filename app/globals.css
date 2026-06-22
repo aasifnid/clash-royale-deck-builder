@@ -33,10 +33,14 @@
 }
 
 body {
-  background:
-    radial-gradient(1100px 520px at 50% -8%, #2c4a91 0%, transparent 62%),
-    linear-gradient(180deg, #16285a 0%, #0c1736 100%) fixed;
+  /* Clash Royale arena feel: a subtle blue diamond lattice over a deep-blue gradient. */
   background-color: var(--background);
+  background-image:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 24px),
+    radial-gradient(1100px 520px at 50% -8%, #2c4a91 0%, transparent 62%),
+    linear-gradient(180deg, #16285a 0%, #0c1736 100%);
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: var(--font-body), system-ui, sans-serif;
 }
