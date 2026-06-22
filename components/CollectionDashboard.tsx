@@ -45,16 +45,27 @@ export default function CollectionDashboard({ collection, onCardChange }: Props)
             {ownedCount}/{CARDS.length} cards
           </span>
         </h2>
-        {/* Arena comes straight from the synced account (read-only). The official API does not
-            expose King Tower level, so we don't show it rather than show a guess. */}
-        <div className="flex items-center gap-1.5 text-sm" title="From your synced account">
-          <span style={{ color: "var(--muted)" }}>Arena</span>
-          <span
-            className="cursor-not-allowed rounded px-3 py-1.5 font-semibold"
-            style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", opacity: 0.7 }}
-          >
-            {collection.arena ?? "—"}
-          </span>
+        {/* Read-only, from the synced account. King Tower is read from the battle log's tower
+            HP (fixed per level); Arena comes straight from the API. */}
+        <div className="flex flex-wrap items-center gap-3 text-sm">
+          <div className="flex items-center gap-1.5" title="Your King Tower level (read from your battle log)">
+            <span style={{ color: "var(--muted)" }}>King Tower</span>
+            <span
+              className="cursor-not-allowed rounded px-3 py-1.5 font-semibold"
+              style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", opacity: 0.7 }}
+            >
+              {collection.kingLevel}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5" title="From your synced account">
+            <span style={{ color: "var(--muted)" }}>Arena</span>
+            <span
+              className="cursor-not-allowed rounded px-3 py-1.5 font-semibold"
+              style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", opacity: 0.7 }}
+            >
+              {collection.arena ?? "—"}
+            </span>
+          </div>
         </div>
       </div>
 

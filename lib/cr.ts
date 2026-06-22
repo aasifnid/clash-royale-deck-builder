@@ -59,6 +59,56 @@ export function displayedLevel(apiLevel: number, apiMaxLevel: number): number {
   return apiLevel + (API_BASE_MAX_LEVEL - apiMaxLevel);
 }
 
+// King Tower full hit points by level (fixed per level in standard 1v1). The player API has no
+// King Tower level field, but the battle log reports the King Tower's HP, so we map it back.
+const KING_TOWER_HP: Record<number, number> = {
+  1: 2400, 2: 2568, 3: 2736, 4: 2904, 5: 3096, 6: 3312, 7: 3528, 8: 3768,
+  9: 4008, 10: 4392, 11: 4824, 12: 5304, 13: 5832, 14: 6408, 15: 7032,
+};
+
+/** King level from the observed full King Tower HP: exact match if possible, else the highest
+ *  level whose HP doesn't exceed it. Null if there's nothing usable. */
+function kingLevelFromHp(maxHp: number): number | null {
+  if (!maxHp || maxHp <= 0) return null;
+  let best: number | null = null;
+  for (const lvl of Object.keys(KING_TOWER_HP).map(Number)) {
+    const hp = KING_TOWER_HP[lvl];
+    if (hp === maxHp) return lvl;
+    if (hp <= maxHp) best = lvl;
+  }
+  return best;
+}
+
+interface BattleLogEntry {
+  team?: { tag?: string; kingTowerHitPoints?: number | null }[];
+}
+
+/** Read the King Tower level from the player's battle log. The tower's HP (reported per battle)
+ *  is fixed per level, so the max across recent 1v1 battles (where it took no damage) is the
+ *  full HP for the player's level. Returns null if unavailable. */
+async function kingLevelFromBattleLog(tag: string, token: string): Promise<number | null> {
+  try {
+    const res = await fetch(`${PROXY_BASE}/players/%23${tag}/battlelog`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    const log = (await res.json()) as BattleLogEntry[];
+    let maxHp = 0;
+    for (const b of log) {
+      const team = b.team ?? [];
+      if (team.length !== 1) continue; // 1v1 only — 2v2/event towers have different HP
+      const me = team[0];
+      if (me?.tag && normalizeTag(me.tag) === tag && typeof me.kingTowerHitPoints === "number") {
+        maxHp = Math.max(maxHp, me.kingTowerHitPoints);
+      }
+    }
+    return kingLevelFromHp(maxHp);
+  } catch {
+    return null;
+  }
+}
+
 export class CrApiError extends Error {
   constructor(
     message: string,
@@ -115,11 +165,12 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
     towerTroops[t.id] = { id: t.id, level: displayedLevel(t.level, t.maxLevel) };
   }
 
-  // The API does not expose the King Tower level and nothing in the payload reliably maps to
-  // it (the Tower Princess troop levels independently). We keep an internal estimate from the
-  // highest card level purely as a fallback for the ranking engine; it is not shown in the UI.
+  // The player API has no King Tower level field, so read it from the battle log's tower HP.
+  // Fall back to the highest card level only if the battle log can't be read.
   const cardLevels = Object.values(owned).map((o) => o.level);
-  const kingLevel = cardLevels.length ? Math.min(MAX_LEVEL, Math.max(...cardLevels)) : 11;
+  const kingFromLog = await kingLevelFromBattleLog(tag, token);
+  const kingLevel =
+    kingFromLog ?? (cardLevels.length ? Math.min(MAX_LEVEL, Math.max(...cardLevels)) : 11);
 
   return {
     tag: data.tag,
