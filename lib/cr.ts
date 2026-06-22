@@ -87,26 +87,31 @@ interface BattleLogEntry {
  *  is fixed per level, so the max across recent 1v1 battles (where it took no damage) is the
  *  full HP for the player's level. Returns null if unavailable. */
 async function kingLevelFromBattleLog(tag: string, token: string): Promise<number | null> {
-  try {
-    const res = await fetch(`${PROXY_BASE}/players/%23${tag}/battlelog`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: "no-store",
-    });
-    if (!res.ok) return null;
-    const log = (await res.json()) as BattleLogEntry[];
-    let maxHp = 0;
-    for (const b of log) {
-      const team = b.team ?? [];
-      if (team.length !== 1) continue; // 1v1 only — 2v2/event towers have different HP
-      const me = team[0];
-      if (me?.tag && normalizeTag(me.tag) === tag && typeof me.kingTowerHitPoints === "number") {
-        maxHp = Math.max(maxHp, me.kingTowerHitPoints);
+  // Retry transient failures (e.g. a cold-start timeout on this second proxy call) so we don't
+  // silently fall back to the wrong card-level estimate.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(`${PROXY_BASE}/players/%23${tag}/battlelog`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: "no-store",
+      });
+      if (!res.ok) continue;
+      const log = (await res.json()) as BattleLogEntry[];
+      let maxHp = 0;
+      for (const b of log) {
+        const team = b.team ?? [];
+        if (team.length !== 1) continue; // 1v1 only — 2v2/event towers have different HP
+        const me = team[0];
+        if (me?.tag && normalizeTag(me.tag) === tag && typeof me.kingTowerHitPoints === "number") {
+          maxHp = Math.max(maxHp, me.kingTowerHitPoints);
+        }
       }
+      return kingLevelFromHp(maxHp);
+    } catch {
+      // fall through to retry
     }
-    return kingLevelFromHp(maxHp);
-  } catch {
-    return null;
   }
+  return null;
 }
 
 export class CrApiError extends Error {
