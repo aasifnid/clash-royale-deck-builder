@@ -45,16 +45,27 @@ export default function CollectionDashboard({ collection, onCardChange }: Props)
             {ownedCount}/{CARDS.length} cards
           </span>
         </h2>
-        {/* Arena comes straight from the synced account (read-only). King Tower level is not
-            exposed by the official API, so we don't show a guessed value for it. */}
-        <div className="flex items-center gap-1.5 text-sm" title="From your synced account">
-          <span style={{ color: "var(--muted)" }}>Arena</span>
-          <span
-            className="cursor-not-allowed rounded px-3 py-1.5 font-semibold"
-            style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", opacity: 0.7 }}
-          >
-            {collection.arena ?? "—"}
-          </span>
+        {/* Read-only, both from the synced account. King Tower is taken from the Tower Princess
+            level (it levels in lockstep with the King Tower); Arena comes straight from the API. */}
+        <div className="flex flex-wrap items-center gap-3 text-sm">
+          <div className="flex items-center gap-1.5" title="Your King Tower level (from the Tower Princess)">
+            <span style={{ color: "var(--muted)" }}>King Tower</span>
+            <span
+              className="cursor-not-allowed rounded px-3 py-1.5 font-semibold"
+              style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", opacity: 0.7 }}
+            >
+              {collection.kingLevel}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5" title="From your synced account">
+            <span style={{ color: "var(--muted)" }}>Arena</span>
+            <span
+              className="cursor-not-allowed rounded px-3 py-1.5 font-semibold"
+              style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", opacity: 0.7 }}
+            >
+              {collection.arena ?? "—"}
+            </span>
+          </div>
         </div>
       </div>
 
