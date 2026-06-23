@@ -3,6 +3,7 @@
 import { MAX_LEVEL, type Collection, type OwnedTowerTroop } from "@/lib/types";
 import { TOWER_TROOPS } from "@/lib/support";
 import { RARITY_COLOR } from "@/lib/ui";
+import { retryImageOnError } from "@/lib/img";
 
 interface Props {
   collection: Collection;
@@ -41,6 +42,8 @@ export default function TowerTroops({ collection, onTroopChange, onSetActive }: 
                       src={troop.iconUrl}
                       alt={troop.name}
                       loading="lazy"
+                      decoding="async"
+                      onError={retryImageOnError}
                       className="block w-full"
                       style={{ marginTop: "-14%", filter: owned ? "none" : "grayscale(0.7) brightness(0.85)" }}
                     />

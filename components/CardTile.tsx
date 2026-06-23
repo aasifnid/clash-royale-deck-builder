@@ -2,6 +2,7 @@
 
 import { MAX_LEVEL, type Card, type OwnedCard } from "@/lib/types";
 import { RARITY_COLOR } from "@/lib/ui";
+import { retryImageOnError } from "@/lib/img";
 
 interface Props {
   card: Card;
@@ -64,6 +65,8 @@ export default function CardTile({ card, owned, onChange }: Props) {
               src={card.iconUrl}
               alt={card.name}
               loading="lazy"
+              decoding="async"
+              onError={retryImageOnError}
               className="block w-full"
               style={{ marginTop: "-14%", filter: isOwned ? "none" : "grayscale(0.7) brightness(0.85)" }}
             />
