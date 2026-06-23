@@ -123,7 +123,7 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
                 )}
                 {card?.iconUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={card.iconUrl} alt={c.name ?? ""} loading="lazy" decoding="async" onError={retryImageOnError} className="block w-full" style={{ marginTop: "-14%", filter: c.isMissing ? "grayscale(1)" : "none" }} />
+                  <img src={card.iconUrl} alt={c.name ?? ""} width={285} height={420} loading="lazy" decoding="async" onError={retryImageOnError} className="block w-full" style={{ height: "auto", marginTop: "-14%", filter: c.isMissing ? "grayscale(1)" : "none" }} />
                 ) : (
                   <div className="flex h-24 items-center justify-center text-[11px]" style={{ color: "var(--muted)" }}>{c.name ?? c.role}</div>
                 )}

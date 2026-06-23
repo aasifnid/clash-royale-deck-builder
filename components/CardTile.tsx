@@ -64,11 +64,13 @@ export default function CardTile({ card, owned, onChange }: Props) {
             <img
               src={card.iconUrl}
               alt={card.name}
+              width={285}
+              height={420}
               loading="lazy"
               decoding="async"
               onError={retryImageOnError}
               className="block w-full"
-              style={{ marginTop: "-14%", filter: isOwned ? "none" : "grayscale(0.7) brightness(0.85)" }}
+              style={{ height: "auto", marginTop: "-14%", filter: isOwned ? "none" : "grayscale(0.7) brightness(0.85)" }}
             />
           ) : (
             <div className="h-28 w-full" />

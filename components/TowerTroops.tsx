@@ -41,11 +41,13 @@ export default function TowerTroops({ collection, onTroopChange, onSetActive }: 
                     <img
                       src={troop.iconUrl}
                       alt={troop.name}
+                      width={285}
+                      height={420}
                       loading="lazy"
                       decoding="async"
                       onError={retryImageOnError}
                       className="block w-full"
-                      style={{ marginTop: "-14%", filter: owned ? "none" : "grayscale(0.7) brightness(0.85)" }}
+                      style={{ height: "auto", marginTop: "-14%", filter: owned ? "none" : "grayscale(0.7) brightness(0.85)" }}
                     />
                   ) : (
                     <div className="h-24 w-full" />
