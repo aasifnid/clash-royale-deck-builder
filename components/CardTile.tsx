@@ -2,7 +2,7 @@
 
 import { MAX_LEVEL, type Card, type OwnedCard } from "@/lib/types";
 import { RARITY_COLOR } from "@/lib/ui";
-import { retryImageOnError } from "@/lib/img";
+import { fallbackCardArt, retryImageOnError } from "@/lib/img";
 
 interface Props {
   card: Card;
@@ -59,10 +59,11 @@ export default function CardTile({ card, owned, onChange }: Props) {
         }}
       >
         <div className="relative">
-          {card.iconUrl ? (
+          {card.iconUrl || card.key ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={card.iconUrl}
+              src={card.iconUrl ?? fallbackCardArt(card.key)}
+              data-fallback={fallbackCardArt(card.key)}
               alt={card.name}
               width={285}
               height={420}
