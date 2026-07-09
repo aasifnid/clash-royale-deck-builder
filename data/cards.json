@@ -1190,6 +1190,20 @@
     "heroUrl": null
   },
   {
+    "id": 26000106,
+    "key": "ronin",
+    "name": "Ronin",
+    "elixir": 5,
+    "type": "Troop",
+    "rarity": "Legendary",
+    "arena": 0,
+    "hasEvolution": false,
+    "hasHero": false,
+    "iconUrl": "https://api-assets.clashroyale.com/cards/300/X0dTFs7OGUavreDEzOtYd_YNZ8Zly6qgAE-dd-bNfWU.png",
+    "evolutionUrl": null,
+    "heroUrl": null
+  },
+  {
     "id": 27000000,
     "key": "cannon",
     "name": "Cannon",

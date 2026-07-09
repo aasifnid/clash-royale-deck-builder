@@ -2,7 +2,7 @@
 // fixed IP can be allowlisted on the token (Vercel's egress IPs are dynamic).
 // Server-side only — never import this into a client component.
 
-import { MAX_LEVEL, type Collection, type OwnedCard, type OwnedTowerTroop } from "./types";
+import { MAX_LEVEL, type Card, type Collection, type OwnedCard, type OwnedTowerTroop, type Rarity } from "./types";
 import { cardById } from "./cards";
 import { arenaNumberFor } from "./arenas";
 
@@ -31,6 +31,34 @@ interface ApiCard {
   maxLevel: number; // rarity-relative base (Common 16, Rare 14, Epic 11, Legendary 8, Champion 6)
   evolutionLevel?: number; // 1..maxEvolutionLevel when the player has the evolution
   count: number;
+  elixirCost?: number; // present on the player endpoint; used to synthesize brand-new cards
+  rarity?: string; // lowercase, e.g. "legendary"
+  iconUrls?: { medium?: string; evolutionMedium?: string; heroMedium?: string };
+}
+
+function slugify(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+/** Build master data for an owned card that isn't in bundled data/cards.json yet (a card released
+ *  after the last refresh). Fields the player API can't give us (type, arena) get safe defaults;
+ *  a later `refresh-cards.mjs` run fills them in properly. */
+function synthesizeCard(c: ApiCard): Card {
+  const rarity = (c.rarity ? c.rarity.charAt(0).toUpperCase() + c.rarity.slice(1) : "Common") as Rarity;
+  return {
+    id: c.id,
+    key: slugify(c.name),
+    name: c.name,
+    elixir: c.elixirCost ?? 0,
+    type: "Troop", // the player endpoint doesn't classify type; most new cards are troops
+    rarity,
+    arena: 0,
+    hasEvolution: Boolean(c.iconUrls?.evolutionMedium),
+    hasHero: Boolean(c.iconUrls?.heroMedium),
+    iconUrl: c.iconUrls?.medium ?? null,
+    evolutionUrl: c.iconUrls?.evolutionMedium ?? null,
+    heroUrl: c.iconUrls?.heroMedium ?? null,
+  };
 }
 
 interface ApiSupportCard {
@@ -154,9 +182,12 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
   const data = (await res.json()) as ApiPlayer;
 
   const owned: Record<number, OwnedCard> = {};
+  const unknownCards: Card[] = [];
   for (const c of data.cards) {
-    // Skip cards not in our master data (e.g. brand-new cards before a data refresh).
-    if (!cardById(c.id)) continue;
+    // Cards not in our bundled master data are brand-new (released after the last refresh).
+    // Synthesize their metadata from the API entry rather than dropping them, so a card the
+    // player just unlocked still appears on sync.
+    if (!cardById(c.id)) unknownCards.push(synthesizeCard(c));
     // evolutionLevel is a bitmask: bit 1 (value 1) = Evolution unlocked, bit 2 (value 2)
     // = Hero unlocked. Verified against a real account (e.g. Knight=3 → both, Giant=2 → hero,
     // Musketeer=1 → evolution).
@@ -195,5 +226,6 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
     towerTroops,
     activeTowerTroop: data.currentDeckSupportCards?.[0]?.id ?? null,
     syncedAt: new Date().toISOString(),
+    unknownCards,
   };
 }

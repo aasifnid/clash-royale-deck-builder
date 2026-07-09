@@ -60,6 +60,9 @@ export interface Collection {
   towerTroops: Record<number, OwnedTowerTroop>; // owned tower troops, keyed by id
   activeTowerTroop: number | null; // id of the tower troop in the current deck
   syncedAt: string | null; // ISO timestamp of last successful sync
+  // Master data for owned cards too new to be in bundled data/cards.json, synthesized from the
+  // player API at sync time so a freshly-released card still shows up without a data refresh.
+  unknownCards?: Card[];
 }
 
 /** One slot in a proven deck, naming the canonical card plus pro-known substitutes. */

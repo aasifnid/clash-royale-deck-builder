@@ -26,15 +26,24 @@ export default function CollectionDashboard({ collection, onCardChange }: Props)
 
   const ownedCount = Object.keys(collection.owned).length;
 
+  // Cards released after the last data refresh arrive on sync as `unknownCards`; fold them into
+  // the grid so a just-unlocked card is visible even before its metadata is bundled.
+  const allCards = useMemo(() => {
+    const extra = collection.unknownCards ?? [];
+    if (extra.length === 0) return CARDS;
+    const known = new Set(CARDS.map((c) => c.id));
+    return [...CARDS, ...extra.filter((c) => !known.has(c.id))];
+  }, [collection.unknownCards]);
+
   const visible = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return CARDS.filter((c) => {
+    return allCards.filter((c) => {
       if (rarity !== "All" && c.rarity !== rarity) return false;
       if (ownedOnly && !collection.owned[c.id]) return false;
       if (q && !c.name.toLowerCase().includes(q)) return false;
       return true;
     }).sort((a, b) => RARITY_ORDER[a.rarity] - RARITY_ORDER[b.rarity] || a.elixir - b.elixir || a.name.localeCompare(b.name));
-  }, [search, rarity, ownedOnly, collection.owned]);
+  }, [allCards, search, rarity, ownedOnly, collection.owned]);
 
   return (
     <div>
@@ -42,7 +51,7 @@ export default function CollectionDashboard({ collection, onCardChange }: Props)
         <h2 className="text-lg font-bold">
           Your collection{" "}
           <span className="text-sm font-normal" style={{ color: "var(--muted)" }}>
-            {ownedCount}/{CARDS.length} cards
+            {ownedCount}/{allCards.length} cards
           </span>
         </h2>
         {/* Read-only, from the synced account. King Tower is read from the battle log's tower
