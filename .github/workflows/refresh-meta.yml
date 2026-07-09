@@ -1,0 +1,51 @@
+name: Refresh card + meta data
+
+# Keeps the bundled game data current on its own. Clash Royale seasons reset on the first
+# Monday of each month and often shift the meta, so this runs a few days into each month
+# (giving the new-season top-ladder meta time to settle), pulls the latest cards and top-1000
+# meta decks, and commits any changes. The push triggers a Vercel production deploy
+# automatically, so the live site always reflects the current meta with no manual step.
+on:
+  schedule:
+    - cron: "0 6 3 * *" # 06:00 UTC on the 3rd of every month
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+permissions:
+  contents: write # needed to commit the refreshed data back to the repo
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # The refresh scripts use only Node built-ins + global fetch — no npm install needed.
+      - name: Refresh cards (adds newly released cards)
+        run: node scripts/refresh-cards.mjs
+        env:
+          CR_API_TOKEN: ${{ secrets.CR_API_TOKEN }}
+
+      - name: Refresh meta decks (current top-1000 ladder decks)
+        run: node scripts/refresh-meta.mjs
+        env:
+          CR_API_TOKEN: ${{ secrets.CR_API_TOKEN }}
+
+      - name: Commit and push if data changed
+        run: |
+          if git diff --quiet -- data/; then
+            echo "No data changes — meta and cards already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          git commit -m "chore: monthly card + meta data refresh [skip ci]"
+          git push
