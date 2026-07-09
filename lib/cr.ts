@@ -54,16 +54,20 @@ interface ApiPlayer {
   currentDeckSupportCards?: ApiSupportCard[]; // active tower troop(s)
 }
 
-/** Convert the API's rarity-relative level to the in-game displayed level (max 15). */
+/** Convert the API's rarity-relative level to the in-game displayed level (max 16). */
 export function displayedLevel(apiLevel: number, apiMaxLevel: number): number {
   return apiLevel + (API_BASE_MAX_LEVEL - apiMaxLevel);
 }
 
 // King Tower full hit points by level (fixed per level in standard 1v1). The player API has no
 // King Tower level field, but the battle log reports the King Tower's HP, so we map it back.
+// Levels 1-15 are observed/published values. Level 16 (added in the Nov 2025 update) isn't
+// published anywhere yet, so 7704 is EXTRAPOLATED from the per-level increment pattern (the deltas
+// grow by +48 each level: ...+576, +624, +672). Included so a level-16 tower resolves instead of
+// undercounting to 15; replace with the observed value once seen on a real level-16 account.
 const KING_TOWER_HP: Record<number, number> = {
   1: 2400, 2: 2568, 3: 2736, 4: 2904, 5: 3096, 6: 3312, 7: 3528, 8: 3768,
-  9: 4008, 10: 4392, 11: 4824, 12: 5304, 13: 5832, 14: 6408, 15: 7032,
+  9: 4008, 10: 4392, 11: 4824, 12: 5304, 13: 5832, 14: 6408, 15: 7032, 16: 7704,
 };
 
 /** King level from the observed full King Tower HP: exact match if possible, else the highest

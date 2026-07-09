@@ -20,7 +20,7 @@ export interface Card {
 }
 
 /** The current cap for card and king-tower levels in Clash Royale. */
-export const MAX_LEVEL = 15;
+export const MAX_LEVEL = 16;
 
 /** A card the player owns, with their progression on it. `evolved`/`hero` are decoded from
  *  the API's evolutionLevel bitmask on sync, and remain editable for manual entry. */
