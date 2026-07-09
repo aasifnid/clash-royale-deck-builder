@@ -58,7 +58,10 @@ export default function CardTile({ card, owned, onChange }: Props) {
           background: isOwned ? "linear-gradient(180deg, #33446c, #1a2342)" : "linear-gradient(180deg, #222c4d, #151c33)",
         }}
       >
-        <div className="relative">
+        {/* Fixed-aspect art frame + object-cover: fills identically no matter the source image's
+            dimensions. Card art comes from two CDNs with different aspect ratios (Supercell 285x420,
+            the RoyaleAPI fallback ~302x363), so a fixed box is what keeps every tile consistent. */}
+        <div className="relative overflow-hidden" style={{ aspectRatio: "285 / 420" }}>
           {card.iconUrl || card.key ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -70,11 +73,11 @@ export default function CardTile({ card, owned, onChange }: Props) {
               loading="lazy"
               decoding="async"
               onError={retryImageOnError}
-              className="block w-full"
-              style={{ height: "auto", marginTop: "-14%", filter: isOwned ? "none" : "grayscale(0.7) brightness(0.85)" }}
+              className="absolute inset-0 h-full w-full object-cover object-top"
+              style={{ filter: isOwned ? "none" : "grayscale(0.7) brightness(0.85)" }}
             />
           ) : (
-            <div className="h-28 w-full" />
+            <div className="h-full w-full" />
           )}
           {/* Nameplate band fades up from the art bottom, holding the name + editable level. */}
           <div
