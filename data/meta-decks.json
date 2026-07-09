@@ -195,7 +195,7 @@
     {
       "id": "meta-10",
       "archetype": "Siege",
-      "usage": 10,
+      "usage": 9,
       "avgElixir": 3.5,
       "cards": [
         "goblins",
@@ -553,27 +553,6 @@
       "id": "meta-27",
       "archetype": "Control",
       "usage": 4,
-      "avgElixir": 4.3,
-      "cards": [
-        "tornado",
-        "golden-knight",
-        "inferno-dragon",
-        "zappies",
-        "freeze",
-        "executioner",
-        "graveyard",
-        "bowler"
-      ],
-      "evolutions": [
-        "executioner",
-        "inferno-dragon"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-28",
-      "archetype": "Control",
-      "usage": 4,
       "avgElixir": 2.6,
       "cards": [
         "skeletons",
@@ -592,7 +571,7 @@
       "towerTroop": null
     },
     {
-      "id": "meta-29",
+      "id": "meta-28",
       "archetype": "Control",
       "usage": 4,
       "avgElixir": 3.9,
@@ -613,7 +592,7 @@
       "towerTroop": null
     },
     {
-      "id": "meta-30",
+      "id": "meta-29",
       "archetype": "Control",
       "usage": 4,
       "avgElixir": 2.9,
@@ -634,7 +613,7 @@
       "towerTroop": null
     },
     {
-      "id": "meta-31",
+      "id": "meta-30",
       "archetype": "Bait",
       "usage": 4,
       "avgElixir": 4.3,
@@ -655,7 +634,7 @@
       "towerTroop": null
     },
     {
-      "id": "meta-32",
+      "id": "meta-31",
       "archetype": "Beatdown",
       "usage": 4,
       "avgElixir": 4.6,
