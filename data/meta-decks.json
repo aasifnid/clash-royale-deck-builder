@@ -5,71 +5,8 @@
   "decks": [
     {
       "id": "meta-1",
-      "archetype": "Siege",
-      "usage": 29,
-      "avgElixir": 3,
-      "cards": [
-        "skeletons",
-        "electro-spirit",
-        "the-log",
-        "archers",
-        "knight",
-        "tesla",
-        "fireball",
-        "x-bow"
-      ],
-      "evolutions": [
-        "archers",
-        "knight"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-2",
-      "archetype": "Cycle",
-      "usage": 26,
-      "avgElixir": 2.6,
-      "cards": [
-        "skeletons",
-        "ice-spirit",
-        "ice-golem",
-        "the-log",
-        "cannon",
-        "musketeer",
-        "fireball",
-        "hog-rider"
-      ],
-      "evolutions": [
-        "skeletons",
-        "ice-golem"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-3",
-      "archetype": "Control",
-      "usage": 21,
-      "avgElixir": 2.9,
-      "cards": [
-        "skeletons",
-        "ice-golem",
-        "barbarian-barrel",
-        "giant-snowball",
-        "miner",
-        "musketeer",
-        "bomb-tower",
-        "balloon"
-      ],
-      "evolutions": [
-        "balloon",
-        "skeletons"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-4",
       "archetype": "Beatdown",
-      "usage": 18,
+      "usage": 32,
       "avgElixir": 3,
       "cards": [
         "skeletons",
@@ -88,15 +25,78 @@
       "towerTroop": null
     },
     {
+      "id": "meta-2",
+      "archetype": "Cycle",
+      "usage": 32,
+      "avgElixir": 2.6,
+      "cards": [
+        "skeletons",
+        "ice-spirit",
+        "ice-golem",
+        "the-log",
+        "cannon",
+        "musketeer",
+        "hog-rider",
+        "fireball"
+      ],
+      "evolutions": [
+        "skeletons",
+        "cannon"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-3",
+      "archetype": "Siege",
+      "usage": 24,
+      "avgElixir": 3,
+      "cards": [
+        "electro-spirit",
+        "skeletons",
+        "the-log",
+        "archers",
+        "knight",
+        "tesla",
+        "fireball",
+        "x-bow"
+      ],
+      "evolutions": [
+        "knight",
+        "archers"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-4",
+      "archetype": "Control",
+      "usage": 22,
+      "avgElixir": 2.9,
+      "cards": [
+        "skeletons",
+        "ice-golem",
+        "barbarian-barrel",
+        "giant-snowball",
+        "miner",
+        "musketeer",
+        "bomb-tower",
+        "balloon"
+      ],
+      "evolutions": [
+        "skeletons",
+        "balloon"
+      ],
+      "towerTroop": null
+    },
+    {
       "id": "meta-5",
       "archetype": "Control",
-      "usage": 15,
+      "usage": 16,
       "avgElixir": 2.4,
       "cards": [
-        "fire-spirit",
         "skeletons",
-        "bats",
+        "fire-spirit",
         "wall-breakers",
+        "bats",
         "the-log",
         "miner",
         "magic-archer",
@@ -104,14 +104,14 @@
       ],
       "evolutions": [
         "magic-archer",
-        "bats"
+        "wall-breakers"
       ],
       "towerTroop": null
     },
     {
       "id": "meta-6",
       "archetype": "Cycle",
-      "usage": 13,
+      "usage": 11,
       "avgElixir": 3.4,
       "cards": [
         "ice-spirit",
@@ -131,8 +131,29 @@
     },
     {
       "id": "meta-7",
+      "archetype": "Control",
+      "usage": 11,
+      "avgElixir": 2.8,
+      "cards": [
+        "ice-spirit",
+        "fire-spirit",
+        "goblins",
+        "wall-breakers",
+        "goblin-barrel",
+        "dart-goblin",
+        "valkyrie",
+        "rocket"
+      ],
+      "evolutions": [
+        "valkyrie",
+        "goblin-barrel"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-8",
       "archetype": "Beatdown",
-      "usage": 12,
+      "usage": 10,
       "avgElixir": 3.4,
       "cards": [
         "heal-spirit",
@@ -151,114 +172,30 @@
       "towerTroop": null
     },
     {
-      "id": "meta-8",
+      "id": "meta-9",
       "archetype": "Control",
-      "usage": 11,
-      "avgElixir": 2.6,
+      "usage": 10,
+      "avgElixir": 2.8,
       "cards": [
         "fire-spirit",
-        "wall-breakers",
-        "bats",
-        "berserker",
-        "miner",
-        "royal-delivery",
-        "magic-archer",
-        "bomb-tower"
+        "skeletons",
+        "giant-snowball",
+        "bomber",
+        "knight",
+        "cannon",
+        "goblin-drill",
+        "rocket"
       ],
       "evolutions": [
-        "wall-breakers",
-        "magic-archer"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-9",
-      "archetype": "Bait",
-      "usage": 11,
-      "avgElixir": 2.9,
-      "cards": [
-        "ice-spirit",
-        "the-log",
-        "goblin-barrel",
-        "knight",
-        "skeleton-army",
-        "princess",
-        "dart-goblin",
-        "inferno-tower"
-      ],
-      "evolutions": [
-        "knight",
-        "goblin-barrel"
+        "giant-snowball",
+        "knight"
       ],
       "towerTroop": null
     },
     {
       "id": "meta-10",
-      "archetype": "Siege",
-      "usage": 9,
-      "avgElixir": 3.5,
-      "cards": [
-        "goblins",
-        "barbarian-barrel",
-        "skeleton-barrel",
-        "minions",
-        "mortar",
-        "fireball",
-        "cannon-cart",
-        "rascals"
-      ],
-      "evolutions": [
-        "mortar",
-        "goblins"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-11",
-      "archetype": "Control",
-      "usage": 9,
-      "avgElixir": 3.4,
-      "cards": [
-        "ice-golem",
-        "zap",
-        "miner",
-        "mega-minion",
-        "inferno-dragon",
-        "goblin-cage",
-        "fireball",
-        "balloon"
-      ],
-      "evolutions": [
-        "inferno-dragon",
-        "goblin-cage"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-12",
       "archetype": "Beatdown",
-      "usage": 8,
-      "avgElixir": 3.4,
-      "cards": [
-        "zap",
-        "rage",
-        "bomber",
-        "mega-minion",
-        "fireball",
-        "dark-prince",
-        "giant",
-        "prince"
-      ],
-      "evolutions": [
-        "zap",
-        "giant"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-13",
-      "archetype": "Beatdown",
-      "usage": 8,
+      "usage": 9,
       "avgElixir": 3.8,
       "cards": [
         "barbarian-barrel",
@@ -277,198 +214,30 @@
       "towerTroop": null
     },
     {
-      "id": "meta-14",
-      "archetype": "Cycle",
-      "usage": 8,
-      "avgElixir": 3.8,
-      "cards": [
-        "electro-spirit",
-        "barbarian-barrel",
-        "arrows",
-        "goblin-cage",
-        "zappies",
-        "flying-machine",
-        "royal-hogs",
-        "royal-recruits"
-      ],
-      "evolutions": [
-        "royal-recruits",
-        "barbarian-barrel"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-15",
+      "id": "meta-11",
       "archetype": "Control",
       "usage": 8,
-      "avgElixir": 2.8,
+      "avgElixir": 2.6,
       "cards": [
         "fire-spirit",
-        "ice-spirit",
-        "goblins",
         "wall-breakers",
-        "goblin-barrel",
-        "dart-goblin",
-        "valkyrie",
-        "rocket"
-      ],
-      "evolutions": [
-        "goblin-barrel",
-        "valkyrie"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-16",
-      "archetype": "Bait",
-      "usage": 7,
-      "avgElixir": 2.5,
-      "cards": [
-        "electro-spirit",
-        "ice-spirit",
-        "goblins",
-        "the-log",
-        "goblin-barrel",
-        "dart-goblin",
-        "cannon",
-        "ronin"
-      ],
-      "evolutions": [
-        "goblin-barrel",
-        "goblins"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-17",
-      "archetype": "Control",
-      "usage": 7,
-      "avgElixir": 2.8,
-      "cards": [
-        "skeletons",
-        "fire-spirit",
-        "giant-snowball",
-        "bomber",
-        "cannon",
-        "knight",
-        "goblin-drill",
-        "rocket"
-      ],
-      "evolutions": [
-        "cannon",
-        "knight"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-18",
-      "archetype": "Control",
-      "usage": 7,
-      "avgElixir": 3.4,
-      "cards": [
-        "barbarian-barrel",
-        "knight",
-        "tombstone",
-        "ice-wizard",
-        "tornado",
-        "baby-dragon",
-        "poison",
-        "graveyard"
-      ],
-      "evolutions": [
-        "baby-dragon",
-        "barbarian-barrel"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-19",
-      "archetype": "Control",
-      "usage": 7,
-      "avgElixir": 3,
-      "cards": [
-        "skeletons",
-        "electro-spirit",
-        "the-log",
-        "royal-delivery",
+        "bats",
+        "berserker",
         "miner",
-        "dark-prince",
-        "tesla",
-        "rocket"
-      ],
-      "evolutions": [
-        "skeletons",
-        "tesla"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-20",
-      "archetype": "Bridge Spam",
-      "usage": 7,
-      "avgElixir": 3.9,
-      "cards": [
-        "zap",
-        "royal-ghost",
-        "bandit",
-        "battle-ram",
+        "royal-delivery",
         "magic-archer",
-        "fireball",
-        "electro-wizard",
-        "pekka"
+        "bomb-tower"
       ],
       "evolutions": [
-        "battle-ram",
+        "wall-breakers",
         "magic-archer"
       ],
       "towerTroop": null
     },
     {
-      "id": "meta-21",
-      "archetype": "Beatdown",
-      "usage": 5,
-      "avgElixir": 3.3,
-      "cards": [
-        "electro-spirit",
-        "heal-spirit",
-        "barbarian-barrel",
-        "lumberjack",
-        "goblin-cage",
-        "phoenix",
-        "fireball",
-        "royal-giant"
-      ],
-      "evolutions": [
-        "lumberjack",
-        "barbarian-barrel"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-22",
+      "id": "meta-12",
       "archetype": "Control",
-      "usage": 5,
-      "avgElixir": 4,
-      "cards": [
-        "giant-snowball",
-        "arrows",
-        "minions",
-        "mini-pekka",
-        "giant",
-        "witch",
-        "bowler",
-        "graveyard"
-      ],
-      "evolutions": [
-        "giant-snowball",
-        "giant"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-23",
-      "archetype": "Control",
-      "usage": 5,
+      "usage": 8,
       "avgElixir": 2.5,
       "cards": [
         "skeletons",
@@ -487,17 +256,269 @@
       "towerTroop": null
     },
     {
-      "id": "meta-24",
+      "id": "meta-13",
+      "archetype": "Control",
+      "usage": 8,
+      "avgElixir": 4,
+      "cards": [
+        "giant-snowball",
+        "arrows",
+        "minions",
+        "mini-pekka",
+        "giant",
+        "witch",
+        "bowler",
+        "graveyard"
+      ],
+      "evolutions": [
+        "giant-snowball",
+        "giant"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-14",
       "archetype": "Bridge Spam",
-      "usage": 4,
+      "usage": 8,
+      "avgElixir": 3.9,
+      "cards": [
+        "zap",
+        "royal-ghost",
+        "bandit",
+        "battle-ram",
+        "magic-archer",
+        "fireball",
+        "electro-wizard",
+        "pekka"
+      ],
+      "evolutions": [
+        "battle-ram",
+        "magic-archer"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-15",
+      "archetype": "Control",
+      "usage": 8,
+      "avgElixir": 3.4,
+      "cards": [
+        "zap",
+        "ice-golem",
+        "mega-minion",
+        "miner",
+        "inferno-dragon",
+        "fireball",
+        "goblin-cage",
+        "balloon"
+      ],
+      "evolutions": [
+        "inferno-dragon",
+        "mega-minion"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-16",
+      "archetype": "Control",
+      "usage": 7,
+      "avgElixir": 3.1,
+      "cards": [
+        "skeletons",
+        "the-log",
+        "tornado",
+        "knight",
+        "goblin-drill",
+        "magic-archer",
+        "goblin-demolisher",
+        "bomb-tower"
+      ],
+      "evolutions": [
+        "knight",
+        "magic-archer"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-17",
+      "archetype": "Cycle",
+      "usage": 7,
+      "avgElixir": 3.8,
+      "cards": [
+        "electro-spirit",
+        "barbarian-barrel",
+        "arrows",
+        "goblin-cage",
+        "flying-machine",
+        "zappies",
+        "royal-hogs",
+        "royal-recruits"
+      ],
+      "evolutions": [
+        "royal-recruits",
+        "barbarian-barrel"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-18",
+      "archetype": "Bait",
+      "usage": 7,
+      "avgElixir": 2.9,
+      "cards": [
+        "ice-spirit",
+        "the-log",
+        "skeleton-army",
+        "knight",
+        "goblin-barrel",
+        "princess",
+        "dart-goblin",
+        "inferno-tower"
+      ],
+      "evolutions": [
+        "knight",
+        "skeleton-army"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-19",
+      "archetype": "Beatdown",
+      "usage": 7,
+      "avgElixir": 3.4,
+      "cards": [
+        "zap",
+        "bomber",
+        "rage",
+        "mega-minion",
+        "dark-prince",
+        "fireball",
+        "giant",
+        "prince"
+      ],
+      "evolutions": [
+        "zap",
+        "giant"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-20",
+      "archetype": "Control",
+      "usage": 6,
+      "avgElixir": 3.4,
+      "cards": [
+        "barbarian-barrel",
+        "knight",
+        "tombstone",
+        "ice-wizard",
+        "tornado",
+        "poison",
+        "baby-dragon",
+        "graveyard"
+      ],
+      "evolutions": [
+        "knight",
+        "tombstone"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-21",
+      "archetype": "Siege",
+      "usage": 6,
+      "avgElixir": 3.5,
+      "cards": [
+        "goblins",
+        "barbarian-barrel",
+        "skeleton-barrel",
+        "minions",
+        "mortar",
+        "fireball",
+        "cannon-cart",
+        "rascals"
+      ],
+      "evolutions": [
+        "skeleton-barrel",
+        "goblins"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-22",
+      "archetype": "Control",
+      "usage": 5,
+      "avgElixir": 2.6,
+      "cards": [
+        "fire-spirit",
+        "skeletons",
+        "giant-snowball",
+        "bomber",
+        "knight",
+        "goblin-drill",
+        "poison",
+        "tesla"
+      ],
+      "evolutions": [
+        "giant-snowball",
+        "knight"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-23",
+      "archetype": "Beatdown",
+      "usage": 5,
+      "avgElixir": 3.9,
+      "cards": [
+        "zap",
+        "bomber",
+        "arrows",
+        "mini-pekka",
+        "lumberjack",
+        "night-witch",
+        "phoenix",
+        "golem"
+      ],
+      "evolutions": [
+        "mini-pekka",
+        "lumberjack"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-24",
+      "archetype": "Siege",
+      "usage": 5,
+      "avgElixir": 3.4,
+      "cards": [
+        "electro-spirit",
+        "goblins",
+        "skeleton-barrel",
+        "minions",
+        "mortar",
+        "fireball",
+        "cannon-cart",
+        "rascals"
+      ],
+      "evolutions": [
+        "mortar",
+        "goblins"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-25",
+      "archetype": "Bridge Spam",
+      "usage": 5,
       "avgElixir": 3.9,
       "cards": [
         "barbarian-barrel",
         "royal-ghost",
         "vines",
         "battle-ram",
-        "mother-witch",
         "zappies",
+        "mother-witch",
         "wizard",
         "giant-skeleton"
       ],
@@ -508,7 +529,70 @@
       "towerTroop": null
     },
     {
-      "id": "meta-25",
+      "id": "meta-26",
+      "archetype": "Control",
+      "usage": 5,
+      "avgElixir": 3,
+      "cards": [
+        "skeletons",
+        "electro-spirit",
+        "the-log",
+        "royal-delivery",
+        "miner",
+        "tesla",
+        "dark-prince",
+        "rocket"
+      ],
+      "evolutions": [
+        "tesla",
+        "skeletons"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-27",
+      "archetype": "Beatdown",
+      "usage": 5,
+      "avgElixir": 4.6,
+      "cards": [
+        "vines",
+        "baby-dragon",
+        "mini-pekka",
+        "valkyrie",
+        "battle-healer",
+        "zappies",
+        "elixir-collector",
+        "golem"
+      ],
+      "evolutions": [
+        "baby-dragon",
+        "mini-pekka"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-28",
+      "archetype": "Control",
+      "usage": 4,
+      "avgElixir": 3,
+      "cards": [
+        "skeletons",
+        "ice-spirit",
+        "barbarian-barrel",
+        "knight",
+        "tesla",
+        "furnace",
+        "poison",
+        "graveyard"
+      ],
+      "evolutions": [
+        "tesla",
+        "furnace"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-29",
       "archetype": "Bait",
       "usage": 4,
       "avgElixir": 2.6,
@@ -529,127 +613,64 @@
       "towerTroop": null
     },
     {
-      "id": "meta-26",
-      "archetype": "Control",
+      "id": "meta-30",
+      "archetype": "Beatdown",
       "usage": 4,
-      "avgElixir": 3.3,
+      "avgElixir": 4,
       "cards": [
-        "skeletons",
         "zap",
-        "knight",
-        "tornado",
-        "miner",
-        "bomb-tower",
+        "mega-minion",
+        "tombstone",
+        "valkyrie",
+        "skeleton-dragons",
+        "fireball",
         "balloon",
-        "executioner"
+        "lava-hound"
       ],
       "evolutions": [
-        "knight",
+        "valkyrie",
         "balloon"
       ],
       "towerTroop": null
     },
     {
-      "id": "meta-27",
-      "archetype": "Control",
-      "usage": 4,
-      "avgElixir": 2.6,
-      "cards": [
-        "skeletons",
-        "fire-spirit",
-        "giant-snowball",
-        "bomber",
-        "knight",
-        "goblin-drill",
-        "poison",
-        "tesla"
-      ],
-      "evolutions": [
-        "giant-snowball",
-        "knight"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-28",
-      "archetype": "Control",
-      "usage": 4,
-      "avgElixir": 3.9,
-      "cards": [
-        "giant-snowball",
-        "guards",
-        "arrows",
-        "musketeer",
-        "night-witch",
-        "bowler",
-        "graveyard",
-        "giant"
-      ],
-      "evolutions": [
-        "musketeer",
-        "bowler"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-29",
-      "archetype": "Control",
-      "usage": 4,
-      "avgElixir": 2.9,
-      "cards": [
-        "fire-spirit",
-        "skeletons",
-        "giant-snowball",
-        "knight",
-        "tesla",
-        "goblin-drill",
-        "poison",
-        "goblin-demolisher"
-      ],
-      "evolutions": [
-        "knight",
-        "giant-snowball"
-      ],
-      "towerTroop": null
-    },
-    {
-      "id": "meta-30",
-      "archetype": "Bait",
-      "usage": 4,
-      "avgElixir": 4.3,
-      "cards": [
-        "goblins",
-        "zap",
-        "lumberjack",
-        "furnace",
-        "fireball",
-        "ram-rider",
-        "spirit-empress",
-        "mega-knight"
-      ],
-      "evolutions": [
-        "lumberjack",
-        "mega-knight"
-      ],
-      "towerTroop": null
-    },
-    {
       "id": "meta-31",
+      "archetype": "Siege",
+      "usage": 4,
+      "avgElixir": 3.1,
+      "cards": [
+        "skeletons",
+        "electro-spirit",
+        "ice-spirit",
+        "fire-spirit",
+        "valkyrie",
+        "wizard",
+        "elixir-collector",
+        "x-bow"
+      ],
+      "evolutions": [
+        "skeletons",
+        "wizard"
+      ],
+      "towerTroop": null
+    },
+    {
+      "id": "meta-32",
       "archetype": "Beatdown",
       "usage": 4,
-      "avgElixir": 4.6,
+      "avgElixir": 3.6,
       "cards": [
-        "vines",
-        "baby-dragon",
+        "heal-spirit",
+        "zap",
+        "rage",
         "mini-pekka",
-        "valkyrie",
-        "battle-healer",
-        "zappies",
-        "elixir-collector",
-        "golem"
+        "dark-prince",
+        "electro-wizard",
+        "goblin-giant",
+        "sparky"
       ],
       "evolutions": [
-        "baby-dragon",
+        "goblin-giant",
         "mini-pekka"
       ],
       "towerTroop": null

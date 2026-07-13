@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Collection } from "@/lib/types";
 import type { EasePreference } from "@/lib/fieldability";
-import { cardByKey } from "@/lib/cards";
+import { cardByKey, cardById } from "@/lib/cards";
 import { deckLink } from "@/lib/deck";
 import { difficultyColor, RARITY_COLOR } from "@/lib/ui";
 import { retryImageOnError } from "@/lib/img";
@@ -162,6 +162,11 @@ export default function Generator({ collection, onSave }: Props) {
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>({ styles: [], archetypes: [] });
+  // Focal-card builder: pick one owned card and build the strongest deck around it.
+  const [focalKey, setFocalKey] = useState("");
+  const [building, setBuilding] = useState(false);
+  const [built, setBuilt] = useState<EnrichedPick | null>(null);
+  const [buildError, setBuildError] = useState<string | null>(null);
 
   // Load the deck-type options (play styles + top archetypes) from the server.
   useEffect(() => {
@@ -198,6 +203,33 @@ export default function Generator({ collection, onSave }: Props) {
       setError(e instanceof Error ? e.message : "Generation failed.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  // The player's owned cards, sorted by name, for the focal-card picker.
+  const ownedCards = Object.keys(collection.owned)
+    .map((id) => cardById(Number(id)))
+    .filter((c): c is NonNullable<typeof c> => Boolean(c))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  async function buildAround(key: string) {
+    if (!key) return;
+    setBuilding(true);
+    setBuildError(null);
+    setBuilt(null);
+    try {
+      const res = await fetch("/api/build", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ collection, focalKey: key, ease }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Build failed.");
+      setBuilt(data.pick);
+    } catch (e) {
+      setBuildError(e instanceof Error ? e.message : "Build failed.");
+    } finally {
+      setBuilding(false);
     }
   }
 
@@ -314,6 +346,55 @@ export default function Generator({ collection, onSave }: Props) {
         </p>
       )}
 
+      {ownedCount > 0 && (
+        <div className="mb-3 rounded-lg p-3" style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
+          <div className="text-sm font-semibold">Or build a deck around one card</div>
+          <p className="mb-2 mt-0.5 text-xs" style={{ color: "var(--muted)" }}>
+            Pick a card you own. We lock it in and build the strongest deck we can around it from your collection, following how top players pair it.
+          </p>
+          <div className="flex flex-wrap items-end gap-3">
+            <div className="relative inline-block">
+              <select
+                value={focalKey}
+                onChange={(e) => setFocalKey(e.target.value)}
+                className="cursor-pointer appearance-none rounded-lg bg-[var(--background)] py-2 pl-3 pr-8 text-sm outline-none"
+                style={{ border: "1px solid var(--border)" }}
+              >
+                <option value="">Choose a card…</option>
+                {ownedCards.map((c) => (
+                  <option key={c.key} value={c.key}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+              <span className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center" style={{ color: "var(--muted)" }}>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M3 4.5 6 7.5 9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </div>
+            <button
+              onClick={() => buildAround(focalKey)}
+              disabled={!focalKey || building}
+              className="rounded-lg px-4 py-2 text-sm font-bold transition disabled:opacity-50"
+              style={{ background: "var(--accent)", color: "#fff" }}
+            >
+              {building ? "Building…" : "Build around it"}
+            </button>
+          </div>
+          {buildError && (
+            <p className="mt-2 text-sm" style={{ color: "#f87171" }}>
+              {buildError}
+            </p>
+          )}
+          {built && (
+            <div className="mt-3">
+              <DeckResult pick={built} copied={copied} onCopy={copyLink} onSave={save} />
+            </div>
+          )}
+        </div>
+      )}
+
       {result && (
         <div className="flex flex-col gap-4">
           {result.insights && result.insights.games > 0 && (
@@ -343,124 +424,7 @@ export default function Generator({ collection, onSave }: Props) {
             </p>
           )}
           {result.picks.map((pick) => (
-            <div
-              key={pick.deckId}
-              className="rounded-lg p-3"
-              style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
-            >
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold">{pick.name}</h3>
-                  <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold" style={{ background: "var(--background)", color: "var(--muted)" }}>
-                    {pick.archetype}
-                  </span>
-                  {pick.source === "meta" && (
-                    <span
-                      className="rounded px-1.5 py-0.5 text-[10px] font-bold"
-                      style={{ background: "var(--accent)", color: "#fff" }}
-                      title={`Run by ${pick.usage} sampled top-ladder players this season`}
-                    >
-                      META{pick.usage > 1 ? ` ×${pick.usage}` : ""}
-                    </span>
-                  )}
-                  <span
-                    className="rounded px-1.5 py-0.5 text-[10px] font-bold"
-                    style={{ background: "var(--background)", color: difficultyColor(pick.coach.difficulty) }}
-                  >
-                    {pick.coach.difficulty}
-                  </span>
-                  <span className="text-[11px]" style={{ color: "var(--muted)" }}>
-                    {pick.avgElixir} avg elixir
-                  </span>
-                  <span className="text-[11px]" style={{ color: "var(--muted)" }} title="The card level this deck was judged against, from the cards you actually field.">
-                    built for level {pick.competitiveLevel}
-                  </span>
-                  {pick.weakCards > 0 && (
-                    <span className="rounded px-1.5 py-0.5 text-[10px] font-bold" style={{ background: "rgba(245,158,11,0.18)", color: "#f59e0b" }} title="This deck includes a card below your level. Highlighted in amber below.">
-                      {pick.weakCards} card{pick.weakCards > 1 ? "s" : ""} under your level
-                    </span>
-                  )}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => copyLink(pick)}
-                    className="rounded px-2.5 py-1 text-xs font-semibold"
-                    style={{ background: "var(--background)", border: "1px solid var(--border)" }}
-                  >
-                    {copied === pick.deckId ? "Copied!" : "Copy deck link"}
-                  </button>
-                  <button
-                    onClick={() => save(pick)}
-                    className="rounded px-2.5 py-1 text-xs font-semibold"
-                    style={{ background: "var(--accent-2)", color: "#1a1300" }}
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-
-              {pick.coach.summary && (
-                <p className="mb-2 text-sm" style={{ color: "var(--foreground)" }}>
-                  {pick.coach.summary}
-                </p>
-              )}
-
-              <div className="mb-3">
-                <DeckCards cards={pick.cards} />
-              </div>
-
-              {pick.coach.gameplan && (
-                <div className="mb-2 rounded-lg p-3" style={{ background: "var(--background)", borderLeft: "3px solid var(--accent-2)" }}>
-                  <div className="text-[11px] font-bold uppercase tracking-wide" style={{ color: "var(--accent-2)" }}>
-                    Game plan
-                  </div>
-                  <div className="mt-1 text-sm" style={{ color: "var(--foreground)" }}>{pick.coach.gameplan}</div>
-                </div>
-              )}
-
-              <div className="grid gap-2 text-sm sm:grid-cols-2">
-                {pick.coach.winCondition && <Field label="Win condition" value={pick.coach.winCondition} />}
-                {pick.coach.opening && <Field label="First minute" value={pick.coach.opening} />}
-                {pick.coach.defense && <Field label="On defense" value={pick.coach.defense} />}
-                {pick.coach.combos && <Field label="Best combos" value={pick.coach.combos} />}
-                {pick.coach.doubleElixir && <Field label="Double elixir" value={pick.coach.doubleElixir} />}
-                {pick.coach.counters && <Field label="Watch out for" value={pick.coach.counters} />}
-                {pick.coach.playTips && <Field label="Play tips" value={pick.coach.playTips} />}
-              </div>
-
-              {(pick.evolutionSlots.length > 0 || pick.heroSlots.length > 0 || pick.extras.length > 0) && (
-                <div className="mt-2 flex flex-col gap-1 rounded p-2 text-xs" style={{ background: "var(--background)" }}>
-                  <div>
-                    <span className="font-bold" style={{ color: "#ec4899" }}>Evolution slots (2):</span>{" "}
-                    {pick.evolutionSlots.length > 0 ? (
-                      <>
-                        {pick.evolutionSlots.join(" + ")}
-                        {pick.evolutionSlots.length < 2 && (
-                          <span style={{ color: "var(--muted)" }}> ({2 - pick.evolutionSlots.length} open — no other evolved card here)</span>
-                        )}
-                      </>
-                    ) : (
-                      <span style={{ color: "var(--muted)" }}>no evolved card in this deck</span>
-                    )}
-                  </div>
-                  <div>
-                    <span className="font-bold" style={{ color: "#ca8a04" }}>Hero slot (1):</span>{" "}
-                    {pick.heroSlots.length > 0 ? pick.heroSlots[0] : <span style={{ color: "var(--muted)" }}>no hero card in this deck</span>}
-                  </div>
-                  {pick.extras.length > 0 && (
-                    <div style={{ color: "var(--muted)" }}>Also unlocked (no slot free): {pick.extras.join(", ")}</div>
-                  )}
-                </div>
-              )}
-              {pick.substitutions.length > 0 && (
-                <p className="mt-2 text-xs" style={{ color: "var(--muted)" }}>
-                  Substitutions:{" "}
-                  {pick.substitutions
-                    .map((s) => `${cardByKey(s.from)?.name ?? s.from} → ${cardByKey(s.to)?.name ?? s.to}`)
-                    .join(", ")}
-                </p>
-              )}
-            </div>
+            <DeckResult key={pick.deckId} pick={pick} copied={copied} onCopy={copyLink} onSave={save} />
           ))}
         </div>
       )}
@@ -475,6 +439,137 @@ function Field({ label, value }: { label: string; value: string }) {
         {label}
       </div>
       <div>{value}</div>
+    </div>
+  );
+}
+
+/** One deck card: header badges, the 8-card grid, coaching, and evolution/substitution notes.
+ *  Rendered for both the ranked library picks and the focal-card "built for you" deck. */
+function DeckResult({
+  pick,
+  copied,
+  onCopy,
+  onSave,
+}: {
+  pick: EnrichedPick;
+  copied: string | null;
+  onCopy: (pick: EnrichedPick) => void;
+  onSave: (pick: EnrichedPick) => void;
+}) {
+  return (
+    <div className="rounded-lg p-3" style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <h3 className="text-base font-bold">{pick.name}</h3>
+          <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold" style={{ background: "var(--background)", color: "var(--muted)" }}>
+            {pick.archetype}
+          </span>
+          {pick.source === "meta" && (
+            <span
+              className="rounded px-1.5 py-0.5 text-[10px] font-bold"
+              style={{ background: "var(--accent)", color: "#fff" }}
+              title={`Run by ${pick.usage} sampled top-ladder players this season`}
+            >
+              META{pick.usage > 1 ? ` ×${pick.usage}` : ""}
+            </span>
+          )}
+          <span
+            className="rounded px-1.5 py-0.5 text-[10px] font-bold"
+            style={{ background: "var(--background)", color: difficultyColor(pick.coach.difficulty) }}
+          >
+            {pick.coach.difficulty}
+          </span>
+          <span className="text-[11px]" style={{ color: "var(--muted)" }}>
+            {pick.avgElixir} avg elixir
+          </span>
+          <span className="text-[11px]" style={{ color: "var(--muted)" }} title="The card level this deck was judged against, from the cards you actually field.">
+            built for level {pick.competitiveLevel}
+          </span>
+          {pick.weakCards > 0 && (
+            <span className="rounded px-1.5 py-0.5 text-[10px] font-bold" style={{ background: "rgba(245,158,11,0.18)", color: "#f59e0b" }} title="This deck includes a card below your level. Highlighted in amber below.">
+              {pick.weakCards} card{pick.weakCards > 1 ? "s" : ""} under your level
+            </span>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onCopy(pick)}
+            className="rounded px-2.5 py-1 text-xs font-semibold"
+            style={{ background: "var(--background)", border: "1px solid var(--border)" }}
+          >
+            {copied === pick.deckId ? "Copied!" : "Copy deck link"}
+          </button>
+          <button
+            onClick={() => onSave(pick)}
+            className="rounded px-2.5 py-1 text-xs font-semibold"
+            style={{ background: "var(--accent-2)", color: "#1a1300" }}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+
+      {pick.coach.summary && (
+        <p className="mb-2 text-sm" style={{ color: "var(--foreground)" }}>
+          {pick.coach.summary}
+        </p>
+      )}
+
+      <div className="mb-3">
+        <DeckCards cards={pick.cards} />
+      </div>
+
+      {pick.coach.gameplan && (
+        <div className="mb-2 rounded-lg p-3" style={{ background: "var(--background)", borderLeft: "3px solid var(--accent-2)" }}>
+          <div className="text-[11px] font-bold uppercase tracking-wide" style={{ color: "var(--accent-2)" }}>
+            Game plan
+          </div>
+          <div className="mt-1 text-sm" style={{ color: "var(--foreground)" }}>{pick.coach.gameplan}</div>
+        </div>
+      )}
+
+      <div className="grid gap-2 text-sm sm:grid-cols-2">
+        {pick.coach.winCondition && <Field label="Win condition" value={pick.coach.winCondition} />}
+        {pick.coach.opening && <Field label="First minute" value={pick.coach.opening} />}
+        {pick.coach.defense && <Field label="On defense" value={pick.coach.defense} />}
+        {pick.coach.combos && <Field label="Best combos" value={pick.coach.combos} />}
+        {pick.coach.doubleElixir && <Field label="Double elixir" value={pick.coach.doubleElixir} />}
+        {pick.coach.counters && <Field label="Watch out for" value={pick.coach.counters} />}
+        {pick.coach.playTips && <Field label="Play tips" value={pick.coach.playTips} />}
+      </div>
+
+      {(pick.evolutionSlots.length > 0 || pick.heroSlots.length > 0 || pick.extras.length > 0) && (
+        <div className="mt-2 flex flex-col gap-1 rounded p-2 text-xs" style={{ background: "var(--background)" }}>
+          <div>
+            <span className="font-bold" style={{ color: "#ec4899" }}>Evolution slots (2):</span>{" "}
+            {pick.evolutionSlots.length > 0 ? (
+              <>
+                {pick.evolutionSlots.join(" + ")}
+                {pick.evolutionSlots.length < 2 && (
+                  <span style={{ color: "var(--muted)" }}> ({2 - pick.evolutionSlots.length} open — no other evolved card here)</span>
+                )}
+              </>
+            ) : (
+              <span style={{ color: "var(--muted)" }}>no evolved card in this deck</span>
+            )}
+          </div>
+          <div>
+            <span className="font-bold" style={{ color: "#ca8a04" }}>Hero slot (1):</span>{" "}
+            {pick.heroSlots.length > 0 ? pick.heroSlots[0] : <span style={{ color: "var(--muted)" }}>no hero card in this deck</span>}
+          </div>
+          {pick.extras.length > 0 && (
+            <div style={{ color: "var(--muted)" }}>Also unlocked (no slot free): {pick.extras.join(", ")}</div>
+          )}
+        </div>
+      )}
+      {pick.substitutions.length > 0 && (
+        <p className="mt-2 text-xs" style={{ color: "var(--muted)" }}>
+          Substitutions:{" "}
+          {pick.substitutions
+            .map((s) => `${cardByKey(s.from)?.name ?? s.from} → ${cardByKey(s.to)?.name ?? s.to}`)
+            .join(", ")}
+        </p>
+      )}
     </div>
   );
 }

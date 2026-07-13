@@ -8,6 +8,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { clusterDecks, classify, computeMomentum } from "./meta-cluster.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "data", "meta-decks.json");
@@ -34,23 +35,7 @@ const get = async (p) => {
 const cards = JSON.parse(readFileSync(join(ROOT, "data", "cards.json"), "utf8"));
 const keyById = new Map(cards.map((c) => [c.id, c.key]));
 const elixirByKey = new Map(cards.map((c) => [c.key, c.elixir]));
-
-const WIN_CONDITIONS = [
-  ["x-bow", "Siege"], ["mortar", "Siege"],
-  ["golem", "Beatdown"], ["lava-hound", "Beatdown"], ["electro-giant", "Beatdown"],
-  ["goblin-giant", "Beatdown"], ["elixir-golem", "Beatdown"], ["three-musketeers", "Beatdown"],
-  ["sparky", "Beatdown"],
-  ["graveyard", "Control"], ["goblin-drill", "Control"], ["miner", "Control"], ["wall-breakers", "Control"],
-  ["goblin-barrel", "Bait"], ["mega-knight", "Bait"],
-  ["ram-rider", "Bridge Spam"], ["battle-ram", "Bridge Spam"],
-  ["royal-giant", "Beatdown"], ["giant", "Beatdown"], ["balloon", "Beatdown"],
-  ["hog-rider", "Cycle"], ["royal-hogs", "Cycle"],
-];
-function classify(keys) {
-  const set = new Set(keys);
-  for (const [k, a] of WIN_CONDITIONS) if (set.has(k)) return a;
-  return "Control";
-}
+const typeByKey = new Map(cards.map((c) => [c.key, c.type]));
 
 async function latestSeason() {
   const seasons = (await get("/locations/global/seasons")).items
@@ -122,7 +107,11 @@ for (const p of players) {
 const topByCount = (m, n) =>
   [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, n).map(([key, count]) => ({ key, count }));
 
-const ranked = [...decks.values()]
+// Cluster exact variants into cores BEFORE the usage filter, so an emerging card whose builds
+// are each individually rare still clears MIN_USAGE as an aggregated core (represented by its
+// most popular full variant).
+const clustered = clusterDecks([...decks.values()], { elixirByKey, typeByKey });
+const ranked = clustered
   .filter((d) => d.count >= MIN_USAGE)
   .sort((a, b) => b.count - a.count)
   .slice(0, KEEP_DECKS)
@@ -141,9 +130,21 @@ const ranked = [...decks.values()]
     };
   });
 
+// Rising-card momentum: diff each card's usage share against the previous snapshot (read BEFORE
+// we overwrite it) so a card the ladder is newly piling into surfaces before raw usage alone would.
+let previousDecks = [];
+try {
+  previousDecks = JSON.parse(readFileSync(OUT, "utf8")).decks ?? [];
+} catch {
+  // no prior snapshot (first run) — momentum falls back to 0 for everything.
+}
+const withMomentum = computeMomentum(ranked, previousDecks);
+
 writeFileSync(
   OUT,
-  JSON.stringify({ season, sampledPlayers: ok, minUsage: MIN_USAGE, decks: ranked }, null, 2) + "\n",
+  JSON.stringify({ season, sampledPlayers: ok, minUsage: MIN_USAGE, decks: withMomentum }, null, 2) + "\n",
 );
-console.log(`Wrote ${ranked.length} meta decks (usage >= ${MIN_USAGE}) to ${OUT}`);
-console.log("Top 8:", ranked.slice(0, 8).map((d) => `${d.archetype} x${d.usage}`).join(", "));
+console.log(`Wrote ${withMomentum.length} meta decks (clustered, usage >= ${MIN_USAGE}) to ${OUT}`);
+console.log("Top 8:", withMomentum.slice(0, 8).map((d) => `${d.archetype} x${d.usage}`).join(", "));
+const rising = withMomentum.filter((d) => d.momentum > 0).sort((a, b) => b.momentum - a.momentum).slice(0, 3);
+if (rising.length) console.log("Rising:", rising.map((d) => `${d.archetype} (m=${d.momentum})`).join(", "));

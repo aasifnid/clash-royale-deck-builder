@@ -30,8 +30,13 @@ const MAX_USAGE = Math.max(1, ...META.map((d) => d.usage ?? 0));
 // Curated decks are a fallback only: give them a low baseline so a real meta deck the player can
 // field always beats them, but they still surface for accounts that can't field any meta deck.
 const CURATED_STRENGTH = 0.12;
+// A rising card the ladder is newly piling into gets a strength boost on top of raw usage, so an
+// emerging deck surfaces before its usage count alone would rank it. Capped so momentum nudges,
+// never dominates, the established meta.
+const MOMENTUM_BOOST = 0.5;
 function strengthOf(deck: ProvenDeck): number {
-  return deck.usage != null ? Math.min(1, deck.usage / MAX_USAGE) : CURATED_STRENGTH;
+  const base = deck.usage != null ? Math.min(1, deck.usage / MAX_USAGE) : CURATED_STRENGTH;
+  return Math.min(1, base + MOMENTUM_BOOST * (deck.momentum ?? 0));
 }
 
 // Cards that serve as a win condition in some deck — they should NOT be used to fill ordinary
@@ -199,6 +204,7 @@ function scoreDeck(
   collection: Collection,
   ease: EasePreference,
   threats: Record<string, number>,
+  locked: Set<string> = new Set(),
 ): DeckCandidate {
   const target = targetLevel(collection);
   // Two-pass resolution. Pass 1 places the deck's intended cards (important slots first), so
@@ -212,7 +218,10 @@ function scoreDeck(
   const pending: number[] = [];
   for (const i of order) {
     const slot = deck.slots[i];
-    const isCore = slot.role === "win-condition" || slot.role === "champion";
+    // Core slots stay the deck's own card (the archetype anchor). A locked card (the focal card
+    // of a "build around this card" request) is treated as core too, so the engine keeps it in
+    // place instead of swapping it for a higher-level owned role-mate.
+    const isCore = slot.role === "win-condition" || slot.role === "champion" || locked.has(slot.cardKey);
     // Core slots stay the deck's own card (the archetype anchor). Every other slot is filled with
     // the player's STRONGEST role+cost-appropriate card, so the deck is built around their best
     // cards instead of their downgraded copies of the canonical list.
@@ -228,7 +237,8 @@ function scoreDeck(
   }
   for (const i of pending) {
     const slot = deck.slots[i];
-    const r = slot.role !== "win-condition" && slot.role !== "champion" ? roleFill(slot, collection, used) : null;
+    const fillable = slot.role !== "win-condition" && slot.role !== "champion" && !locked.has(slot.cardKey);
+    const r = fillable ? roleFill(slot, collection, used) : null;
     if (r) {
       used.add(r.chosenKey);
       slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: r.chosenKey, isSubstitute: true, isMissing: false, level: r.level, weak: false };
@@ -412,6 +422,17 @@ export function rankDecks(collection: Collection, opts: RankOptions = {}): DeckC
   return pool
     .map((d) => scoreDeck(d, collection, ease, threats))
     .sort((a, b) => b.scores.total - a.scores.total);
+}
+
+/** Score a single ad-hoc deck (e.g. one the focal-card builder assembled) through the same
+ *  engine the library uses, so it inherits identical resolution, coverage, and coaching. Pass
+ *  `locked` to pin cards the builder must keep in place regardless of the player's levels. */
+export function scoreBuiltDeck(
+  deck: ProvenDeck,
+  collection: Collection,
+  opts: { ease?: EasePreference; threats?: Record<string, number>; locked?: Set<string> } = {},
+): DeckCandidate {
+  return scoreDeck(deck, collection, opts.ease ?? "any", opts.threats ?? {}, opts.locked ?? new Set());
 }
 
 /** Distinct archetypes present in the library, for UI filter controls. */

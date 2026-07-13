@@ -8,33 +8,11 @@ import { NextResponse } from "next/server";
 import type { Collection } from "@/lib/types";
 import { rankDecks, type DeckCandidate, type EasePreference } from "@/lib/fieldability";
 import { coachDecks, CoachError, type CoachPick } from "@/lib/coach";
-import { coachingForDeck } from "@/lib/coaching";
 import { fetchBattleInsights } from "@/lib/battlelog";
-import { cardByKey } from "@/lib/cards";
+import { coachPickFor, enrichCandidate } from "@/lib/present";
 
 const SHORTLIST_SIZE = 6;
 const MAX_PICKS = 3;
-
-function difficultyFor(skillFloor: number): CoachPick["difficulty"] {
-  if (skillFloor <= 2) return "Easy";
-  if (skillFloor >= 4) return "Hard";
-  return "Medium";
-}
-
-/** A one-line, personalized "why this deck for you" using the player's real state. */
-function personalizedSummary(cand: DeckCandidate): string {
-  const wc = cand.slots.find((s) => s.role === "win-condition" && !s.isMissing) ?? cand.slots.find((s) => !s.isMissing);
-  const wcNote = wc ? ` Win condition ${cardByKey(wc.chosenKey!)?.name ?? wc.canonicalKey} is at level ${wc.level}.` : "";
-
-  if (!cand.fieldable) {
-    const missing = cand.missingRoles.map((k) => cardByKey(k)?.name ?? k);
-    return `Closest ${cand.deck.archetype} deck to what you own — you're missing ${missing.join(", ")}.`;
-  }
-  if (cand.substitutions.length > 0) {
-    return `A ${cand.deck.archetype} deck you can field, using ${cand.substitutions.length} substitute(s) for cards you don't own.${wcNote}`;
-  }
-  return `You own all 8 cards for this ${cand.deck.archetype} deck.${wcNote}`;
-}
 
 /** Build coached picks from the deck library — no LLM. Prefers fully-fieldable decks, and
  *  diversifies the picks by win condition so the player never sees the same deck three times. */
@@ -58,71 +36,7 @@ function buildStaticPicks(ranked: DeckCandidate[]): CoachPick[] {
     if (!chosen.includes(cand)) chosen.push(cand);
   }
 
-  return chosen.map((cand) => {
-    const deckCards = cand.slots
-      .filter((s) => s.chosenKey)
-      .map((s) => {
-        const card = cardByKey(s.chosenKey!);
-        return { name: card?.name ?? s.chosenKey!, type: card?.type ?? "Troop", role: s.role, elixir: card?.elixir };
-      });
-    const c = coachingForDeck(cand.deck, deckCards);
-    return {
-      deckId: cand.deck.id,
-      summary: personalizedSummary(cand),
-      gameplan: c.gameplan,
-      opening: c.opening,
-      defense: c.defense,
-      combos: c.combos,
-      doubleElixir: c.doubleElixir,
-      winCondition: cand.deck.winCondition,
-      counters: c.counters,
-      playTips: c.playTips,
-      difficulty: difficultyFor(cand.deck.skillFloor),
-    };
-  });
-}
-
-/** Flatten a candidate into the resolved 8-card list (with levels) for the client,
- *  plus explicit Evolution-slot (2) and Hero/Champion-slot recommendations. */
-function enrichCandidate(cand: DeckCandidate) {
-  // Slot recommendations (2 evolutions + 1 hero) are computed in the engine.
-  const evoKeys = new Set(cand.evolutionSlotKeys);
-  const heroKeys = new Set(cand.heroSlotKeys);
-
-  return {
-    deckId: cand.deck.id,
-    name: cand.deck.name,
-    archetype: cand.deck.archetype,
-    winCondition: cand.deck.winCondition,
-    skillFloor: cand.deck.skillFloor,
-    avgElixir: cand.avgElixir,
-    fieldable: cand.fieldable,
-    competitiveLevel: cand.competitiveLevel,
-    weakCards: cand.weakCards,
-    source: cand.deck.source ?? "curated",
-    usage: cand.deck.usage ?? 0,
-    scores: cand.scores,
-    substitutions: cand.substitutions,
-    missingRoles: cand.missingRoles,
-    powerCards: cand.powerCards,
-    evolutionSlots: cand.evolutionSlots,
-    heroSlots: cand.heroSlots,
-    extras: cand.extras,
-    cards: cand.slots.map((s) => {
-      const need = s.isMissing ? cardByKey(s.canonicalKey) : null;
-      return {
-        role: s.role,
-        key: s.chosenKey ?? need?.key ?? null,
-        name: s.chosenKey ? (cardByKey(s.chosenKey)?.name ?? s.chosenKey) : (need?.name ?? s.canonicalKey),
-        level: s.level,
-        isSubstitute: s.isSubstitute,
-        isMissing: s.isMissing,
-        underLeveled: s.weak,
-        evolved: s.chosenKey ? evoKeys.has(s.chosenKey) : false,
-        hero: s.chosenKey ? heroKeys.has(s.chosenKey) : false,
-      };
-    }),
-  };
+  return chosen.map(coachPickFor);
 }
 
 export async function POST(request: Request) {

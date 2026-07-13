@@ -23,6 +23,12 @@ const WIN_CONDITIONS: [string, Archetype][] = [
   ["wall-breakers", "Control"],
   ["goblin-barrel", "Bait"],
   ["mega-knight", "Bait"],
+  // Ronin (legendary, added Jul 2026) is a dashing bridge-spam win condition. Kept in the
+  // Bridge Spam group and BELOW goblin-barrel/mega-knight on purpose: a deck built around
+  // Ronin classifies as Bridge Spam, but a Log Bait deck that merely splashes Ronin still
+  // classifies by its real win condition. NOTE: keep this list in sync with the copy in
+  // scripts/refresh-meta.mjs.
+  ["ronin", "Bridge Spam"],
   ["ram-rider", "Bridge Spam"],
   ["battle-ram", "Bridge Spam"],
   ["royal-giant", "Beatdown"],
@@ -43,6 +49,13 @@ export function classifyDeck(cardIds: number[]): Archetype | null {
 export function winConditionKeyOf(cardKeys: string[]): string | null {
   const set = new Set(cardKeys);
   for (const [key] of WIN_CONDITIONS) if (set.has(key)) return key;
+  return null;
+}
+
+/** The archetype a single card defines when it is the win condition, or null if the card is
+ *  not a known win condition. Used by the focal-card builder to pick a coherent skeleton. */
+export function archetypeForWinCondition(key: string): Archetype | null {
+  for (const [k, arch] of WIN_CONDITIONS) if (k === key) return arch;
   return null;
 }
 

@@ -12,6 +12,7 @@ interface RawMetaDeck {
   id: string;
   archetype: string;
   usage: number;
+  momentum?: number;
   avgElixir: number;
   cards: string[];
   evolutions?: string[];
@@ -77,6 +78,7 @@ export const META_DECKS: ProvenDeck[] = ((metaData as { decks: RawMetaDeck[] }).
       notes: `Run by ${d.usage} of the sampled top-ladder players this season.`,
       source: "meta",
       usage: d.usage,
+      momentum: d.momentum ?? 0,
       metaEvolutions: d.evolutions ?? [],
       metaTowerTroop: d.towerTroop ?? null,
     } satisfies ProvenDeck;

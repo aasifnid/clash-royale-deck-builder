@@ -1,5 +1,62 @@
 [
   {
+    "id": "ronin-bridge-spam",
+    "name": "Ronin Bridge Spam",
+    "archetype": "Bridge Spam",
+    "winCondition": "Ronin",
+    "skillFloor": 4,
+    "minArena": 12,
+    "notes": "Punish at the bridge. Defend their push, then send Ronin with a second threat the moment their best answer is out of rotation. Never stop applying pressure.",
+    "slots": [
+      { "cardKey": "ronin", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "bandit", "role": "support", "substitutes": ["royal-ghost", "lumberjack"] },
+      { "cardKey": "royal-ghost", "role": "support", "substitutes": ["bandit", "lumberjack"] },
+      { "cardKey": "magic-archer", "role": "support", "substitutes": ["electro-wizard", "archers"] },
+      { "cardKey": "phoenix", "role": "air-defense", "substitutes": ["mega-minion", "minions"] },
+      { "cardKey": "electro-spirit", "role": "cycle", "substitutes": ["ice-spirit", "skeletons"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel", "giant-snowball"] },
+      { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] }
+    ]
+  },
+  {
+    "id": "ronin-pekka",
+    "name": "Ronin PEKKA Bridge Spam",
+    "archetype": "Bridge Spam",
+    "winCondition": "Ronin",
+    "skillFloor": 4,
+    "minArena": 12,
+    "notes": "PEKKA anchors the defense; Ronin and Bandit counter-push the survivors across the bridge. Bait their reset and heavy answers on defense, then punish the empty lane.",
+    "slots": [
+      { "cardKey": "ronin", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "pekka", "role": "mini-tank", "substitutes": ["mega-knight"] },
+      { "cardKey": "bandit", "role": "support", "substitutes": ["royal-ghost", "lumberjack"] },
+      { "cardKey": "electro-wizard", "role": "support", "substitutes": ["zappies", "magic-archer"] },
+      { "cardKey": "magic-archer", "role": "support", "substitutes": ["archers", "electro-wizard"] },
+      { "cardKey": "royal-ghost", "role": "support", "substitutes": ["bandit"] },
+      { "cardKey": "zap", "role": "spell-small", "substitutes": ["the-log", "giant-snowball"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] }
+    ]
+  },
+  {
+    "id": "ronin-midrange",
+    "name": "Ronin Midrange",
+    "archetype": "Bridge Spam",
+    "winCondition": "Ronin",
+    "skillFloor": 3,
+    "minArena": 12,
+    "notes": "A forgiving Ronin deck. Valkyrie and Goblin Cage hold the fort, then Ronin leads a counter-push with your survivors. Less punishing to misplay than the spam variants.",
+    "slots": [
+      { "cardKey": "ronin", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "valkyrie", "role": "mini-tank", "substitutes": ["knight"] },
+      { "cardKey": "musketeer", "role": "support", "substitutes": ["archers", "magic-archer"] },
+      { "cardKey": "phoenix", "role": "air-defense", "substitutes": ["mega-minion", "minions"] },
+      { "cardKey": "goblin-cage", "role": "building", "substitutes": ["cannon", "tombstone"] },
+      { "cardKey": "electro-spirit", "role": "cycle", "substitutes": ["ice-spirit", "skeletons"] },
+      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] }
+    ]
+  },
+  {
     "id": "hog-2.6",
     "name": "Hog 2.6 Cycle",
     "archetype": "Cycle",

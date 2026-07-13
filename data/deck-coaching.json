@@ -1,4 +1,19 @@
 {
+  "ronin-bridge-spam": {
+    "gameplan": "Apply constant pressure at the bridge. Defend their push cheaply, then immediately send Ronin with Bandit or Royal Ghost across the bridge before they can rebuild. Ronin dashes past the first troop, so pair it with a second threat that punishes whatever they drop to stop it.",
+    "counters": "Strong single-target defenders like PEKKA and Mini PEKKA, and buildings that pull Ronin. Big spells that wipe your support hurt your follow-up. Do not over-extend into a heavy beatdown deck that punishes the lane you ignore.",
+    "playTips": "Send Ronin when their best counter is out of rotation, not on cooldown. Always hold a small spell for the swarm they use to block your push."
+  },
+  "ronin-pekka": {
+    "gameplan": "PEKKA is your defensive wall. Let their push crash into it, then turn the survivors into a counter-push with Ronin and Bandit over the bridge. Electro Wizard resets and stuns, Magic Archer chips from range. You win the counter-attack, not the first move.",
+    "counters": "Swarms that overwhelm PEKKA, and air decks if your Magic Archer or Phoenix is down. Spells like Lightning that reset your Electro Wizard and clear support at once. Split-lane pressure while your PEKKA is committed one side.",
+    "playTips": "Never open with PEKKA at the back on a full push. Keep it for defense, then counter-push. Save Zap for their reset or swarm on your Ronin."
+  },
+  "ronin-midrange": {
+    "gameplan": "Defend first, attack second. Valkyrie and Goblin Cage soak and kill their push for cheap, then Ronin leads your surviving troops back across the bridge. This is the forgiving Ronin build, so you can afford to play patient and punish their mistakes.",
+    "counters": "Buildings that pull Ronin away from the tower, and beatdown decks that out-value your midrange trades over time. Watch for big spells on your grouped support.",
+    "playTips": "Let Valkyrie and Phoenix survive the defense so your counter-push starts for almost no elixir. Only send Ronin alone to chip when you are ahead and safe."
+  },
   "hog-2.6": {
     "gameplan": "Defend efficiently with your cheap cards, then send the Hog the moment their main counter (a building or Mini PEKKA) is out of rotation. Your faster cycle lets you send Hog again before they can answer.",
     "counters": "Buildings and swarms slow the Hog. Watch for Tornado pulling it to the middle, and beatdown decks that out-value your cheap cards if you over-defend.",
