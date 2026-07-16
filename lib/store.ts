@@ -23,6 +23,7 @@ export function emptyCollection(): Collection {
     name: null,
     trophies: null,
     arena: null,
+    arenaName: null,
     experienceLevel: null,
     wins: null,
     losses: null,

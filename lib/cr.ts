@@ -4,7 +4,7 @@
 
 import { MAX_LEVEL, type Card, type Collection, type OwnedCard, type OwnedTowerTroop, type Rarity } from "./types";
 import { cardById } from "./cards";
-import { arenaNumberFor } from "./arenas";
+import { arenaNumberFor, arenaNumberByName } from "./arenas";
 
 const PROXY_BASE = "https://proxy.royaleapi.dev/v1";
 
@@ -216,7 +216,10 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
     tag: data.tag,
     name: data.name,
     trophies: data.trophies,
-    arena: arenaNumberFor(data.arena?.id),
+    // Resolve by internal id first, then parse the number from the arena name (handles new
+    // arenas whose id isn't in the bundled table yet, e.g. "Lumberlove Cabin" / "Arena 25").
+    arena: arenaNumberFor(data.arena?.id) ?? arenaNumberByName(data.arena?.name),
+    arenaName: data.arena?.name ?? null,
     experienceLevel: data.expLevel,
     wins: data.wins ?? null,
     losses: data.losses ?? null,

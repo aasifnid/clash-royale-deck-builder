@@ -36,12 +36,12 @@ export default function SyncBar({ collection, onSynced }: Props) {
 
   const synced = collection.syncedAt && collection.name;
 
-  const { wins, losses, battleCount, trophies, arena, experienceLevel } = collection;
+  const { wins, losses, battleCount, trophies, arena, arenaName, experienceLevel } = collection;
   const decided = (wins ?? 0) + (losses ?? 0);
   const winRate = wins != null && decided > 0 ? `${Math.round((wins / decided) * 100)}%` : "—";
   const metrics = [
     { label: "Trophies", value: trophies != null ? `${trophies} 🏆` : "—" },
-    { label: "Arena", value: arena != null ? arena : "—" },
+    { label: "Arena", value: arenaName || (arena != null ? `Arena ${arena}` : "—") },
     { label: "Exp level", value: experienceLevel != null ? experienceLevel : "—" },
     { label: "Win rate", value: winRate },
     { label: "Games", value: battleCount != null ? battleCount.toLocaleString() : "—" },

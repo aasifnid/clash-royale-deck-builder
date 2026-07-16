@@ -51,6 +51,7 @@ export interface Collection {
   name: string | null; // player name if synced
   trophies: number | null;
   arena: number | null; // current arena number
+  arenaName?: string | null; // arena display name from the API (e.g. "Lumberlove Cabin")
   experienceLevel: number | null; // account XP level (the star-badge number); NOT the king tower level
   wins: number | null; // career ladder wins
   losses: number | null; // career ladder losses
