@@ -24,21 +24,49 @@ export function arenaNameFor(id: number | null | undefined): string | null {
   return byId.get(id)?.name ?? null;
 }
 
-/** Lowercase and strip punctuation/spacing so "Little Prince's Tavern" (straight OR curly
- *  apostrophe) matches its table key. */
+/** Lowercase, strip punctuation, and drop a trailing "arena" word so every spelling variant of
+ *  a themed name collapses to one key: straight vs curly apostrophe ("Little Prince's Tavern"),
+ *  dotted acronyms ("P.E.K.K.A's Playhouse"), and optional "Arena" suffix ("Royal Arena" /
+ *  "Royal", "Bone Pit" / "Bone Pit Arena"). */
 function normalizeArenaName(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s*arena$/, "")
+    .trim();
 }
 
-// Themed arenas the API reports by name rather than as "Arena N". The player endpoint returns
-// the themed name (e.g. "Lumberlove Cabin"), and new arenas ship faster than the bundled id
-// table updates, so we map the known themed names to their in-game number here. Kept at/above
-// the top numbered arena so the viability gate treats these players as having everything
-// unlocked. Add new arenas here as they release (numbered current top: Spirit Square = 32).
+// The player API reports the arena by its THEMED name ("Miner's Mind"), not "Arena N", so this
+// table is the authoritative name->number map for the whole trophy road. It also future-proofs
+// against the bundled id table lagging behind a season update (new arenas appear here before
+// their internal id is known). Add new arenas as they release (current top: Spirit Square = 32).
 const NAMED_ARENA_NUMBER: Record<string, number> = Object.fromEntries(
   Object.entries({
-    "Legendary Arena": 23,
-    "Ultimate Champion": 24,
+    "Goblin Stadium": 1,
+    "Bone Pit": 2,
+    "Barbarian Bowl": 3,
+    "Spell Valley": 4,
+    "Builder's Workshop": 5,
+    "P.E.K.K.A's Playhouse": 6,
+    "Royal Arena": 7,
+    "Frozen Peak": 8,
+    "Jungle Arena": 9,
+    "Hog Mountain": 10,
+    "Electro Valley": 11,
+    "Spooky Town": 12,
+    "Rascal's Hideout": 13,
+    "Serenity Peak": 14,
+    "Miner's Mind": 15,
+    "Executioner's Kitchen": 16,
+    "Royal Crypt": 17,
+    "Silent Sanctuary": 18,
+    "Dragon Spa": 19,
+    "Boot Camp": 20,
+    "Clash Fest": 21,
+    "Pancakes": 22,
+    "Wildcalla": 23,
+    "Legendary Arena": 24,
     "Lumberlove Cabin": 25,
     "Royal Road": 26,
     "Musketeer Street": 27,
