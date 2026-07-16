@@ -24,24 +24,39 @@ export function arenaNameFor(id: number | null | undefined): string | null {
   return byId.get(id)?.name ?? null;
 }
 
-// End-game / themed arenas the API reports by name rather than as "Arena N". The player endpoint
-// returns the themed name (e.g. "Lumberlove Cabin"), and new arenas ship faster than the bundled
-// id table updates, so we map the known themed names to their in-game number here. Add new
-// arenas to this table as they release. Kept at/above the top numbered arena so the viability
-// gate treats these players as having everything unlocked.
-const NAMED_ARENA_NUMBER: Record<string, number> = {
-  "legendary arena": 23,
-  "ultimate champion": 24,
-  "lumberlove cabin": 25,
-};
+/** Lowercase and strip punctuation/spacing so "Little Prince's Tavern" (straight OR curly
+ *  apostrophe) matches its table key. */
+function normalizeArenaName(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+// Themed arenas the API reports by name rather than as "Arena N". The player endpoint returns
+// the themed name (e.g. "Lumberlove Cabin"), and new arenas ship faster than the bundled id
+// table updates, so we map the known themed names to their in-game number here. Kept at/above
+// the top numbered arena so the viability gate treats these players as having everything
+// unlocked. Add new arenas here as they release (numbered current top: Spirit Square = 32).
+const NAMED_ARENA_NUMBER: Record<string, number> = Object.fromEntries(
+  Object.entries({
+    "Legendary Arena": 23,
+    "Ultimate Champion": 24,
+    "Lumberlove Cabin": 25,
+    "Royal Road": 26,
+    "Musketeer Street": 27,
+    "Summit of Heroes": 28,
+    "Magic Academy": 29,
+    "Ultimate Clash Pit": 30,
+    "Little Prince's Tavern": 31,
+    "Spirit Square": 32,
+  }).map(([k, v]) => [normalizeArenaName(k), v]),
+);
 
 /** In-game arena number parsed from the arena NAME the player API returns. Numbered arenas come
  *  through as "Arena 15", so the number is read straight from the name — this resolves arenas
  *  whose internal id isn't in our bundled table (e.g. a new arena added in a season update).
- *  Named end-game tiers ("Legendary Arena", "Ultimate Champion") map via a small table. */
+ *  Themed tiers ("Lumberlove Cabin", "Spirit Square", ...) map via the table above. */
 export function arenaNumberByName(name: string | null | undefined): number | null {
   if (!name) return null;
   const m = name.match(/arena\s+(\d+)/i);
   if (m) return Number(m[1]);
-  return NAMED_ARENA_NUMBER[name.trim().toLowerCase()] ?? null;
+  return NAMED_ARENA_NUMBER[normalizeArenaName(name)] ?? null;
 }
