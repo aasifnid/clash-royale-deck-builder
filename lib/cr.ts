@@ -95,13 +95,11 @@ export function displayedLevel(apiLevel: number, apiMaxLevel: number): number {
 
 // King Tower full hit points by level (fixed per level in standard 1v1). The player API has no
 // King Tower level field, but the battle log reports the King Tower's HP, so we map it back.
-// Levels 1-15 are observed/published values. Level 16 (added in the Nov 2025 update) isn't
-// published anywhere yet, so 7704 is EXTRAPOLATED from the per-level increment pattern (the deltas
-// grow by +48 each level: ...+576, +624, +672). Included so a level-16 tower resolves instead of
-// undercounting to 15; replace with the observed value once seen on a real level-16 account.
+// Levels 1-15 are the published values; level 16 (7728) is OBSERVED from real level-16 accounts
+// via the API (the pre-release +48-delta extrapolation guessed 7704, which was 24 low).
 const KING_TOWER_HP: Record<number, number> = {
   1: 2400, 2: 2568, 3: 2736, 4: 2904, 5: 3096, 6: 3312, 7: 3528, 8: 3768,
-  9: 4008, 10: 4392, 11: 4824, 12: 5304, 13: 5832, 14: 6408, 15: 7032, 16: 7704,
+  9: 4008, 10: 4392, 11: 4824, 12: 5304, 13: 5832, 14: 6408, 15: 7032, 16: 7728,
 };
 
 /** King level from the observed full King Tower HP: the level whose known HP is NEAREST to the
@@ -216,16 +214,26 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
     towerTroops[t.id] = { id: t.id, level: displayedLevel(t.level, t.maxLevel) };
   }
 
-  // King Tower level = the default Tower Princess tower-troop level (they upgrade together). This
-  // is a direct API value present on every account and correct even in Path of Legends, where the
-  // battle-log King Tower HP reads 0. Fall back to the battle-log HP, then the player's max card
-  // level, only if the Tower Princess is somehow absent from the response.
+  // King Tower level. Two independent signals, each of which is at MOST the true level, so the
+  // max of them is the best estimate and never overshoots:
+  //  - Tower Princess troop level: a reliable FLOOR. It upgrades in lockstep with the King Tower,
+  //    but can LAG it — the King Tower levels up first and the player then spends gold to bring
+  //    the Princess up, which a "lazy" player may not do right away.
+  //  - Battle-log King Tower HP: the EXACT level, but only present in non-Path-of-Legends battles
+  //    (PoL reports it as 0), and only when the tower survived a battle at full HP.
+  // Taking the max corrects both failure modes: a lagging Princess is lifted by any real battle
+  // HP, and a PoL-only log (no usable HP) still yields the Princess floor. Fall back to the max
+  // card level only if neither signal is available.
   const princess = (data.supportCards ?? []).find((s) => s.id === TOWER_PRINCESS_ID);
+  const princessLevel = princess ? displayedLevel(princess.level, princess.maxLevel) : null;
+  const hpLevel = await kingLevelFromBattleLog(tag, token);
   const cardLevels = Object.values(owned).map((o) => o.level);
-  const kingLevel =
-    (princess ? displayedLevel(princess.level, princess.maxLevel) : null) ??
-    (await kingLevelFromBattleLog(tag, token)) ??
-    (cardLevels.length ? Math.min(MAX_LEVEL, Math.max(...cardLevels)) : 11);
+  const signals = [princessLevel, hpLevel].filter((n): n is number => n != null);
+  const kingLevel = signals.length
+    ? Math.min(MAX_LEVEL, Math.max(...signals))
+    : cardLevels.length
+      ? Math.min(MAX_LEVEL, Math.max(...cardLevels))
+      : 11;
 
   return {
     tag: data.tag,
