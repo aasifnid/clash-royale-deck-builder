@@ -98,15 +98,20 @@ const KING_TOWER_HP: Record<number, number> = {
   9: 4008, 10: 4392, 11: 4824, 12: 5304, 13: 5832, 14: 6408, 15: 7032, 16: 7704,
 };
 
-/** King level from the observed full King Tower HP: exact match if possible, else the highest
- *  level whose HP doesn't exceed it. Null if there's nothing usable. */
+/** King level from the observed full King Tower HP: the level whose known HP is NEAREST to the
+ *  observed value. Nearest-match (not "highest not exceeding") so a level-16 tower still resolves
+ *  to 16 even if the observed HP is slightly below our extrapolated 7704 — the alternative would
+ *  quietly undercount it to 15. Null if there's nothing usable. */
 function kingLevelFromHp(maxHp: number): number | null {
   if (!maxHp || maxHp <= 0) return null;
   let best: number | null = null;
-  for (const lvl of Object.keys(KING_TOWER_HP).map(Number)) {
-    const hp = KING_TOWER_HP[lvl];
-    if (hp === maxHp) return lvl;
-    if (hp <= maxHp) best = lvl;
+  let bestDiff = Infinity;
+  for (const [lvl, hp] of Object.entries(KING_TOWER_HP)) {
+    const diff = Math.abs(hp - maxHp);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      best = Number(lvl);
+    }
   }
   return best;
 }

@@ -72,7 +72,7 @@ export default function CollectionDashboard({ collection, onCardChange }: Props)
               className="cursor-not-allowed rounded px-3 py-1.5 font-semibold"
               style={{ background: "var(--background)", border: "1px solid var(--border)", color: "var(--foreground)", opacity: 0.7 }}
             >
-              {collection.arenaName || (collection.arena != null ? `Arena ${collection.arena}` : "—")}
+              {collection.arena != null ? `Arena ${collection.arena}` : (collection.arenaName || "—")}
             </span>
           </div>
         </div>
