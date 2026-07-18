@@ -1,59 +1,59 @@
 [
   {
-    "id": "ronin-bridge-spam",
-    "name": "Ronin Bridge Spam",
+    "id": "ronin-wallbreakers-cycle",
+    "name": "Ronin Wall Breakers Cycle",
     "archetype": "Bridge Spam",
     "winCondition": "Ronin",
     "skillFloor": 4,
     "minArena": 12,
-    "notes": "Punish at the bridge. Defend their push, then send Ronin with a second threat the moment their best answer is out of rotation. Never stop applying pressure.",
+    "notes": "The current top-ladder Ronin build: a cheap double-threat cycle. Trade Ronin and Wall Breakers at the bridge whenever their answer is out of rotation, defend for cheap with Tesla, and out-cycle them back to the next threat.",
     "slots": [
       { "cardKey": "ronin", "role": "win-condition", "substitutes": [] },
-      { "cardKey": "bandit", "role": "support", "substitutes": ["royal-ghost", "lumberjack"] },
-      { "cardKey": "royal-ghost", "role": "support", "substitutes": ["bandit", "lumberjack"] },
-      { "cardKey": "magic-archer", "role": "support", "substitutes": ["electro-wizard", "archers"] },
-      { "cardKey": "phoenix", "role": "air-defense", "substitutes": ["mega-minion", "minions"] },
-      { "cardKey": "electro-spirit", "role": "cycle", "substitutes": ["ice-spirit", "skeletons"] },
-      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel", "giant-snowball"] },
+      { "cardKey": "wall-breakers", "role": "win-condition", "substitutes": ["battle-ram"] },
+      { "cardKey": "dart-goblin", "role": "support", "substitutes": ["magic-archer", "spear-goblins"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "electro-spirit", "role": "cycle", "substitutes": ["fire-spirit", "ice-spirit"] },
+      { "cardKey": "tesla", "role": "building", "substitutes": ["cannon"] },
+      { "cardKey": "giant-snowball", "role": "spell-small", "substitutes": ["barbarian-barrel", "the-log"] },
+      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] }
+    ]
+  },
+  {
+    "id": "ronin-goblin-barrel-bait",
+    "name": "Ronin Goblin Barrel Bait",
+    "archetype": "Bait",
+    "winCondition": "Ronin",
+    "skillFloor": 3,
+    "minArena": 12,
+    "notes": "Ronin plus a Goblin Barrel bait. Force out their small spell with your cheap cards, then Barrel and Ronin both run free. Tesla and Dart Goblin hold the defense while you cycle.",
+    "slots": [
+      { "cardKey": "ronin", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "goblin-barrel", "role": "win-condition", "substitutes": [] },
+      { "cardKey": "dart-goblin", "role": "support", "substitutes": ["spear-goblins", "magic-archer"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "electro-spirit", "role": "cycle", "substitutes": ["fire-spirit"] },
+      { "cardKey": "tesla", "role": "building", "substitutes": ["cannon"] },
+      { "cardKey": "barbarian-barrel", "role": "spell-small", "substitutes": ["giant-snowball", "the-log"] },
       { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] }
     ]
   },
   {
-    "id": "ronin-pekka",
-    "name": "Ronin PEKKA Bridge Spam",
+    "id": "ronin-battle-ram",
+    "name": "Ronin Battle Ram Bridge Spam",
     "archetype": "Bridge Spam",
     "winCondition": "Ronin",
     "skillFloor": 4,
     "minArena": 12,
-    "notes": "PEKKA anchors the defense; Ronin and Bandit counter-push the survivors across the bridge. Bait their reset and heavy answers on defense, then punish the empty lane.",
+    "notes": "A heavier double bridge-spam. Ronin and Battle Ram split the opponent's defense; Mother Witch turns their counter-troops into hogs for you. Poison finishes the chip and clears swarms.",
     "slots": [
       { "cardKey": "ronin", "role": "win-condition", "substitutes": [] },
-      { "cardKey": "pekka", "role": "mini-tank", "substitutes": ["mega-knight"] },
-      { "cardKey": "bandit", "role": "support", "substitutes": ["royal-ghost", "lumberjack"] },
-      { "cardKey": "electro-wizard", "role": "support", "substitutes": ["zappies", "magic-archer"] },
-      { "cardKey": "magic-archer", "role": "support", "substitutes": ["archers", "electro-wizard"] },
-      { "cardKey": "royal-ghost", "role": "support", "substitutes": ["bandit"] },
-      { "cardKey": "zap", "role": "spell-small", "substitutes": ["the-log", "giant-snowball"] },
-      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] }
-    ]
-  },
-  {
-    "id": "ronin-midrange",
-    "name": "Ronin Midrange",
-    "archetype": "Bridge Spam",
-    "winCondition": "Ronin",
-    "skillFloor": 3,
-    "minArena": 12,
-    "notes": "A forgiving Ronin deck. Valkyrie and Goblin Cage hold the fort, then Ronin leads a counter-push with your survivors. Less punishing to misplay than the spam variants.",
-    "slots": [
-      { "cardKey": "ronin", "role": "win-condition", "substitutes": [] },
-      { "cardKey": "valkyrie", "role": "mini-tank", "substitutes": ["knight"] },
-      { "cardKey": "musketeer", "role": "support", "substitutes": ["archers", "magic-archer"] },
-      { "cardKey": "phoenix", "role": "air-defense", "substitutes": ["mega-minion", "minions"] },
-      { "cardKey": "goblin-cage", "role": "building", "substitutes": ["cannon", "tombstone"] },
-      { "cardKey": "electro-spirit", "role": "cycle", "substitutes": ["ice-spirit", "skeletons"] },
-      { "cardKey": "the-log", "role": "spell-small", "substitutes": ["barbarian-barrel"] },
-      { "cardKey": "fireball", "role": "spell-big", "substitutes": ["poison"] }
+      { "cardKey": "battle-ram", "role": "win-condition", "substitutes": ["bandit"] },
+      { "cardKey": "mother-witch", "role": "support", "substitutes": ["magic-archer"] },
+      { "cardKey": "fire-spirit", "role": "cycle", "substitutes": ["electro-spirit", "ice-spirit"] },
+      { "cardKey": "skeletons", "role": "cycle", "substitutes": ["ice-spirit"] },
+      { "cardKey": "arrows", "role": "spell-small", "substitutes": ["giant-snowball", "the-log"] },
+      { "cardKey": "tesla", "role": "building", "substitutes": ["cannon"] },
+      { "cardKey": "poison", "role": "spell-big", "substitutes": ["fireball"] }
     ]
   },
   {

@@ -58,21 +58,47 @@ export function coreSignature(keys, { elixirByKey, typeByKey }) {
   return [wc ?? "nowc", ...signature].join("|");
 }
 
+/** Aggregate variants keyed by a signature function into { keys(best), count, evo, tower }. */
+function aggregateBy(variants, keyOf) {
+  const groups = new Map();
+  for (const v of variants) {
+    const sig = keyOf(v.keys);
+    if (sig == null) continue;
+    const g = groups.get(sig) ?? { count: 0, best: null, evo: new Map(), tower: new Map() };
+    g.count += v.count;
+    if (!g.best || v.count > g.best.count) g.best = { keys: v.keys, count: v.count };
+    for (const [k, n] of v.evo ?? []) g.evo.set(k, (g.evo.get(k) ?? 0) + n);
+    for (const [k, n] of v.tower ?? []) g.tower.set(k, (g.tower.get(k) ?? 0) + n);
+    groups.set(sig, g);
+  }
+  return [...groups.values()].map((g) => ({ keys: g.best.keys, count: g.count, evo: g.evo, tower: g.tower }));
+}
+
 /** Cluster exact 8-card variants into cores. Input: [{ keys, count, evo:Map, tower:Map }].
  *  Output: one entry per core, represented by its most popular full variant, with summed usage
- *  and merged evolution / tower-troop tallies. */
-export function clusterDecks(variants, ctx) {
-  const clusters = new Map();
-  for (const v of variants) {
-    const core = coreSignature(v.keys, ctx);
-    const c = clusters.get(core) ?? { count: 0, best: null, evo: new Map(), tower: new Map() };
-    c.count += v.count;
-    if (!c.best || v.count > c.best.count) c.best = { keys: v.keys, count: v.count };
-    for (const [k, n] of v.evo ?? []) c.evo.set(k, (c.evo.get(k) ?? 0) + n);
-    for (const [k, n] of v.tower ?? []) c.tower.set(k, (c.tower.get(k) ?? 0) + n);
-    clusters.set(core, c);
-  }
-  return [...clusters.values()].map((c) => ({ keys: c.best.keys, count: c.count, evo: c.evo, tower: c.tower }));
+ *  and merged evolution / tower-troop tallies.
+ *
+ *  Two-tier when `minUsage` is given. An EMERGING win condition (e.g. a just-released card the
+ *  ladder is experimenting with) fragments across so many builds that no fine CORE clears the
+ *  usage bar, so it would silently show nothing. So after fine clustering, any win condition with
+ *  no qualifying core but whose builds COLLECTIVELY clear the bar gets one coarse win-condition
+ *  level cluster, represented by its single most popular build. Win conditions already carried by
+ *  a qualifying core are untouched, so this only rescues the fragmented newcomers. */
+export function clusterDecks(variants, ctx, minUsage = 0) {
+  const fine = aggregateBy(variants, (keys) => coreSignature(keys, ctx));
+  if (!minUsage) return fine;
+
+  const survivors = fine.filter((c) => c.count >= minUsage);
+  const representedWc = new Set(survivors.map((c) => winConditionKey(c.keys)).filter(Boolean));
+
+  // Coarse pass: aggregate by win condition, but only for win conditions not already represented.
+  const emergingVariants = variants.filter((v) => {
+    const wc = winConditionKey(v.keys);
+    return wc && !representedWc.has(wc);
+  });
+  const coarse = aggregateBy(emergingVariants, (keys) => winConditionKey(keys)).filter((c) => c.count >= minUsage);
+
+  return [...survivors, ...coarse];
 }
 
 /** Usage-weighted share of ladder decks each card appears in. Input: [{ cards, usage }]. */

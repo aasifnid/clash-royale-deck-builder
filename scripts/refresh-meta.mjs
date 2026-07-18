@@ -110,7 +110,7 @@ const topByCount = (m, n) =>
 // Cluster exact variants into cores BEFORE the usage filter, so an emerging card whose builds
 // are each individually rare still clears MIN_USAGE as an aggregated core (represented by its
 // most popular full variant).
-const clustered = clusterDecks([...decks.values()], { elixirByKey, typeByKey });
+const clustered = clusterDecks([...decks.values()], { elixirByKey, typeByKey }, MIN_USAGE);
 const ranked = clustered
   .filter((d) => d.count >= MIN_USAGE)
   .sort((a, b) => b.count - a.count)

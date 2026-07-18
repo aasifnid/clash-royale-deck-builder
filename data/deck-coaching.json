@@ -1,18 +1,18 @@
 {
-  "ronin-bridge-spam": {
-    "gameplan": "Apply constant pressure at the bridge. Defend their push cheaply, then immediately send Ronin with Bandit or Royal Ghost across the bridge before they can rebuild. Ronin dashes past the first troop, so pair it with a second threat that punishes whatever they drop to stop it.",
-    "counters": "Strong single-target defenders like PEKKA and Mini PEKKA, and buildings that pull Ronin. Big spells that wipe your support hurt your follow-up. Do not over-extend into a heavy beatdown deck that punishes the lane you ignore.",
-    "playTips": "Send Ronin when their best counter is out of rotation, not on cooldown. Always hold a small spell for the swarm they use to block your push."
+  "ronin-wallbreakers-cycle": {
+    "gameplan": "You carry two cheap bridge threats. Send Ronin or Wall Breakers the moment their best answer to that card is out of rotation, and cycle back fast with Skeletons and Electro Spirit. Defend for cheap with Tesla and turn every defense into a counter-push. The chip from two threats adds up faster than they can answer both.",
+    "counters": "Buildings that pull Ronin, and swarms plus splash (Valkyrie, Bomber) that shut down Wall Breakers. Beatdown decks out-value you if you overspend on defense, so trade cheaply and keep the pressure on.",
+    "playTips": "Never send both threats into a full defense. Bait an answer with one, then send the other. Hold Giant Snowball for the swarm that blocks Wall Breakers."
   },
-  "ronin-pekka": {
-    "gameplan": "PEKKA is your defensive wall. Let their push crash into it, then turn the survivors into a counter-push with Ronin and Bandit over the bridge. Electro Wizard resets and stuns, Magic Archer chips from range. You win the counter-attack, not the first move.",
-    "counters": "Swarms that overwhelm PEKKA, and air decks if your Magic Archer or Phoenix is down. Spells like Lightning that reset your Electro Wizard and clear support at once. Split-lane pressure while your PEKKA is committed one side.",
-    "playTips": "Never open with PEKKA at the back on a full push. Keep it for defense, then counter-push. Save Zap for their reset or swarm on your Ronin."
+  "ronin-goblin-barrel-bait": {
+    "gameplan": "Bait out their small spell with Goblin Barrel, Skeletons, and Dart Goblin, then punish the gap. Once their Log or Zap is gone, Goblin Barrel and Ronin both run free for big value. Tesla and cheap cards keep you defending for less than they spend.",
+    "counters": "Decks carrying two small spells, or splash (Valkyrie, Wizard) that clears your Barrel and swarm at once. Track their spell at all times so your Barrel is never wasted.",
+    "playTips": "Do not throw Goblin Barrel until you have seen their small spell used. Ronin is the free punish while they hold their spell for the Barrel."
   },
-  "ronin-midrange": {
-    "gameplan": "Defend first, attack second. Valkyrie and Goblin Cage soak and kill their push for cheap, then Ronin leads your surviving troops back across the bridge. This is the forgiving Ronin build, so you can afford to play patient and punish their mistakes.",
-    "counters": "Buildings that pull Ronin away from the tower, and beatdown decks that out-value your midrange trades over time. Watch for big spells on your grouped support.",
-    "playTips": "Let Valkyrie and Phoenix survive the defense so your counter-push starts for almost no elixir. Only send Ronin alone to chip when you are ahead and safe."
+  "ronin-battle-ram": {
+    "gameplan": "Split their defense with two bridge threats. Send Ronin one lane and Battle Ram the other so they cannot answer both. Mother Witch turns their defending troops into hogs that push for you, and Poison finishes the chip while clearing the swarm they use to block you.",
+    "counters": "Strong single-target defense (Mini PEKKA, Inferno) and buildings that pull your threats. Big spells that wipe Mother Witch and your support at once. Do not over-commit into a heavy beatdown you have to race.",
+    "playTips": "Alternate lanes to keep their defense guessing. Save Poison for the moment their counter-push and swarm are grouped with the tower."
   },
   "hog-2.6": {
     "gameplan": "Defend efficiently with your cheap cards, then send the Hog the moment their main counter (a building or Mini PEKKA) is out of rotation. Your faster cycle lets you send Hog again before they can answer.",

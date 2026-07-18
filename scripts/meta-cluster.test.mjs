@@ -47,6 +47,30 @@ check("Hog and Golem remain distinct cores",
   clusters.some((c) => c.keys.includes("hog-rider")) && clusters.some((c) => c.keys.includes("golem")));
 check("Hog/Golem did not merge with Ronin", clusters.length === 3, `${clusters.length} clusters`);
 
+// 2b) COARSE FALLBACK — an emerging win condition fragmented across builds that DON'T share
+//     anchors (so every fine core stays below MIN_USAGE) still surfaces as one coarse cluster.
+const fragmentedRonin = [
+  V(["ronin", "pekka", "electro-wizard", "skeletons", "the-log", "zap", "tesla", "bats"], 1),
+  V(["ronin", "mega-minion", "magic-archer", "ice-spirit", "fireball", "barbarian-barrel", "cannon", "skeletons"], 1),
+  V(["ronin", "valkyrie", "musketeer", "phoenix", "goblin-cage", "electro-spirit", "the-log", "poison"], 1),
+  V(["ronin", "bandit", "royal-ghost", "dart-goblin", "arrows", "giant-snowball", "tesla", "fire-spirit"], 1),
+  V(["ronin", "hunter", "fisherman", "skeleton-dragons", "fireball", "electro-spirit", "barbarian-barrel", "zap"], 1),
+];
+const twoTier = clusterDecks([...fragmentedRonin, hog, golem], ctx, 4);
+const roninFallback = twoTier.filter((c) => c.keys.includes("ronin"));
+check("Fragmented emerging Ronin surfaces via coarse fallback", roninFallback.length === 1, `${roninFallback.length}`);
+check("Coarse Ronin aggregates all fragmented usage (5)", roninFallback[0]?.count === 5, `usage=${roninFallback[0]?.count}`);
+check("Coarse Ronin represented by a real 8-card build", roninFallback[0]?.keys.length === 8 && roninFallback[0].keys.includes("ronin"));
+check("Established Hog fine core still present under two-tier", twoTier.some((c) => c.keys.includes("hog-rider") && c.count === 20));
+
+// 2c) A win condition already carried by a QUALIFYING fine core is not also coarse-aggregated.
+const dominant = [
+  V(["ronin", "pekka", "magic-archer", "bandit", "royal-ghost", "electro-spirit", "the-log", "poison"], 6),
+  V(["ronin", "valkyrie", "musketeer", "phoenix", "goblin-cage", "electro-spirit", "the-log", "poison"], 1),
+];
+const roninMixed = clusterDecks(dominant, ctx, 4).filter((c) => c.keys.includes("ronin"));
+check("Represented win condition not double-listed by coarse pass", roninMixed.length === 1, `${roninMixed.length} clusters`);
+
 // 3) Momentum: with a previous snapshot that had NO Ronin, the Ronin core should be the top riser.
 const previousDecks = [
   { cards: hog.keys, usage: 22 },
