@@ -14,6 +14,12 @@ const PROXY_BASE = "https://proxy.royaleapi.dev/v1";
 // apiLevel 15 / apiMaxLevel 16, and a level-15 champion has apiLevel 5 / apiMaxLevel 6.
 const API_BASE_MAX_LEVEL = 16;
 
+// The default "Tower Princess" tower troop. It exists on every account and upgrades in lockstep
+// with the King Tower, so its level IS the King Tower level (Tower Power). This is the reliable,
+// always-present source — unlike the battle-log King Tower HP, which the API reports as 0 in
+// Path of Legends battles (where top players spend most of their time).
+const TOWER_PRINCESS_ID = 159000000;
+
 /** Normalize a user-entered tag: strip '#', uppercase, fix the common O->0 typo. */
 export function normalizeTag(input: string): string {
   return input
@@ -210,12 +216,16 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
     towerTroops[t.id] = { id: t.id, level: displayedLevel(t.level, t.maxLevel) };
   }
 
-  // The player API has no King Tower level field, so read it from the battle log's tower HP.
-  // Fall back to the highest card level only if the battle log can't be read.
+  // King Tower level = the default Tower Princess tower-troop level (they upgrade together). This
+  // is a direct API value present on every account and correct even in Path of Legends, where the
+  // battle-log King Tower HP reads 0. Fall back to the battle-log HP, then the player's max card
+  // level, only if the Tower Princess is somehow absent from the response.
+  const princess = (data.supportCards ?? []).find((s) => s.id === TOWER_PRINCESS_ID);
   const cardLevels = Object.values(owned).map((o) => o.level);
-  const kingFromLog = await kingLevelFromBattleLog(tag, token);
   const kingLevel =
-    kingFromLog ?? (cardLevels.length ? Math.min(MAX_LEVEL, Math.max(...cardLevels)) : 11);
+    (princess ? displayedLevel(princess.level, princess.maxLevel) : null) ??
+    (await kingLevelFromBattleLog(tag, token)) ??
+    (cardLevels.length ? Math.min(MAX_LEVEL, Math.max(...cardLevels)) : 11);
 
   return {
     tag: data.tag,

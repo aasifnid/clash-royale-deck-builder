@@ -41,7 +41,7 @@ export default function SyncBar({ collection, onSynced }: Props) {
   const winRate = wins != null && decided > 0 ? `${Math.round((wins / decided) * 100)}%` : "—";
   const metrics = [
     { label: "Trophies", value: trophies != null ? `${trophies} 🏆` : "—" },
-    { label: "Arena", value: arena != null ? `Arena ${arena}` : (arenaName || "—") },
+    { label: "Arena", value: arena != null ? arena : (arenaName || "—") },
     { label: "Exp level", value: experienceLevel != null ? experienceLevel : "—" },
     { label: "Win rate", value: winRate },
     { label: "Games", value: battleCount != null ? battleCount.toLocaleString() : "—" },
