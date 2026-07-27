@@ -6,7 +6,8 @@
 
 import { NextResponse } from "next/server";
 import type { Collection } from "@/lib/types";
-import { rankDecks, type DeckCandidate, type EasePreference } from "@/lib/fieldability";
+import { type DeckCandidate, type EasePreference } from "@/lib/fieldability";
+import { rankWithBestCardDecks } from "@/lib/build";
 import { coachDecks, CoachError, type CoachPick } from "@/lib/coach";
 import { fetchBattleInsights } from "@/lib/battlelog";
 import { coachPickFor, enrichCandidate } from "@/lib/present";
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
   // Read the player's recent ladder battles to learn the local meta + what beats them.
   const insights = collection.tag ? await fetchBattleInsights(collection.tag) : null;
 
-  const ranked = rankDecks(collection, { archetype, ease, threats: insights?.threats });
+  const ranked = rankWithBestCardDecks(collection, { archetype, ease, threats: insights?.threats });
   const shortlist = ranked.slice(0, SHORTLIST_SIZE);
 
   if (shortlist.length === 0) {

@@ -10,7 +10,8 @@
 // is built onto a win condition the player owns.
 // Server-side only.
 
-import { DECKS, scoreBuiltDeck, type DeckCandidate, type EasePreference } from "./fieldability";
+import { DECKS, rankDecks, scoreBuiltDeck, type DeckCandidate, type EasePreference } from "./fieldability";
+import { META_DECKS } from "./meta-decks";
 import { cardByKey, cardById } from "./cards";
 import { winConditionKeyOf, archetypeForWinCondition } from "./archetypes";
 import type { Collection, ProvenDeck } from "./types";
@@ -143,4 +144,70 @@ export function buildAroundCard(collection: Collection, focalKey: string, opts: 
   };
 
   return scoreBuiltDeck(built, collection, { ease: opts.ease, threats: opts.threats, locked: new Set([focalKey]) });
+}
+
+// The 8-card signature of a deck, order-independent, for de-duping builds against the library.
+const deckSig = (d: ProvenDeck) => d.slots.map((s) => s.cardKey).sort().join(",");
+
+// Every card the CURRENT top-ladder meta actually runs, derived fresh from data/meta-decks.json
+// on each load. This is the gate for "is there meta for this card?" — nothing card-specific is
+// hard-coded; it moves entirely with whatever the latest meta refresh pulled.
+const META_CARD_KEYS = new Set<string>(META_DECKS.flatMap((d) => d.slots.map((s) => s.cardKey)));
+
+/** The player's owned deck-defining cards (win conditions + champions) that the CURRENT meta
+ *  still runs, ordered by the card they've levelled HIGHEST first. Selection is fully dynamic:
+ *  it starts at the player's highest such card and steps down — a high card the meta doesn't run
+ *  (e.g. an off-meta champion) is skipped in favour of the next-highest that IS in the meta. So
+ *  recommendations are always both "your best card" and "a real current-meta deck". Evolution /
+ *  hero only break ties between equal card levels. */
+export function metaBackedAnchors(collection: Collection, limit = 6): string[] {
+  const anchors: { key: string; level: number; evolved: boolean; hero: boolean }[] = [];
+  for (const [idStr, o] of Object.entries(collection.owned)) {
+    const card = cardById(Number(idStr));
+    if (!card) continue;
+    const definesADeck = card.rarity === "Champion" || archetypeForWinCondition(card.key) !== null;
+    if (!definesADeck) continue; // a deck is built around a win condition/champion, not a support
+    if (!META_CARD_KEYS.has(card.key)) continue; // no current meta for this card → try the next one
+    anchors.push({ key: card.key, level: o.level, evolved: o.evolved, hero: o.hero });
+  }
+  anchors.sort(
+    (a, b) => b.level - a.level || Number(b.evolved) - Number(a.evolved) || Number(b.hero) - Number(a.hero),
+  );
+  return anchors.slice(0, limit).map((a) => a.key);
+}
+
+interface RankOptions {
+  archetype?: string;
+  ease?: EasePreference;
+  threats?: Record<string, number>;
+}
+
+/** Rank the deck library for this collection AND guarantee the player's best cards are on the
+ *  board — but only the ones the CURRENT meta actually backs. It walks the player's highest owned
+ *  win conditions/champions downward, builds a real meta deck around each (adapted to their
+ *  collection), skips any the meta doesn't run, drops duplicates of a library deck, and ranks
+ *  everything through the same engine. Nothing is hard-coded: change the player tag or refresh the
+ *  meta and the anchors change with it. */
+export function rankWithBestCardDecks(collection: Collection, opts: RankOptions = {}): DeckCandidate[] {
+  const ranked = rankDecks(collection, opts);
+  const seen = new Set(ranked.map((c) => deckSig(c.deck)));
+  const arch = opts.archetype && opts.archetype !== "auto" ? opts.archetype : null;
+
+  const builds: DeckCandidate[] = [];
+  for (const key of metaBackedAnchors(collection)) {
+    let cand: DeckCandidate | null = null;
+    try {
+      cand = buildAroundCard(collection, key, { ease: opts.ease, threats: opts.threats });
+    } catch {
+      cand = null;
+    }
+    if (!cand) continue;
+    const s = deckSig(cand.deck);
+    if (seen.has(s)) continue; // the library already covers this exact 8
+    if (arch && cand.deck.archetype !== arch) continue; // respect an archetype filter
+    seen.add(s);
+    builds.push(cand);
+  }
+
+  return [...ranked, ...builds].sort((a, b) => b.scores.total - a.scores.total);
 }
