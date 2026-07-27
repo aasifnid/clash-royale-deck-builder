@@ -7,7 +7,7 @@
 import { NextResponse } from "next/server";
 import type { Collection } from "@/lib/types";
 import { type DeckCandidate, type EasePreference } from "@/lib/fieldability";
-import { rankWithBestCardDecks } from "@/lib/build";
+import { rankWithBestCardDecks, bestCardPlan } from "@/lib/build";
 import { coachDecks, CoachError, type CoachPick } from "@/lib/coach";
 import { fetchBattleInsights } from "@/lib/battlelog";
 import { coachPickFor, enrichCandidate } from "@/lib/present";
@@ -92,6 +92,10 @@ export async function POST(request: Request) {
   return NextResponse.json({
     aiUsed,
     insights,
+    // Which of the player's highest cards the recs were built around, and which higher cards were
+    // skipped for being off-meta this month — so the UI can explain the cascade instead of the
+    // player thinking their best cards were ignored.
+    bestCards: bestCardPlan(collection),
     picks: enrichedPicks,
     shortlist: shortlist.map(enrichCandidate),
     // Debug-only: full ranked list with sub-scores, for the weight-sensitivity audit.

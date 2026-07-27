@@ -154,26 +154,64 @@ const deckSig = (d: ProvenDeck) => d.slots.map((s) => s.cardKey).sort().join(","
 // hard-coded; it moves entirely with whatever the latest meta refresh pulled.
 const META_CARD_KEYS = new Set<string>(META_DECKS.flatMap((d) => d.slots.map((s) => s.cardKey)));
 
-/** The player's owned deck-defining cards (win conditions + champions) that the CURRENT meta
- *  still runs, ordered by the card they've levelled HIGHEST first. Selection is fully dynamic:
- *  it starts at the player's highest such card and steps down — a high card the meta doesn't run
- *  (e.g. an off-meta champion) is skipped in favour of the next-highest that IS in the meta. So
- *  recommendations are always both "your best card" and "a real current-meta deck". Evolution /
- *  hero only break ties between equal card levels. */
-export function metaBackedAnchors(collection: Collection, limit = 6): string[] {
-  const anchors: { key: string; level: number; evolved: boolean; hero: boolean }[] = [];
+interface DefinerCard {
+  key: string;
+  name: string;
+  level: number;
+  evolved: boolean;
+  hero: boolean;
+  meta: boolean; // does the CURRENT top-ladder meta run this card?
+}
+
+/** The player's owned deck-defining cards (win conditions + champions), highest-levelled first.
+ *  Evolution / hero only break ties between equal card levels. This is the raw cascade both the
+ *  anchor picker and the "why we skipped your top card" explainer read from. */
+function definerCards(collection: Collection): DefinerCard[] {
+  const out: DefinerCard[] = [];
   for (const [idStr, o] of Object.entries(collection.owned)) {
     const card = cardById(Number(idStr));
     if (!card) continue;
     const definesADeck = card.rarity === "Champion" || archetypeForWinCondition(card.key) !== null;
     if (!definesADeck) continue; // a deck is built around a win condition/champion, not a support
-    if (!META_CARD_KEYS.has(card.key)) continue; // no current meta for this card → try the next one
-    anchors.push({ key: card.key, level: o.level, evolved: o.evolved, hero: o.hero });
+    out.push({ key: card.key, name: card.name, level: o.level, evolved: o.evolved, hero: o.hero, meta: META_CARD_KEYS.has(card.key) });
   }
-  anchors.sort(
+  out.sort(
     (a, b) => b.level - a.level || Number(b.evolved) - Number(a.evolved) || Number(b.hero) - Number(a.hero),
   );
-  return anchors.slice(0, limit).map((a) => a.key);
+  return out;
+}
+
+/** The player's highest deck-defining cards that the CURRENT meta still runs, highest first.
+ *  Fully dynamic: it starts at the player's highest such card and steps down — a high card the
+ *  meta doesn't run (an off-meta champion, say) is skipped in favour of the next-highest that IS
+ *  in the meta. So recommendations are always both "your best card" and "a real current-meta
+ *  deck". */
+export function metaBackedAnchors(collection: Collection, limit = 6): string[] {
+  return definerCards(collection)
+    .filter((c) => c.meta)
+    .slice(0, limit)
+    .map((c) => c.key);
+}
+
+export interface BestCardPlan {
+  anchors: { key: string; name: string; level: number }[]; // meta cards the recs were built around
+  skipped: { key: string; name: string; level: number }[]; // higher cards skipped for being off-meta
+}
+
+/** Explains the cascade for the UI: which of the player's highest deck-defining cards the current
+ *  meta backs (what the recommendations were built around), and which equally-high-or-higher cards
+ *  were passed over because this month's meta doesn't run them. */
+export function bestCardPlan(collection: Collection): BestCardPlan {
+  const defs = definerCards(collection);
+  const meta = defs.filter((c) => c.meta);
+  const topMetaLevel = meta[0]?.level ?? 0;
+  const pick = ({ key, name, level }: DefinerCard) => ({ key, name, level });
+  return {
+    anchors: meta.slice(0, 3).map(pick),
+    // Only the cards a player would actually expect to see: as high as, or higher than, the best
+    // card the meta DID back. A low off-meta card isn't a surprise, so we don't mention it.
+    skipped: defs.filter((c) => !c.meta && c.level >= topMetaLevel).slice(0, 3).map(pick),
+  };
 }
 
 interface RankOptions {

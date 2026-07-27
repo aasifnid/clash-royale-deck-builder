@@ -58,9 +58,15 @@ interface BattleInsights {
   meta: Record<string, number>;
   threats: Record<string, number>;
 }
+interface CardRef {
+  key: string;
+  name: string;
+  level: number;
+}
 interface GenerateResponse {
   aiUsed: boolean;
   insights?: BattleInsights | null;
+  bestCards?: { anchors: CardRef[]; skipped: CardRef[] };
   picks: EnrichedPick[];
   shortlist: EnrichedPick[];
 }
@@ -415,6 +421,29 @@ export default function Generator({ collection, onSave }: Props) {
               )}
               <div className="mt-1 text-xs" style={{ color: "var(--muted)" }}>
                 Decks below are scored to counter what beats you.
+              </div>
+            </div>
+          )}
+          {result.bestCards && result.bestCards.anchors.length > 0 && (
+            <div
+              className="rounded-lg p-3 text-sm"
+              style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
+            >
+              <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
+                Built around your best cards
+              </div>
+              {result.bestCards.skipped.length > 0 && (
+                <div className="mb-1">
+                  <span style={{ color: "var(--muted)" }}>
+                    {result.bestCards.skipped.map((c) => `${c.name} (lvl ${c.level})`).join(", ")}
+                  </span>{" "}
+                  {result.bestCards.skipped.length > 1 ? "aren't" : "isn't"} in this month&apos;s top-ladder meta, so we
+                  stepped down to your next-highest meta cards.
+                </div>
+              )}
+              <div>
+                <span style={{ color: "var(--muted)" }}>Anchored on:</span>{" "}
+                {result.bestCards.anchors.map((c) => `${c.name} (lvl ${c.level})`).join(", ")}
               </div>
             </div>
           )}
