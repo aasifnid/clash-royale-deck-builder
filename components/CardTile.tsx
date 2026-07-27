@@ -112,7 +112,7 @@ export default function CardTile({ card, owned, onChange }: Props) {
         {/* Footer is reserved on EVERY card (fixed min-height) so all cards are the same height
             whether or not they have Evolution/Hero controls. Owned cards with neither just leave
             this space empty. */}
-        <div className="flex min-h-[2.5rem] flex-wrap items-center justify-center gap-1.5 px-2 py-2">
+        <div className="flex min-h-[2.5rem] items-center justify-center gap-1.5 px-2 py-2">
           {!isOwned ? (
             <button
               onClick={() => onChange({})}
@@ -126,7 +126,7 @@ export default function CardTile({ card, owned, onChange }: Props) {
               {card.hasEvolution && (
                 <button
                   onClick={() => onChange({ evolved: !isEvolved })}
-                  className="rounded px-2 py-1 text-[12px] font-semibold"
+                  className="min-w-0 flex-1 whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-semibold"
                   style={{
                     background: isEvolved ? "#ec4899" : "transparent",
                     color: isEvolved ? "#fff" : "var(--muted)",
@@ -140,7 +140,7 @@ export default function CardTile({ card, owned, onChange }: Props) {
               {card.hasHero && (
                 <button
                   onClick={() => onChange({ hero: !isHero })}
-                  className="rounded px-2 py-1 text-[12px] font-semibold"
+                  className="min-w-0 flex-1 whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-semibold"
                   style={{
                     background: isHero ? "#facc15" : "transparent",
                     color: isHero ? "#3a2e00" : "var(--muted)",
