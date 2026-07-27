@@ -126,11 +126,11 @@ export default function CardTile({ card, owned, onChange }: Props) {
               {card.hasEvolution && (
                 <button
                   onClick={() => onChange({ evolved: !isEvolved })}
-                  className="min-w-0 flex-1 whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-semibold"
+                  className="min-w-0 shrink-0 grow-0 basis-[calc(50%-0.1875rem)] whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-semibold"
                   style={{
-                    background: isEvolved ? "#ec4899" : "transparent",
-                    color: isEvolved ? "#fff" : "var(--muted)",
-                    border: `1px solid ${isEvolved ? "#ec4899" : "var(--border)"}`,
+                    background: isEvolved ? "#ec4899" : "rgba(236,72,153,0.14)",
+                    color: isEvolved ? "#fff" : "#f472b6",
+                    border: `1px solid ${isEvolved ? "#ec4899" : "rgba(236,72,153,0.5)"}`,
                   }}
                   title={isEvolved ? "Evolution unlocked" : "Has an Evolution (not unlocked)"}
                 >
@@ -140,11 +140,11 @@ export default function CardTile({ card, owned, onChange }: Props) {
               {card.hasHero && (
                 <button
                   onClick={() => onChange({ hero: !isHero })}
-                  className="min-w-0 flex-1 whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-semibold"
+                  className="min-w-0 shrink-0 grow-0 basis-[calc(50%-0.1875rem)] whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-semibold"
                   style={{
-                    background: isHero ? "#facc15" : "transparent",
-                    color: isHero ? "#3a2e00" : "var(--muted)",
-                    border: `1px solid ${isHero ? "#facc15" : "var(--border)"}`,
+                    background: isHero ? "#facc15" : "rgba(250,204,21,0.14)",
+                    color: isHero ? "#3a2e00" : "#eab308",
+                    border: `1px solid ${isHero ? "#facc15" : "rgba(250,204,21,0.5)"}`,
                   }}
                   title={isHero ? "Hero unlocked" : "Has a Hero form (not unlocked)"}
                 >
