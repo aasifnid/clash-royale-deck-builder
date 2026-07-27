@@ -121,8 +121,8 @@ export default function CollectionDashboard({ collection, onCardChange }: Props)
       </div>
 
       <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(128px, 1fr))" }}
+        className="grid gap-3"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(96px, 1fr))" }}
       >
         {visible.map((card) => (
           <CardTile
