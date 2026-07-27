@@ -86,8 +86,8 @@ export default function Home() {
           Clash Royale <span style={{ color: "var(--accent-2)" }}>Deck Builder</span>
         </h1>
         <p className="mt-3 max-w-2xl text-base leading-relaxed" style={{ color: "var(--muted)" }}>
-          It reads your real card collection, levels and evolutions included, then gives you the strongest current
-          top-ladder decks you can actually field. No more generic lists that assume maxed cards you do not have.
+          The strongest current top-ladder decks you can actually field — matched to your real cards, levels, and
+          evolutions. No generic lists assuming maxed cards you don&apos;t have.
         </p>
       </header>
 
@@ -112,8 +112,7 @@ export default function Home() {
       )}
 
       <footer className="mt-8 text-center text-xs leading-relaxed" style={{ color: "var(--muted)" }}>
-        Decks from the current top-ladder meta (official Clash Royale API) and proven archetypes. Card data and art via
-        RoyaleAPI. Not affiliated with Supercell.
+        Meta decks via the official Clash Royale API. Card data and art via RoyaleAPI. Not affiliated with Supercell.
       </footer>
     </main>
   );

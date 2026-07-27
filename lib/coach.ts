@@ -15,14 +15,10 @@ const MODEL = process.env.COACH_MODEL || "claude-sonnet-4-6";
 export interface CoachPick {
   deckId: string;
   summary: string; // one line: why this deck suits this player
-  gameplan: string;
-  opening: string; // what to do in the first minute
-  defense: string; // how to defend their pushes
-  combos: string; // which cards to play together
-  doubleElixir: string; // how to play once elixir doubles
+  gameplan: string; // how to win with it — plan, defense, and second half in one
   winCondition: string;
   counters: string; // what beats it and how to play around that
-  playTips: string;
+  playTips: string; // the one or two habits that matter most
   difficulty: "Easy" | "Medium" | "Hard";
 }
 
@@ -39,10 +35,6 @@ const OUTPUT_SCHEMA = {
           deckId: { type: "string" },
           summary: { type: "string" },
           gameplan: { type: "string" },
-          opening: { type: "string" },
-          defense: { type: "string" },
-          combos: { type: "string" },
-          doubleElixir: { type: "string" },
           winCondition: { type: "string" },
           counters: { type: "string" },
           playTips: { type: "string" },
@@ -52,10 +44,6 @@ const OUTPUT_SCHEMA = {
           "deckId",
           "summary",
           "gameplan",
-          "opening",
-          "defense",
-          "combos",
-          "doubleElixir",
           "winCondition",
           "counters",
           "playTips",
@@ -71,13 +59,9 @@ const SYSTEM = `You are the best Clash Royale coach in the world — a top-ladde
 
 You are given that player's account state and a SHORTLIST of proven, fieldable decks already filtered to cards they own at their level. Your job: rank the best 2-3 for THIS player and coach them on each.
 
-For each deck you pick, write a detailed game plan so the player fully understands how to win:
-- gameplan: the core plan to win, naming the deck's actual cards.
-- opening: what to do in the first minute before elixir doubles.
-- defense: how to defend their main pushes, naming which of your cards to use.
-- combos: which cards to play together, and in what order.
-- doubleElixir: how to play once elixir doubles in the second half.
-- counters: what beats this deck and how to play around it.
+For each deck you pick, coach them tightly — three fields, no filler:
+- gameplan: how to win with it in 2-3 sentences — the core plan, how to defend, and how the second half changes, naming the deck's actual cards.
+- counters: what beats this deck and how to play around it, in one or two sentences.
 - playTips: the one or two habits that matter most.
 
 Hard rules:

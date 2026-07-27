@@ -25,10 +25,6 @@ interface EnrichedPick {
     deckId: string;
     summary: string;
     gameplan: string;
-    opening?: string;
-    defense?: string;
-    combos?: string;
-    doubleElixir?: string;
     winCondition: string;
     counters: string;
     playTips: string;
@@ -265,7 +261,7 @@ export default function Generator({ collection, onSave }: Props) {
         <span style={{ color: "var(--accent-2)" }}>Step 2</span> · Get your decks
       </h2>
       <p className="mb-3 mt-1 text-sm" style={{ color: "var(--muted)" }}>
-        Three real top-ladder decks, ranked by how well your cards fit, each with recommended evolutions and a game plan.
+        Three top-ladder decks ranked to your cards, each with evolutions and a game plan.
       </p>
 
       <div className="mb-3 flex flex-wrap items-end gap-4">
@@ -354,9 +350,9 @@ export default function Generator({ collection, onSave }: Props) {
 
       {ownedCount > 0 && (
         <div className="mb-3 rounded-lg p-3" style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
-          <div className="text-sm font-semibold">Or build a deck around one card</div>
+          <div className="text-sm font-semibold">Or build around one card</div>
           <p className="mb-2 mt-0.5 text-xs" style={{ color: "var(--muted)" }}>
-            Pick a card you own. We lock it in and build the strongest deck we can around it from your collection, following how top players pair it.
+            Pick a card you own; we build the strongest deck around it, the way top players pair it.
           </p>
           <div className="flex flex-wrap items-end gap-3">
             <div className="relative inline-block">
@@ -403,53 +399,41 @@ export default function Generator({ collection, onSave }: Props) {
 
       {result && (
         <div className="flex flex-col gap-4">
-          {result.insights && result.insights.games > 0 && (
+          {((result.bestCards && result.bestCards.anchors.length > 0) ||
+            (result.insights && result.insights.games > 0)) && (
             <div
-              className="rounded-lg p-3 text-sm"
+              className="flex flex-col gap-1 rounded-lg p-3 text-sm"
               style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
             >
-              <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-                Your ladder meta · last {result.insights.games} games ({result.insights.wins}W / {result.insights.losses}L)
-              </div>
-              <div>
-                <span style={{ color: "var(--muted)" }}>Facing most:</span> {topEntries(result.insights.meta)}
-              </div>
-              {Object.keys(result.insights.threats).length > 0 && (
+              {result.bestCards && result.bestCards.anchors.length > 0 && (
                 <div>
-                  <span style={{ color: "#f87171" }}>Losing most to:</span> {topEntries(result.insights.threats)}
+                  <span style={{ color: "var(--muted)" }}>Built around:</span>{" "}
+                  {result.bestCards.anchors.map((c) => c.name).join(", ")}
+                  {result.bestCards.skipped.length > 0 && (
+                    <span style={{ color: "var(--muted)" }}>
+                      {" "}
+                      ({result.bestCards.skipped.map((c) => c.name).join(", ")} off-meta this month)
+                    </span>
+                  )}
                 </div>
               )}
-              <div className="mt-1 text-xs" style={{ color: "var(--muted)" }}>
-                Decks below are scored to counter what beats you.
-              </div>
-            </div>
-          )}
-          {result.bestCards && result.bestCards.anchors.length > 0 && (
-            <div
-              className="rounded-lg p-3 text-sm"
-              style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}
-            >
-              <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide" style={{ color: "var(--muted)" }}>
-                Built around your best cards
-              </div>
-              {result.bestCards.skipped.length > 0 && (
-                <div className="mb-1">
-                  <span style={{ color: "var(--muted)" }}>
-                    {result.bestCards.skipped.map((c) => `${c.name} (lvl ${c.level})`).join(", ")}
-                  </span>{" "}
-                  {result.bestCards.skipped.length > 1 ? "aren't" : "isn't"} in this month&apos;s top-ladder meta, so we
-                  stepped down to your next-highest meta cards.
+              {result.insights && result.insights.games > 0 && (
+                <div>
+                  <span style={{ color: "var(--muted)" }}>Last {result.insights.games} games — facing:</span>{" "}
+                  {topEntries(result.insights.meta)}
+                  {Object.keys(result.insights.threats).length > 0 && (
+                    <>
+                      {" · "}
+                      <span style={{ color: "#f87171" }}>losing to:</span> {topEntries(result.insights.threats)}
+                    </>
+                  )}
                 </div>
               )}
-              <div>
-                <span style={{ color: "var(--muted)" }}>Anchored on:</span>{" "}
-                {result.bestCards.anchors.map((c) => `${c.name} (lvl ${c.level})`).join(", ")}
-              </div>
             </div>
           )}
           {result.picks.length === 0 && (
             <p className="text-sm" style={{ color: "var(--muted)" }}>
-              No fieldable decks found. Try a different archetype or add more cards.
+              No fieldable decks found. Try another archetype or add more cards.
             </p>
           )}
           {result.picks.map((pick) => (
@@ -488,11 +472,8 @@ function DeckResult({
   return (
     <div className="rounded-lg p-3" style={{ background: "var(--surface-2)", border: "1px solid var(--border)" }}>
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <h3 className="text-base font-bold">{pick.name}</h3>
-          <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold" style={{ background: "var(--background)", color: "var(--muted)" }}>
-            {pick.archetype}
-          </span>
           {pick.source === "meta" && (
             <span
               className="rounded px-1.5 py-0.5 text-[10px] font-bold"
@@ -502,21 +483,12 @@ function DeckResult({
               META{pick.usage > 1 ? ` ×${pick.usage}` : ""}
             </span>
           )}
-          <span
-            className="rounded px-1.5 py-0.5 text-[10px] font-bold"
-            style={{ background: "var(--background)", color: difficultyColor(pick.coach.difficulty) }}
-          >
-            {pick.coach.difficulty}
-          </span>
-          <span className="text-[11px]" style={{ color: "var(--muted)" }}>
-            {pick.avgElixir} avg elixir
-          </span>
-          <span className="text-[11px]" style={{ color: "var(--muted)" }} title="The card level this deck was judged against, from the cards you actually field.">
-            built for level {pick.competitiveLevel}
+          <span className="text-[11px]" style={{ color: "var(--muted)" }} title="Difficulty · average elixir · the card level this deck was judged against, from the cards you actually field.">
+            {pick.archetype} · <span style={{ color: difficultyColor(pick.coach.difficulty) }}>{pick.coach.difficulty}</span> · {pick.avgElixir} elixir · lvl {pick.competitiveLevel}
           </span>
           {pick.weakCards > 0 && (
-            <span className="rounded px-1.5 py-0.5 text-[10px] font-bold" style={{ background: "rgba(245,158,11,0.18)", color: "#f59e0b" }} title="This deck includes a card below your level. Highlighted in amber below.">
-              {pick.weakCards} card{pick.weakCards > 1 ? "s" : ""} under your level
+            <span className="rounded px-1.5 py-0.5 text-[10px] font-bold" style={{ background: "rgba(245,158,11,0.18)", color: "#f59e0b" }} title="This deck includes a card below your level, highlighted in amber below.">
+              {pick.weakCards} under-level
             </span>
           )}
         </div>
@@ -557,12 +529,8 @@ function DeckResult({
         </div>
       )}
 
-      <div className="grid gap-2 text-sm sm:grid-cols-2">
+      <div className="grid gap-2 text-sm sm:grid-cols-3">
         {pick.coach.winCondition && <Field label="Win condition" value={pick.coach.winCondition} />}
-        {pick.coach.opening && <Field label="First minute" value={pick.coach.opening} />}
-        {pick.coach.defense && <Field label="On defense" value={pick.coach.defense} />}
-        {pick.coach.combos && <Field label="Best combos" value={pick.coach.combos} />}
-        {pick.coach.doubleElixir && <Field label="Double elixir" value={pick.coach.doubleElixir} />}
         {pick.coach.counters && <Field label="Watch out for" value={pick.coach.counters} />}
         {pick.coach.playTips && <Field label="Play tips" value={pick.coach.playTips} />}
       </div>
@@ -570,24 +538,24 @@ function DeckResult({
       {(pick.evolutionSlots.length > 0 || pick.heroSlots.length > 0 || pick.extras.length > 0) && (
         <div className="mt-2 flex flex-col gap-1 rounded p-2 text-xs" style={{ background: "var(--background)" }}>
           <div>
-            <span className="font-bold" style={{ color: "#ec4899" }}>Evolution slots (2):</span>{" "}
+            <span className="font-bold" style={{ color: "#ec4899" }}>Evolutions (2):</span>{" "}
             {pick.evolutionSlots.length > 0 ? (
               <>
                 {pick.evolutionSlots.join(" + ")}
                 {pick.evolutionSlots.length < 2 && (
-                  <span style={{ color: "var(--muted)" }}> ({2 - pick.evolutionSlots.length} open — no other evolved card here)</span>
+                  <span style={{ color: "var(--muted)" }}> ({2 - pick.evolutionSlots.length} open)</span>
                 )}
               </>
             ) : (
-              <span style={{ color: "var(--muted)" }}>no evolved card in this deck</span>
+              <span style={{ color: "var(--muted)" }}>none in this deck</span>
             )}
           </div>
           <div>
-            <span className="font-bold" style={{ color: "#ca8a04" }}>Hero slot (1):</span>{" "}
-            {pick.heroSlots.length > 0 ? pick.heroSlots[0] : <span style={{ color: "var(--muted)" }}>no hero card in this deck</span>}
+            <span className="font-bold" style={{ color: "#ca8a04" }}>Hero (1):</span>{" "}
+            {pick.heroSlots.length > 0 ? pick.heroSlots[0] : <span style={{ color: "var(--muted)" }}>none in this deck</span>}
           </div>
           {pick.extras.length > 0 && (
-            <div style={{ color: "var(--muted)" }}>Also unlocked (no slot free): {pick.extras.join(", ")}</div>
+            <div style={{ color: "var(--muted)" }}>Also owned: {pick.extras.join(", ")}</div>
           )}
         </div>
       )}
