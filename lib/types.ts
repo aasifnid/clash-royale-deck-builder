@@ -29,6 +29,12 @@ export interface OwnedCard {
   level: number; // 1..MAX_LEVEL
   evolved: boolean; // player has unlocked this card's Evolution
   hero: boolean; // player has unlocked this card's Hero form
+  // Whether the card HAS an Evolution / Hero form available in the game at all (unlocked or not),
+  // captured live from the API on sync. Lets the "form available, not yet unlocked" pill appear
+  // the moment a new form ships, without waiting for the monthly bundled-data refresh. Undefined
+  // for hand-added cards → falls back to the bundled master-data flag.
+  evoAvailable?: boolean;
+  heroAvailable?: boolean;
 }
 
 /** Master data for a tower troop (support card). */

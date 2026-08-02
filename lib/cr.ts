@@ -206,6 +206,11 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
       level: displayedLevel(c.level, c.maxLevel),
       evolved: (evoMask & 1) === 1,
       hero: (evoMask & 2) === 2,
+      // The API returns these icons whenever the card HAS the form in-game, whether or not this
+      // player unlocked it — so a newly-shipped Evolution/Hero shows as "available" on the very
+      // next sync, no bundled-data refresh needed.
+      evoAvailable: Boolean(c.iconUrls?.evolutionMedium),
+      heroAvailable: Boolean(c.iconUrls?.heroMedium),
     };
   }
 

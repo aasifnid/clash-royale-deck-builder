@@ -35,6 +35,10 @@ export default function CardTile({ card, owned, onChange }: Props) {
   const isOwned = Boolean(owned);
   const isEvolved = Boolean(owned?.evolved);
   const isHero = Boolean(owned?.hero);
+  // Form availability: prefer what the last sync saw live (so a just-shipped form appears at once),
+  // fall back to the bundled master-data flag for hand-added cards.
+  const canEvolve = owned?.evoAvailable ?? card.hasEvolution;
+  const canHero = owned?.heroAvailable ?? card.hasHero;
 
   const glow = isEvolved
     ? "0 0 0 1px #ec4899, 0 0 12px rgba(236,72,153,0.55)"
@@ -123,7 +127,7 @@ export default function CardTile({ card, owned, onChange }: Props) {
             </button>
           ) : (
             <>
-              {card.hasEvolution && (
+              {canEvolve && (
                 <button
                   onClick={() => onChange({ evolved: !isEvolved })}
                   className="min-w-0 shrink-0 grow-0 basis-[calc(50%-0.1875rem)] whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-semibold"
@@ -137,7 +141,7 @@ export default function CardTile({ card, owned, onChange }: Props) {
                   Evo
                 </button>
               )}
-              {card.hasHero && (
+              {canHero && (
                 <button
                   onClick={() => onChange({ hero: !isHero })}
                   className="min-w-0 shrink-0 grow-0 basis-[calc(50%-0.1875rem)] whitespace-nowrap rounded px-1.5 py-1 text-[11px] font-semibold"
