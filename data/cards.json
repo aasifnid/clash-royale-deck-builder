@@ -162,10 +162,10 @@
     "rarity": "Rare",
     "arena": 2,
     "hasEvolution": true,
-    "hasHero": false,
+    "hasHero": true,
     "iconUrl": "https://api-assets.clashroyale.com/cards/300/0lIoYf3Y_plFTzo95zZL93JVxpfb3MMgFDDhgSDGU9A.png",
     "evolutionUrl": "https://api-assets.clashroyale.com/cardevolutions/300/0lIoYf3Y_plFTzo95zZL93JVxpfb3MMgFDDhgSDGU9A.png",
-    "heroUrl": null
+    "heroUrl": "https://api-assets.clashroyale.com/cardheroes/300/0lIoYf3Y_plFTzo95zZL93JVxpfb3MMgFDDhgSDGU9A.png"
   },
   {
     "id": 26000012,
@@ -1170,10 +1170,10 @@
     "rarity": "Common",
     "arena": 0,
     "hasEvolution": false,
-    "hasHero": false,
+    "hasHero": true,
     "iconUrl": "https://api-assets.clashroyale.com/cards/300/NA6W8S1JBYBlOPwD3dNvJLFvVDKq-UuBs_J3i3ewLFI.png",
     "evolutionUrl": null,
-    "heroUrl": null
+    "heroUrl": "https://api-assets.clashroyale.com/cardheroes/300/NA6W8S1JBYBlOPwD3dNvJLFvVDKq-UuBs_J3i3ewLFI.png"
   },
   {
     "id": 26000103,
