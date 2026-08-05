@@ -35,10 +35,13 @@ export default function CardTile({ card, owned, onChange }: Props) {
   const isOwned = Boolean(owned);
   const isEvolved = Boolean(owned?.evolved);
   const isHero = Boolean(owned?.hero);
-  // Form availability: prefer what the last sync saw live (so a just-shipped form appears at once),
-  // fall back to the bundled master-data flag for hand-added cards.
-  const canEvolve = owned?.evoAvailable ?? card.hasEvolution;
-  const canHero = owned?.heroAvailable ?? card.hasHero;
+  // Form availability. Owning the form is itself proof it exists — a player who has UNLOCKED an
+  // Evolution/Hero (owned.evolved / owned.hero, read live from the account's evolutionLevel
+  // bitmask) must always see its pill, even when Supercell's card CATALOG hasn't yet published
+  // that form's icon (a real lag for freshly-released evolutions). Otherwise fall back to what the
+  // last sync saw available in the catalog, then the bundled flag for hand-added cards.
+  const canEvolve = Boolean(owned?.evolved) || (owned?.evoAvailable ?? card.hasEvolution);
+  const canHero = Boolean(owned?.hero) || (owned?.heroAvailable ?? card.hasHero);
 
   const glow = isEvolved
     ? "0 0 0 1px #ec4899, 0 0 12px rgba(236,72,153,0.55)"
