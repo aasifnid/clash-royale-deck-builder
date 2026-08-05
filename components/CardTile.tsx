@@ -3,6 +3,7 @@
 import { MAX_LEVEL, type Card, type OwnedCard } from "@/lib/types";
 import { RARITY_COLOR } from "@/lib/ui";
 import { fallbackCardArt, retryImageOnError } from "@/lib/img";
+import { AVAILABLE_EVOLUTIONS, AVAILABLE_HEROES } from "@/lib/forms";
 
 interface Props {
   card: Card;
@@ -35,13 +36,17 @@ export default function CardTile({ card, owned, onChange }: Props) {
   const isOwned = Boolean(owned);
   const isEvolved = Boolean(owned?.evolved);
   const isHero = Boolean(owned?.hero);
-  // Form availability. Owning the form is itself proof it exists — a player who has UNLOCKED an
-  // Evolution/Hero (owned.evolved / owned.hero, read live from the account's evolutionLevel
-  // bitmask) must always see its pill, even when Supercell's card CATALOG hasn't yet published
-  // that form's icon (a real lag for freshly-released evolutions). Otherwise fall back to what the
-  // last sync saw available in the catalog, then the bundled flag for hand-added cards.
-  const canEvolve = Boolean(owned?.evolved) || (owned?.evoAvailable ?? card.hasEvolution);
-  const canHero = Boolean(owned?.hero) || (owned?.heroAvailable ?? card.hasHero);
+  // Form availability from three independent Supercell-data sources, none hardcoded:
+  //  1. Own account: owning the form proves it exists (owned.evolved/hero, live from evolutionLevel).
+  //  2. Live catalog: the form's icon in your synced player data (owned.evoAvailable/heroAvailable),
+  //     falling back to the bundled flag for hand-added cards.
+  //  3. Real accounts: any card the top-ladder sample has unlocked this form on (AVAILABLE_*).
+  // Source 3 is what surfaces a freshly-released form (e.g. a new Pass evolution) before Supercell
+  // publishes its catalog icon — the moment any real player has it, everyone sees "available".
+  const canEvolve =
+    Boolean(owned?.evolved) || (owned?.evoAvailable ?? card.hasEvolution) || AVAILABLE_EVOLUTIONS.has(card.key);
+  const canHero =
+    Boolean(owned?.hero) || (owned?.heroAvailable ?? card.hasHero) || AVAILABLE_HEROES.has(card.key);
 
   const glow = isEvolved
     ? "0 0 0 1px #ec4899, 0 0 12px rgba(236,72,153,0.55)"

@@ -104,6 +104,23 @@ for (const p of players) {
   decks.set(sig, entry);
 }
 
+// Which Evolution / Hero forms actually EXIST in the game, harvested from what these real
+// top-ladder accounts have unlocked (evolutionLevel bit 1 = evo, bit 2 = hero). This is the
+// authoritative "does this card have a form available" signal that does NOT depend on Supercell
+// publishing the form's catalog icon — the moment any sampled player has evolved a card, the app
+// can show that card's "form available" pill for everyone. Pure account data, no hardcoding.
+const evoForms = new Set();
+const heroForms = new Set();
+for (const p of players) {
+  for (const c of p?.cards ?? []) {
+    const k = keyById.get(c.id);
+    if (!k) continue;
+    const m = c.evolutionLevel ?? 0;
+    if (m & 1) evoForms.add(k);
+    if (m & 2) heroForms.add(k);
+  }
+}
+
 const topByCount = (m, n) =>
   [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, n).map(([key, count]) => ({ key, count }));
 
@@ -142,7 +159,18 @@ const withMomentum = computeMomentum(ranked, previousDecks);
 
 writeFileSync(
   OUT,
-  JSON.stringify({ season, sampledPlayers: ok, minUsage: MIN_USAGE, decks: withMomentum }, null, 2) + "\n",
+  JSON.stringify(
+    {
+      season,
+      sampledPlayers: ok,
+      minUsage: MIN_USAGE,
+      // Forms real accounts have unlocked → "this card has an evo/hero available", catalog or not.
+      availableForms: { evolutions: [...evoForms].sort(), heroes: [...heroForms].sort() },
+      decks: withMomentum,
+    },
+    null,
+    2,
+  ) + "\n",
 );
 console.log(`Wrote ${withMomentum.length} meta decks (clustered, usage >= ${MIN_USAGE}) to ${OUT}`);
 console.log("Top 8:", withMomentum.slice(0, 8).map((d) => `${d.archetype} x${d.usage}`).join(", "));
