@@ -58,20 +58,23 @@ export function coreSignature(keys, { elixirByKey, typeByKey }) {
   return [wc ?? "nowc", ...signature].join("|");
 }
 
-/** Aggregate variants keyed by a signature function into { keys(best), count, evo, tower }. */
+/** Aggregate variants keyed by a signature function into { keys(best), count, wins, evo, tower }.
+ *  `wins` is summed alongside `count` so a battle-log sample's win rate (wins/count) survives
+ *  clustering. Variants without `wins` (e.g. current-deck samples) contribute 0. */
 function aggregateBy(variants, keyOf) {
   const groups = new Map();
   for (const v of variants) {
     const sig = keyOf(v.keys);
     if (sig == null) continue;
-    const g = groups.get(sig) ?? { count: 0, best: null, evo: new Map(), tower: new Map() };
+    const g = groups.get(sig) ?? { count: 0, wins: 0, best: null, evo: new Map(), tower: new Map() };
     g.count += v.count;
+    g.wins += v.wins ?? 0;
     if (!g.best || v.count > g.best.count) g.best = { keys: v.keys, count: v.count };
     for (const [k, n] of v.evo ?? []) g.evo.set(k, (g.evo.get(k) ?? 0) + n);
     for (const [k, n] of v.tower ?? []) g.tower.set(k, (g.tower.get(k) ?? 0) + n);
     groups.set(sig, g);
   }
-  return [...groups.values()].map((g) => ({ keys: g.best.keys, count: g.count, evo: g.evo, tower: g.tower }));
+  return [...groups.values()].map((g) => ({ keys: g.best.keys, count: g.count, wins: g.wins, evo: g.evo, tower: g.tower }));
 }
 
 /** Cluster exact 8-card variants into cores. Input: [{ keys, count, evo:Map, tower:Map }].

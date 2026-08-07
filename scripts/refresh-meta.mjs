@@ -1,7 +1,9 @@
-// Pulls the CURRENT top-ladder meta: the decks the best Path of Legends players are running
-// right now. Samples a LARGE set of top players (so usage counts are meaningful, not noise),
-// aggregates decks by their 8-card set, and for each popular deck records the evolutions and
-// tower troop those top players actually run. Output -> data/meta-decks.json.
+// Pulls the CURRENT top-ladder meta from BATTLE LOGS, the way RoyaleAPI does it: sample the top
+// Path of Legends players, read each one's recent competitive battles, and aggregate EVERY deck
+// played (the player's and their opponent's) with its win/loss. This gives (a) a far larger sample
+// than "one current deck per player" — ~30 battles x 2 decks each — and (b) a real WIN RATE per
+// deck, not just popularity. For each deck it also records the evolutions + tower troop actually
+// run, and harvests which evo/hero forms exist from what real accounts play. Output -> data/meta-decks.json.
 //
 // Run: node scripts/refresh-meta.mjs   (needs CR_API_TOKEN; proxy IP allowlisted)
 
@@ -13,10 +15,12 @@ import { clusterDecks, classify, computeMomentum } from "./meta-cluster.mjs";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "data", "meta-decks.json");
 const BASE = "https://proxy.royaleapi.dev/v1";
-const TOP_PLAYERS = 1000; // sample size — the whole top-ladder leaderboard
-const CONCURRENCY = 12;
-const MIN_USAGE = 4; // keep only decks run by at least this many top players (drop noise/brews)
+const TOP_PLAYERS = 1000; // top-ladder leaderboard sample
+const CONCURRENCY = 10;
+const MIN_GAMES = 15; // a clustered deck needs at least this many battle instances to count (drop noise)
 const KEEP_DECKS = 40;
+const WINRATE_PRIOR = 30; // Bayesian shrink: pulls small-sample win rates toward 50% so a lightly-played deck can't fake a high rate
+const COMPETITIVE = /pvp|pathoflegend|ranked|ladder/i; // 1v1 competitive battle types only (skip boat/2v2/challenge)
 
 const token =
   process.env.CR_API_TOKEN ||
@@ -26,10 +30,14 @@ if (!token) {
   process.exit(1);
 }
 const H = { headers: { Authorization: `Bearer ${token}` } };
-const get = async (p) => {
-  const r = await fetch(BASE + p, H);
-  if (!r.ok) throw new Error(`${p} -> ${r.status}`);
-  return r.json();
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const get = async (p, tries = 3) => {
+  for (let a = 0; a < tries; a++) {
+    const r = await fetch(BASE + p, H);
+    if (r.ok) return r.json();
+    if ((r.status === 429 || r.status === 503) && a < tries - 1) { await sleep(1000 * (a + 1)); continue; }
+    throw new Error(`${p} -> ${r.status}`);
+  }
 };
 
 const cards = JSON.parse(readFileSync(join(ROOT, "data", "cards.json"), "utf8"));
@@ -76,27 +84,36 @@ const ranking = await get(`/locations/global/pathoflegend/${season}/rankings/pla
 const tags = ranking.items.map((p) => p.tag.replace("#", ""));
 console.log("Top players on leaderboard:", tags.length);
 
-const players = await mapLimit(tags, CONCURRENCY, (tag) => get(`/players/%23${tag}`));
-const ok = players.filter(Boolean).length;
-console.log(`Fetched ${ok}/${tags.length} player profiles`);
+const logs = await mapLimit(tags, CONCURRENCY, (tag) => get(`/players/%23${tag}/battlelog`));
+const ok = logs.filter(Boolean).length;
+console.log(`Fetched ${ok}/${tags.length} battle logs`);
 
-// Aggregate current decks by their 8-card set. For each deck also tally which cards players
-// run as evolutions (evolutionLevel > 0) and which tower troop they bring.
-const decks = new Map(); // sig -> { keys, count, evo: Map<key,count>, tower: Map<key,count> }
-for (const p of players) {
-  if (!p?.currentDeck || p.currentDeck.length !== 8) continue;
-  const keys = p.currentDeck.map((c) => keyById.get(c.id)).filter(Boolean);
-  if (keys.length !== 8) continue;
+// Aggregate every deck played across the sampled competitive battles — both the player's and the
+// opponent's — keyed by 8-card set, tallying games (count), wins, evolutions run, and tower troop.
+const decks = new Map(); // sig -> { keys, count, wins, evo: Map, tower: Map }
+// Which Evolution / Hero forms actually exist, harvested from what real accounts USE in battle
+// (evolutionLevel bit 1 = evo, bit 2 = hero). Independent of Supercell's catalog icons — a form
+// shows as "available" the moment any real player is seen using it. No hardcoding.
+const evoForms = new Set();
+const heroForms = new Set();
+
+function record(side, won) {
+  const cards = side?.cards;
+  if (!Array.isArray(cards) || cards.length !== 8) return;
+  const keys = cards.map((c) => keyById.get(c.id)).filter(Boolean);
+  if (keys.length !== 8) return;
   const sig = [...keys].sort().join(",");
-  const entry = decks.get(sig) ?? { keys, count: 0, evo: new Map(), tower: new Map() };
+  const entry = decks.get(sig) ?? { keys, count: 0, wins: 0, evo: new Map(), tower: new Map() };
   entry.count++;
-  for (const c of p.currentDeck) {
-    if ((c.evolutionLevel ?? 0) > 0) {
-      const k = keyById.get(c.id);
-      if (k) entry.evo.set(k, (entry.evo.get(k) ?? 0) + 1);
-    }
+  if (won) entry.wins++;
+  for (const c of cards) {
+    const k = keyById.get(c.id);
+    if (!k) continue;
+    const m = c.evolutionLevel ?? 0;
+    if (m & 1) { entry.evo.set(k, (entry.evo.get(k) ?? 0) + 1); evoForms.add(k); }
+    if (m & 2) heroForms.add(k);
   }
-  const support = p.currentDeckSupportCards?.[0];
+  const support = side.supportCards?.[0];
   if (support) {
     const k = keyById.get(support.id);
     if (k) entry.tower.set(k, (entry.tower.get(k) ?? 0) + 1);
@@ -104,44 +121,49 @@ for (const p of players) {
   decks.set(sig, entry);
 }
 
-// Which Evolution / Hero forms actually EXIST in the game, harvested from what these real
-// top-ladder accounts have unlocked (evolutionLevel bit 1 = evo, bit 2 = hero). This is the
-// authoritative "does this card have a form available" signal that does NOT depend on Supercell
-// publishing the form's catalog icon — the moment any sampled player has evolved a card, the app
-// can show that card's "form available" pill for everyone. Pure account data, no hardcoding.
-const evoForms = new Set();
-const heroForms = new Set();
-for (const p of players) {
-  for (const c of p?.cards ?? []) {
-    const k = keyById.get(c.id);
-    if (!k) continue;
-    const m = c.evolutionLevel ?? 0;
-    if (m & 1) evoForms.add(k);
-    if (m & 2) heroForms.add(k);
+let battlesUsed = 0;
+for (const log of logs) {
+  if (!Array.isArray(log)) continue;
+  for (const b of log) {
+    if (!COMPETITIVE.test(b.type ?? "")) continue;
+    const me = b.team?.[0];
+    const opp = b.opponent?.[0];
+    if (!me || !opp || me.cards?.length !== 8 || opp.cards?.length !== 8) continue;
+    const mc = me.crowns ?? 0;
+    const oc = opp.crowns ?? 0;
+    if (mc === oc) continue; // skip draws so win rate stays clean
+    battlesUsed++;
+    record(me, mc > oc);
+    record(opp, oc > mc);
   }
 }
+console.log(`Aggregated ${battlesUsed} competitive battles into ${decks.size} distinct decks`);
 
 const topByCount = (m, n) =>
   [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, n).map(([key, count]) => ({ key, count }));
 
-// Cluster exact variants into cores BEFORE the usage filter, so an emerging card whose builds
-// are each individually rare still clears MIN_USAGE as an aggregated core (represented by its
-// most popular full variant).
-const clustered = clusterDecks([...decks.values()], { elixirByKey, typeByKey }, MIN_USAGE);
+// Cluster exact variants into cores BEFORE the games filter, so an emerging card whose builds
+// are each individually rare still clears MIN_GAMES as an aggregated core.
+const clustered = clusterDecks([...decks.values()], { elixirByKey, typeByKey }, MIN_GAMES);
 const ranked = clustered
-  .filter((d) => d.count >= MIN_USAGE)
+  .filter((d) => d.count >= MIN_GAMES)
   .sort((a, b) => b.count - a.count)
   .slice(0, KEEP_DECKS)
   .map((d, i) => {
     const ordered = [...d.keys].sort((a, b) => (elixirByKey.get(a) ?? 0) - (elixirByKey.get(b) ?? 0));
     const avg = ordered.reduce((s, k) => s + (elixirByKey.get(k) ?? 0), 0) / 8;
+    // Bayesian-shrunk win rate (percent): pulls small samples toward 50% so popularity, not luck,
+    // drives a high rate. e.g. a 3-1 deck won't read 75%.
+    const winRate = Math.round(((d.wins + WINRATE_PRIOR * 0.5) / (d.count + WINRATE_PRIOR)) * 1000) / 10;
     return {
       id: `meta-${i + 1}`,
       archetype: classify(ordered),
-      usage: d.count,
+      usage: d.count, // battle instances (games) this deck was seen in
+      wins: d.wins,
+      winRate, // percent, Bayesian-shrunk
       avgElixir: Math.round(avg * 10) / 10,
       cards: ordered,
-      // The 2 evolutions top players most commonly run in this deck, and the popular tower troop.
+      // The 2 evolutions most commonly run in this deck, and the popular tower troop.
       evolutions: topByCount(d.evo, 2).map((e) => e.key),
       towerTroop: topByCount(d.tower, 1)[0]?.key ?? null,
     };
@@ -163,8 +185,9 @@ writeFileSync(
     {
       season,
       sampledPlayers: ok,
-      minUsage: MIN_USAGE,
-      // Forms real accounts have unlocked → "this card has an evo/hero available", catalog or not.
+      sampledBattles: battlesUsed,
+      minGames: MIN_GAMES,
+      // Forms real accounts USE → "this card has an evo/hero available", catalog or not.
       availableForms: { evolutions: [...evoForms].sort(), heroes: [...heroForms].sort() },
       decks: withMomentum,
     },
@@ -172,7 +195,9 @@ writeFileSync(
     2,
   ) + "\n",
 );
-console.log(`Wrote ${withMomentum.length} meta decks (clustered, usage >= ${MIN_USAGE}) to ${OUT}`);
-console.log("Top 8:", withMomentum.slice(0, 8).map((d) => `${d.archetype} x${d.usage}`).join(", "));
+console.log(`Wrote ${withMomentum.length} meta decks (clustered, games >= ${MIN_GAMES}) to ${OUT}`);
+console.log("Top 8 by usage:", withMomentum.slice(0, 8).map((d) => `${d.archetype} ${d.usage}g/${d.winRate}%`).join(", "));
+const byWin = [...withMomentum].filter((d) => d.usage >= MIN_GAMES * 2).sort((a, b) => b.winRate - a.winRate).slice(0, 5);
+console.log("Highest win rate:", byWin.map((d) => `${d.archetype} ${d.winRate}% (${d.usage}g)`).join(", "));
 const rising = withMomentum.filter((d) => d.momentum > 0).sort((a, b) => b.momentum - a.momentum).slice(0, 3);
 if (rising.length) console.log("Rising:", rising.map((d) => `${d.archetype} (m=${d.momentum})`).join(", "));

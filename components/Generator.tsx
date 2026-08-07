@@ -40,6 +40,7 @@ interface EnrichedPick {
   weakCards: number;
   source: "curated" | "meta";
   usage: number;
+  winRate?: number | null;
   substitutions: { role: string; from: string; to: string }[];
   powerCards: { key: string; name: string; evolved: boolean; hero: boolean }[];
   evolutionSlots: string[];
@@ -478,9 +479,18 @@ function DeckResult({
             <span
               className="rounded px-1.5 py-0.5 text-[10px] font-bold"
               style={{ background: "var(--accent)", color: "#fff" }}
-              title={`Run by ${pick.usage} sampled top-ladder players this season`}
+              title={`Seen in ${pick.usage} sampled top-ladder battles`}
             >
-              META{pick.usage > 1 ? ` ×${pick.usage}` : ""}
+              META
+            </span>
+          )}
+          {typeof pick.winRate === "number" && (
+            <span
+              className="rounded px-1.5 py-0.5 text-[10px] font-bold"
+              style={{ background: "var(--background)", color: pick.winRate >= 50 ? "#4ade80" : "var(--muted)" }}
+              title={`Win rate across ${pick.usage} sampled top-ladder battles`}
+            >
+              {pick.winRate}% win
             </span>
           )}
           <span className="text-[11px]" style={{ color: "var(--muted)" }} title="Difficulty · average elixir · the card level this deck was judged against, from the cards you actually field.">

@@ -68,6 +68,7 @@ export function enrichCandidate(cand: DeckCandidate) {
     weakCards: cand.weakCards,
     source: cand.deck.source ?? "curated",
     usage: cand.deck.usage ?? 0,
+    winRate: cand.deck.winRate ?? null,
     scores: cand.scores,
     substitutions: cand.substitutions,
     missingRoles: cand.missingRoles,

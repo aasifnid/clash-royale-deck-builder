@@ -36,7 +36,11 @@ const CURATED_STRENGTH = 0.12;
 const MOMENTUM_BOOST = 0.5;
 function strengthOf(deck: ProvenDeck): number {
   const base = deck.usage != null ? Math.min(1, deck.usage / MAX_USAGE) : CURATED_STRENGTH;
-  return Math.min(1, base + MOMENTUM_BOOST * (deck.momentum ?? 0));
+  // Tilt popularity by real battle-log win rate: a deck winning above 50% gets a boost, below
+  // 50% a trim, capped at ±0.2 so win rate nudges the ranking rather than overturning usage.
+  const wr = deck.winRate != null ? deck.winRate / 100 : 0.5;
+  const winFactor = 1 + Math.max(-0.2, Math.min(0.2, (wr - 0.5) * 1.5));
+  return Math.min(1, base * winFactor + MOMENTUM_BOOST * (deck.momentum ?? 0));
 }
 
 // Cards that serve as a win condition in some deck — they should NOT be used to fill ordinary

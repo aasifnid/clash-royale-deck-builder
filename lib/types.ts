@@ -90,7 +90,8 @@ export interface ProvenDeck {
   slots: DeckSlot[]; // 8 slots
   notes?: string; // short gameplan hint
   source?: "curated" | "meta"; // where the deck came from
-  usage?: number; // for meta decks: how many sampled top players ran it
+  usage?: number; // for meta decks: battle instances (games) this deck was seen in
+  winRate?: number; // for meta decks: Bayesian-shrunk win rate, percent (50 = neutral)
   momentum?: number; // for meta decks: 0..1 rising-card momentum vs the previous snapshot
   metaEvolutions?: string[]; // for meta decks: the evolutions top players run in this deck
   metaTowerTroop?: string | null; // for meta decks: the tower troop top players run
