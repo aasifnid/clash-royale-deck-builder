@@ -1655,7 +1655,7 @@
     "id": 28000023,
     "key": "void",
     "name": "Void",
-    "elixir": 3,
+    "elixir": 5,
     "type": "Troop",
     "rarity": "Epic",
     "arena": 0,
