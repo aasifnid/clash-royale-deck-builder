@@ -3,7 +3,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { clusterDecks, computeMomentum, coreSignature, classify } from "./meta-cluster.mjs";
+import { clusterDecks, computeMomentum, classify } from "./meta-cluster.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const cards = JSON.parse(readFileSync(join(ROOT, "data", "cards.json"), "utf8"));

@@ -23,8 +23,12 @@ export default function Home() {
   const [decks, setDecks] = useState<SavedDeck[]>([]);
   const [ready, setReady] = useState(false);
 
-  // Hydrate from localStorage on mount.
+  // Hydrate from localStorage on mount. This must run in an effect, not lazy state init: the
+  // component server-renders (empty, ready=false) and only reads localStorage on the client after
+  // mount, which is what avoids an SSR/client hydration mismatch. The set-state-in-effect warning
+  // doesn't apply to this one-time client hydration.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCollection(loadCollection());
     setDecks(loadDecks());
     setReady(true);
