@@ -36,6 +36,12 @@ const WIN_CONDITIONS: [string, Archetype][] = [
   ["balloon", "Beatdown"],
   ["hog-rider", "Cycle"],
   ["royal-hogs", "Cycle"],
+  // Aggressive bridge win conditions the Aug 2026 pass pushed into the meta. Kept LAST = lowest
+  // priority: only chosen when no stronger win condition is present, so a Hog/Miner deck that
+  // merely splashes Elite Barbarians still classifies by its real win condition. Recognising them
+  // fixes the Control-fallback misclassification and lets them anchor a build.
+  ["elite-barbarians", "Bridge Spam"],
+  ["rune-giant", "Bridge Spam"],
 ];
 
 /** Classify a deck (by card ids) into an archetype, or null if no known win condition. */

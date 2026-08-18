@@ -24,6 +24,9 @@ export const WIN_CONDITIONS = [
   ["ram-rider", "Bridge Spam"], ["battle-ram", "Bridge Spam"],
   ["royal-giant", "Beatdown"], ["giant", "Beatdown"], ["balloon", "Beatdown"],
   ["hog-rider", "Cycle"], ["royal-hogs", "Cycle"],
+  // Aggressive bridge win conditions the Aug 2026 pass pushed into the meta. Kept LAST = lowest
+  // priority: only chosen when no stronger win condition is present.
+  ["elite-barbarians", "Bridge Spam"], ["rune-giant", "Bridge Spam"],
 ];
 
 /** Archetype of a deck (by card keys). Falls back to Control when no known win condition. */
