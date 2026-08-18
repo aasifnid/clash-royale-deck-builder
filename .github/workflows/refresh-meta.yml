@@ -1,19 +1,24 @@
-name: Refresh card + meta data
+name: Refresh + meta algorithm check
 
-# Keeps the bundled game data current on its own. Runs WEEKLY (not just monthly) so mid-season
-# changes — a Royale Pass evolution/hero the API publishes mid-month, a balance-driven meta shift —
-# land in the bundled data and global meta within days instead of waiting for the next season.
-# Pulls the latest cards and top-1000 meta decks and commits any changes; the push triggers a Vercel
-# production deploy automatically, so the live site tracks the current game with no manual step.
-# (Live per-player sync already surfaces new forms the day the API gets them; this keeps the shared
-# card master data + meta decks in step too.)
+# Twice a month, aligned to the Royale Pass cycle (seasons reset the FIRST MONDAY of each month, when
+# new evolutions / cards / balance changes drop, and the pass runs ~4 weeks):
+#   - the 8th:  a few days after the season start (first Monday is the 1st-7th), so new content has
+#               had time to enter the top-ladder meta and can actually be detected.
+#   - the 22nd: mid-pass, catching balance-change-driven shifts and any second-half content.
+# Each run REFRESHES the bundled card + meta data (battle-log method, with win rates) and commits it
+# — the push auto-deploys to Vercel — then runs the ALGORITHM CHECK (scripts/meta-check.mjs). The
+# check flags things the CODE (not just the data) needs to adapt to: a new card the classifier
+# doesn't know, a deck falling back to the Control default because its win condition is unrecognized
+# (like Elite Barbarians / Rune Giant in Aug 2026), etc. Data updates on their own; a code gap can't
+# be auto-fixed safely (choosing a new card's archetype needs judgment), so it opens a review ISSUE.
 on:
   schedule:
-    - cron: "0 6 * * 1" # 06:00 UTC every Monday
+    - cron: "0 7 8,22 * *" # 07:00 UTC on the 8th and 22nd (twice-monthly, pass-aligned)
   workflow_dispatch: {} # allow manual runs from the Actions tab
 
 permissions:
-  contents: write # needed to commit the refreshed data back to the repo
+  contents: write # commit the refreshed data back to the repo
+  issues: write # open a review issue when the algorithm check finds a gap
 
 concurrency:
   group: refresh-data
@@ -29,16 +34,20 @@ jobs:
         with:
           node-version: 20
 
-      # The refresh scripts use only Node built-ins + global fetch — no npm install needed.
+      # The refresh + check scripts use only Node built-ins + global fetch — no npm install needed.
       - name: Refresh cards (adds newly released cards)
         run: node scripts/refresh-cards.mjs
         env:
           CR_API_TOKEN: ${{ secrets.CR_API_TOKEN }}
 
-      - name: Refresh meta decks (current top-1000 ladder decks)
+      - name: Refresh meta decks (battle-log aggregation with win rates)
         run: node scripts/refresh-meta.mjs
         env:
           CR_API_TOKEN: ${{ secrets.CR_API_TOKEN }}
+
+      - name: Meta algorithm gap check
+        id: check
+        run: node scripts/meta-check.mjs
 
       - name: Commit and push if data changed
         run: |
@@ -51,5 +60,14 @@ jobs:
           git add data/
           # No [skip ci]: Vercel honors it and would skip deploying the refreshed data. This
           # workflow only runs on schedule/dispatch (never on push), so the push can't loop.
-          git commit -m "chore: monthly card + meta data refresh"
+          git commit -m "chore: twice-monthly meta refresh + algorithm check"
           git push
+
+      - name: Open a review issue if the algorithm check found gaps
+        if: steps.check.outputs.gaps != '' && steps.check.outputs.gaps != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "Meta algorithm check: ${{ steps.check.outputs.gaps }} gap(s) to review ($(date -u +%Y-%m-%d))" \
+            --body-file meta-check-report.md
