@@ -609,10 +609,10 @@
     "type": "Troop",
     "rarity": "Common",
     "arena": 10,
-    "hasEvolution": false,
+    "hasEvolution": true,
     "hasHero": false,
     "iconUrl": "https://api-assets.clashroyale.com/cards/300/C88C5JH_F3lLZj6K-tLcMo5DPjrFmvzIb1R2M6xCfTE.png",
-    "evolutionUrl": null,
+    "evolutionUrl": "https://api-assets.clashroyale.com/cardevolutions/300/C88C5JH_F3lLZj6K-tLcMo5DPjrFmvzIb1R2M6xCfTE.png",
     "heroUrl": null
   },
   {
