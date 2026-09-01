@@ -175,16 +175,26 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
   const tag = normalizeTag(rawTag);
   if (!tag) throw new CrApiError("Empty player tag.", 400);
 
-  const res = await fetch(`${PROXY_BASE}/players/%23${tag}`, {
-    headers: { Authorization: `Bearer ${token}` },
-    // Player progression changes constantly — never cache.
-    cache: "no-store",
-  });
+  // The official API throws brief 429/503 blips under load. Retry those a couple of times
+  // with backoff before surfacing an error — a real outage still ends up as an error, but a
+  // transient one no longer breaks a sync.
+  let res: Response;
+  for (let attempt = 0; ; attempt++) {
+    res = await fetch(`${PROXY_BASE}/players/%23${tag}`, {
+      headers: { Authorization: `Bearer ${token}` },
+      // Player progression changes constantly — never cache.
+      cache: "no-store",
+    });
+    if (res.ok || (res.status !== 429 && res.status !== 503) || attempt >= 2) break;
+    await new Promise((r) => setTimeout(r, 1000 * (attempt + 1)));
+  }
 
   if (!res.ok) {
     if (res.status === 404) throw new CrApiError(`No player found for tag #${tag}.`, 404);
     if (res.status === 403)
       throw new CrApiError("API rejected the token (check it and the allowlisted proxy IP).", 403);
+    if (res.status === 429 || res.status === 503)
+      throw new CrApiError("Clash Royale's servers are busy right now. Try syncing again in a moment.", res.status);
     throw new CrApiError(`Clash Royale API error (${res.status}).`, res.status);
   }
 
