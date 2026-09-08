@@ -330,10 +330,10 @@
     "rarity": "Legendary",
     "arena": 12,
     "hasEvolution": false,
-    "hasHero": false,
+    "hasHero": true,
     "iconUrl": "https://api-assets.clashroyale.com/cards/300/W3dkw0HTw9n1jB-zbknY2w3wHuyuLxSRIAV5fUT1SEY.png",
     "evolutionUrl": null,
-    "heroUrl": null
+    "heroUrl": "https://api-assets.clashroyale.com/cardheroes/300/W3dkw0HTw9n1jB-zbknY2w3wHuyuLxSRIAV5fUT1SEY.png"
   },
   {
     "id": 26000024,
@@ -1200,6 +1200,20 @@
     "hasEvolution": false,
     "hasHero": false,
     "iconUrl": "https://api-assets.clashroyale.com/cards/300/X0dTFs7OGUavreDEzOtYd_YNZ8Zly6qgAE-dd-bNfWU.png",
+    "evolutionUrl": null,
+    "heroUrl": null
+  },
+  {
+    "id": 26000107,
+    "key": "minion-giant",
+    "name": "Minion Giant",
+    "elixir": 4,
+    "type": "Troop",
+    "rarity": "Rare",
+    "arena": 0,
+    "hasEvolution": false,
+    "hasHero": false,
+    "iconUrl": "https://api-assets.clashroyale.com/cards/300/VRjL0yVLzrnoe-IBh2l2fDHDok0L-UoM9cG-X_8xbMk.png",
     "evolutionUrl": null,
     "heroUrl": null
   },
