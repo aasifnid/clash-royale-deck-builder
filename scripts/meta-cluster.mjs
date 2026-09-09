@@ -30,6 +30,9 @@ export const WIN_CONDITIONS = [
   // Sep 2026 pass gap (meta-check): ranged DPS/swarm chip-damage anchors, previously
   // misclassified as the Control fallback. KEEP IN SYNC with lib/archetypes.ts.
   ["musketeer", "Control"], ["rascals", "Bait"],
+  // Goblinstein (new Champion, Sep 2026 pass): grind-and-counter-push Control shape when it's the
+  // only anchor. KEEP IN SYNC with lib/archetypes.ts.
+  ["goblinstein", "Control"],
 ];
 
 /** Archetype of a deck (by card keys). Falls back to Control when no known win condition. */

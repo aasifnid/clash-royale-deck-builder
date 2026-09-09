@@ -47,6 +47,11 @@ const WIN_CONDITIONS: [string, Archetype][] = [
   // priority, same as the pair above. NOTE: keep in sync with scripts/meta-cluster.mjs.
   ["musketeer", "Control"],
   ["rascals", "Bait"],
+  // Goblinstein (new Champion, Sep 2026 pass): already appears alongside Mortar/Graveyard/Royal
+  // Hogs where those anchors classify the deck, but 3 emerging builds pair it only with
+  // defensive buildings + a big spell + chip damage (no other recognized win condition) — a
+  // grind-and-counter-push Control shape. KEEP IN SYNC with scripts/meta-cluster.mjs.
+  ["goblinstein", "Control"],
 ];
 
 /** Classify a deck (by card ids) into an archetype, or null if no known win condition. */
