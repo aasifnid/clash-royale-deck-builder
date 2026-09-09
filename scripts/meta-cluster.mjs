@@ -27,6 +27,9 @@ export const WIN_CONDITIONS = [
   // Aggressive bridge win conditions the Aug 2026 pass pushed into the meta. Kept LAST = lowest
   // priority: only chosen when no stronger win condition is present.
   ["elite-barbarians", "Bridge Spam"], ["rune-giant", "Bridge Spam"],
+  // Sep 2026 pass gap (meta-check): ranged DPS/swarm chip-damage anchors, previously
+  // misclassified as the Control fallback. KEEP IN SYNC with lib/archetypes.ts.
+  ["musketeer", "Control"], ["rascals", "Bait"],
 ];
 
 /** Archetype of a deck (by card keys). Falls back to Control when no known win condition. */

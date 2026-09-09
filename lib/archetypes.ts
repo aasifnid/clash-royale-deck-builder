@@ -42,6 +42,11 @@ const WIN_CONDITIONS: [string, Archetype][] = [
   // fixes the Control-fallback misclassification and lets them anchor a build.
   ["elite-barbarians", "Bridge Spam"],
   ["rune-giant", "Bridge Spam"],
+  // Sep 2026 pass gap (meta-check): decks anchored on ranged DPS/swarm chip damage rather than a
+  // tank or building, previously misclassified as the Control fallback. Kept LAST = lowest
+  // priority, same as the pair above. NOTE: keep in sync with scripts/meta-cluster.mjs.
+  ["musketeer", "Control"],
+  ["rascals", "Bait"],
 ];
 
 /** Classify a deck (by card ids) into an archetype, or null if no known win condition. */
