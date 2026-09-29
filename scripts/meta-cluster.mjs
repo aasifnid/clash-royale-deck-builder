@@ -33,6 +33,9 @@ export const WIN_CONDITIONS = [
   // Goblinstein (new Champion, Sep 2026 pass): grind-and-counter-push Control shape when it's the
   // only anchor. KEEP IN SYNC with lib/archetypes.ts.
   ["goblinstein", "Control"],
+  // Mighty Miner (Champion): late-Sep 2026 meta-check gap — grind-and-counter-push Control shape
+  // (Goblin Hut + Baby Dragon + Lightning) when it's the only anchor. KEEP IN SYNC with lib/archetypes.ts.
+  ["mighty-miner", "Control"],
 ];
 
 /** Archetype of a deck (by card keys). Falls back to Control when no known win condition. */

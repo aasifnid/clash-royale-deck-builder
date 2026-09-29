@@ -52,6 +52,10 @@ const WIN_CONDITIONS: [string, Archetype][] = [
   // defensive buildings + a big spell + chip damage (no other recognized win condition) — a
   // grind-and-counter-push Control shape. KEEP IN SYNC with scripts/meta-cluster.mjs.
   ["goblinstein", "Control"],
+  // Mighty Miner (Champion): late-Sep 2026 meta-check gap — a top-5 deck by usage (979g) pairs it
+  // with Goblin Hut + Baby Dragon + Lightning and no other recognized win condition. Same
+  // grind-and-counter-push Control shape as Miner. KEEP IN SYNC with scripts/meta-cluster.mjs.
+  ["mighty-miner", "Control"],
 ];
 
 /** Classify a deck (by card ids) into an archetype, or null if no known win condition. */
