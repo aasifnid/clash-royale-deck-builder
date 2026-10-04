@@ -33,6 +33,10 @@ export const WIN_CONDITIONS = [
   // Goblinstein (new Champion, Sep 2026 pass): grind-and-counter-push Control shape when it's the
   // only anchor. KEEP IN SYNC with lib/archetypes.ts.
   ["goblinstein", "Control"],
+  // Minion Giant (Oct 2026 meta-check): the shared anchor of 3 decks that fell back to Control
+  // (cheap defensive cores + Tesla/Hut + Lightning). Lowest priority so Rune Giant decks that run
+  // it stay Bridge Spam. KEEP IN SYNC with lib/archetypes.ts.
+  ["minion-giant", "Control"],
 ];
 
 /** Archetype of a deck (by card keys). Falls back to Control when no known win condition. */

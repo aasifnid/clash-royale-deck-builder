@@ -52,6 +52,12 @@ const WIN_CONDITIONS: [string, Archetype][] = [
   // defensive buildings + a big spell + chip damage (no other recognized win condition) — a
   // grind-and-counter-push Control shape. KEEP IN SYNC with scripts/meta-cluster.mjs.
   ["goblinstein", "Control"],
+  // Minion Giant (Oct 2026 meta-check): the shared anchor of 3 top-ladder decks that fell back to
+  // Control (cheap defensive cores + Tesla/Goblin Hut + Lightning). The meta-check suggested
+  // Tesla/Mighty Miner/Archer Queen only because it picks each deck's highest-elixir card; Minion
+  // Giant is the one card all three share. Lowest priority so Rune Giant decks that run it stay
+  // Bridge Spam. KEEP IN SYNC with scripts/meta-cluster.mjs.
+  ["minion-giant", "Control"],
 ];
 
 /** Classify a deck (by card ids) into an archetype, or null if no known win condition. */
