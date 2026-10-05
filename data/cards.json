@@ -596,10 +596,10 @@
     "rarity": "Legendary",
     "arena": 11,
     "hasEvolution": false,
-    "hasHero": false,
+    "hasHero": true,
     "iconUrl": "https://api-assets.clashroyale.com/cards/300/RsFaHgB3w6vXsTjXdPr3x8l_GbV9TbOUCvIx07prbrQ.png",
     "evolutionUrl": null,
-    "heroUrl": null
+    "heroUrl": "https://api-assets.clashroyale.com/cardheroes/300/RsFaHgB3w6vXsTjXdPr3x8l_GbV9TbOUCvIx07prbrQ.png"
   },
   {
     "id": 26000043,
