@@ -1,7 +1,7 @@
 {
   "season": "2026-09",
   "sampledPlayers": 1000,
-  "sampledBattles": 27189,
+  "sampledBattles": 21290,
   "minGames": 15,
   "availableForms": {
     "evolutions": [
@@ -74,9 +74,9 @@
     {
       "id": "meta-1",
       "archetype": "Bridge Spam",
-      "usage": 3755,
-      "wins": 1937,
-      "winRate": 51.6,
+      "usage": 2307,
+      "wins": 1206,
+      "winRate": 52.2,
       "avgElixir": 2.9,
       "cards": [
         "skeletons",
@@ -93,14 +93,38 @@
         "cannon"
       ],
       "towerTroop": null,
-      "momentum": 1
+      "momentum": 0
     },
     {
       "id": "meta-2",
+      "archetype": "Beatdown",
+      "usage": 1154,
+      "wins": 594,
+      "winRate": 51.4,
+      "avgElixir": 3.6,
+      "cards": [
+        "heal-spirit",
+        "zap",
+        "vines",
+        "tornado",
+        "mini-pekka",
+        "wizard",
+        "giant",
+        "sparky"
+      ],
+      "evolutions": [
+        "wizard",
+        "zap"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-3",
       "archetype": "Cycle",
-      "usage": 1477,
-      "wins": 748,
-      "winRate": 50.6,
+      "usage": 1143,
+      "wins": 568,
+      "winRate": 49.7,
       "avgElixir": 2.8,
       "cards": [
         "skeletons",
@@ -117,38 +141,38 @@
         "firecracker"
       ],
       "towerTroop": null,
-      "momentum": 0.978
-    },
-    {
-      "id": "meta-3",
-      "archetype": "Beatdown",
-      "usage": 1469,
-      "wins": 695,
-      "winRate": 47.4,
-      "avgElixir": 3.4,
-      "cards": [
-        "heal-spirit",
-        "skeletons",
-        "zap",
-        "tornado",
-        "mini-pekka",
-        "wizard",
-        "giant",
-        "sparky"
-      ],
-      "evolutions": [
-        "wizard",
-        "zap"
-      ],
-      "towerTroop": null,
-      "momentum": 0.978
+      "momentum": 0
     },
     {
       "id": "meta-4",
-      "archetype": "Control",
-      "usage": 1395,
-      "wins": 720,
+      "archetype": "Bridge Spam",
+      "usage": 1019,
+      "wins": 526,
       "winRate": 51.6,
+      "avgElixir": 3.6,
+      "cards": [
+        "zap",
+        "bandit",
+        "royal-ghost",
+        "battle-ram",
+        "golden-knight",
+        "mother-witch",
+        "electro-wizard",
+        "ronin"
+      ],
+      "evolutions": [
+        "battle-ram",
+        "zap"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-5",
+      "archetype": "Control",
+      "usage": 906,
+      "wins": 488,
+      "winRate": 53.7,
       "avgElixir": 2.8,
       "cards": [
         "skeletons",
@@ -157,22 +181,22 @@
         "ice-wizard",
         "knight",
         "tesla",
-        "fireball",
-        "minion-giant"
+        "minion-giant",
+        "fireball"
       ],
       "evolutions": [
         "tesla",
         "skeletons"
       ],
       "towerTroop": null,
-      "momentum": 1
+      "momentum": 0
     },
     {
-      "id": "meta-5",
+      "id": "meta-6",
       "archetype": "Control",
-      "usage": 1344,
-      "wins": 768,
-      "winRate": 57,
+      "usage": 856,
+      "wins": 498,
+      "winRate": 57.9,
       "avgElixir": 3.3,
       "cards": [
         "skeletons",
@@ -185,90 +209,18 @@
         "lightning"
       ],
       "evolutions": [
-        "archers",
-        "tesla"
+        "tesla",
+        "archers"
       ],
       "towerTroop": null,
-      "momentum": 1
-    },
-    {
-      "id": "meta-6",
-      "archetype": "Bridge Spam",
-      "usage": 1280,
-      "wins": 633,
-      "winRate": 49.5,
-      "avgElixir": 3.6,
-      "cards": [
-        "zap",
-        "royal-ghost",
-        "bandit",
-        "battle-ram",
-        "golden-knight",
-        "electro-wizard",
-        "mother-witch",
-        "ronin"
-      ],
-      "evolutions": [
-        "battle-ram",
-        "zap"
-      ],
-      "towerTroop": null,
-      "momentum": 0.261
+      "momentum": 0
     },
     {
       "id": "meta-7",
-      "archetype": "Bridge Spam",
-      "usage": 1177,
-      "wins": 558,
-      "winRate": 47.5,
-      "avgElixir": 3.8,
-      "cards": [
-        "heal-spirit",
-        "zap",
-        "golden-knight",
-        "hunter",
-        "mother-witch",
-        "furnace",
-        "ronin",
-        "boss-bandit"
-      ],
-      "evolutions": [
-        "zap",
-        "royal-ghost"
-      ],
-      "towerTroop": null,
-      "momentum": 0.273
-    },
-    {
-      "id": "meta-8",
-      "archetype": "Bridge Spam",
-      "usage": 1150,
-      "wins": 598,
-      "winRate": 51.9,
-      "avgElixir": 4,
-      "cards": [
-        "royal-ghost",
-        "bandit",
-        "arrows",
-        "battle-ram",
-        "golden-knight",
-        "furnace",
-        "electro-wizard",
-        "pekka"
-      ],
-      "evolutions": [
-        "battle-ram",
-        "royal-ghost"
-      ],
-      "towerTroop": null,
-      "momentum": 0.261
-    },
-    {
-      "id": "meta-9",
       "archetype": "Cycle",
-      "usage": 1125,
-      "wins": 578,
-      "winRate": 51.3,
+      "usage": 847,
+      "wins": 441,
+      "winRate": 52,
       "avgElixir": 2.6,
       "cards": [
         "skeletons",
@@ -285,14 +237,38 @@
         "cannon"
       ],
       "towerTroop": null,
-      "momentum": 0.978
+      "momentum": 0
     },
     {
-      "id": "meta-10",
+      "id": "meta-8",
+      "archetype": "Bridge Spam",
+      "usage": 791,
+      "wins": 402,
+      "winRate": 50.8,
+      "avgElixir": 3.8,
+      "cards": [
+        "heal-spirit",
+        "zap",
+        "golden-knight",
+        "hunter",
+        "mother-witch",
+        "furnace",
+        "ronin",
+        "boss-bandit"
+      ],
+      "evolutions": [
+        "zap",
+        "royal-ghost"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-9",
       "archetype": "Beatdown",
-      "usage": 1031,
-      "wins": 522,
-      "winRate": 50.6,
+      "usage": 777,
+      "wins": 426,
+      "winRate": 54.6,
       "avgElixir": 4.1,
       "cards": [
         "heal-spirit",
@@ -309,14 +285,14 @@
         "royal-ghost"
       ],
       "towerTroop": null,
-      "momentum": 0.273
+      "momentum": 0
     },
     {
-      "id": "meta-11",
+      "id": "meta-10",
       "archetype": "Cycle",
-      "usage": 985,
-      "wins": 518,
-      "winRate": 52.5,
+      "usage": 770,
+      "wins": 425,
+      "winRate": 55,
       "avgElixir": 2.9,
       "cards": [
         "skeletons",
@@ -333,14 +309,14 @@
         "royal-hogs"
       ],
       "towerTroop": null,
-      "momentum": 0.978
+      "momentum": 0
     },
     {
-      "id": "meta-12",
+      "id": "meta-11",
       "archetype": "Control",
-      "usage": 788,
-      "wins": 362,
-      "winRate": 46.1,
+      "usage": 654,
+      "wins": 310,
+      "winRate": 47.5,
       "avgElixir": 2.9,
       "cards": [
         "ice-spirit",
@@ -357,14 +333,38 @@
         "skeleton-army"
       ],
       "towerTroop": null,
-      "momentum": 0.394
+      "momentum": 0
+    },
+    {
+      "id": "meta-12",
+      "archetype": "Bridge Spam",
+      "usage": 625,
+      "wins": 310,
+      "winRate": 49.6,
+      "avgElixir": 4,
+      "cards": [
+        "zap",
+        "royal-ghost",
+        "battle-ram",
+        "golden-knight",
+        "electro-wizard",
+        "fireball",
+        "furnace",
+        "pekka"
+      ],
+      "evolutions": [
+        "battle-ram",
+        "zap"
+      ],
+      "towerTroop": null,
+      "momentum": 0
     },
     {
       "id": "meta-13",
       "archetype": "Beatdown",
-      "usage": 778,
-      "wins": 370,
-      "winRate": 47.6,
+      "usage": 614,
+      "wins": 305,
+      "winRate": 49.7,
       "avgElixir": 3,
       "cards": [
         "skeletons",
@@ -381,62 +381,14 @@
         "royal-ghost"
       ],
       "towerTroop": null,
-      "momentum": 0.978
+      "momentum": 0
     },
     {
       "id": "meta-14",
-      "archetype": "Control",
-      "usage": 753,
-      "wins": 418,
-      "winRate": 55.3,
-      "avgElixir": 4,
-      "cards": [
-        "giant-snowball",
-        "minions",
-        "arrows",
-        "zappies",
-        "bowler",
-        "witch",
-        "giant",
-        "graveyard"
-      ],
-      "evolutions": [
-        "giant-snowball",
-        "witch"
-      ],
-      "towerTroop": null,
-      "momentum": 0.137
-    },
-    {
-      "id": "meta-15",
       "archetype": "Beatdown",
-      "usage": 695,
-      "wins": 348,
-      "winRate": 50.1,
-      "avgElixir": 4.5,
-      "cards": [
-        "berserker",
-        "barbarian-barrel",
-        "tornado",
-        "skeleton-dragons",
-        "electro-dragon",
-        "elite-barbarians",
-        "elixir-collector",
-        "golem"
-      ],
-      "evolutions": [
-        "elite-barbarians",
-        "electro-dragon"
-      ],
-      "towerTroop": null,
-      "momentum": 0.351
-    },
-    {
-      "id": "meta-16",
-      "archetype": "Beatdown",
-      "usage": 693,
-      "wins": 290,
-      "winRate": 42.2,
+      "usage": 574,
+      "wins": 283,
+      "winRate": 49.3,
       "avgElixir": 3.8,
       "cards": [
         "barbarian-barrel",
@@ -453,86 +405,14 @@
         "baby-dragon"
       ],
       "towerTroop": null,
-      "momentum": 0.351
+      "momentum": 0
     },
     {
-      "id": "meta-17",
-      "archetype": "Beatdown",
-      "usage": 693,
-      "wins": 327,
-      "winRate": 47.3,
-      "avgElixir": 4,
-      "cards": [
-        "heal-spirit",
-        "rage",
-        "arrows",
-        "mini-pekka",
-        "witch",
-        "giant",
-        "elite-barbarians",
-        "elixir-collector"
-      ],
-      "evolutions": [
-        "elite-barbarians",
-        "witch"
-      ],
-      "towerTroop": null,
-      "momentum": 0.273
-    },
-    {
-      "id": "meta-18",
-      "archetype": "Beatdown",
-      "usage": 685,
-      "wins": 335,
-      "winRate": 49,
-      "avgElixir": 3.8,
-      "cards": [
-        "zap",
-        "bats",
-        "arrows",
-        "skeleton-army",
-        "mini-pekka",
-        "giant",
-        "minion-horde",
-        "sparky"
-      ],
-      "evolutions": [
-        "minion-horde",
-        "zap"
-      ],
-      "towerTroop": null,
-      "momentum": 0.203
-    },
-    {
-      "id": "meta-19",
-      "archetype": "Siege",
-      "usage": 685,
-      "wins": 324,
-      "winRate": 47.4,
-      "avgElixir": 4,
-      "cards": [
-        "barbarian-barrel",
-        "goblin-gang",
-        "mortar",
-        "mother-witch",
-        "fireball",
-        "minion-horde",
-        "goblinstein",
-        "cannon-cart"
-      ],
-      "evolutions": [
-        "mortar",
-        "minion-horde"
-      ],
-      "towerTroop": null,
-      "momentum": 0.718
-    },
-    {
-      "id": "meta-20",
+      "id": "meta-15",
       "archetype": "Control",
-      "usage": 681,
-      "wins": 387,
-      "winRate": 56.5,
+      "usage": 570,
+      "wins": 379,
+      "winRate": 65.7,
       "avgElixir": 2.8,
       "cards": [
         "skeletons",
@@ -549,86 +429,38 @@
         "princess"
       ],
       "towerTroop": null,
-      "momentum": 1
+      "momentum": 0
     },
     {
-      "id": "meta-21",
-      "archetype": "Siege",
-      "usage": 607,
-      "wins": 277,
-      "winRate": 45.8,
-      "avgElixir": 3.6,
-      "cards": [
-        "barbarian-barrel",
-        "ice-wizard",
-        "skeleton-barrel",
-        "minions",
-        "mortar",
-        "fireball",
-        "cannon-cart",
-        "rascals"
-      ],
-      "evolutions": [
-        "mortar",
-        "skeleton-barrel"
-      ],
-      "towerTroop": null,
-      "momentum": 0.718
-    },
-    {
-      "id": "meta-22",
+      "id": "meta-16",
       "archetype": "Control",
-      "usage": 559,
-      "wins": 293,
-      "winRate": 52.3,
-      "avgElixir": 2.8,
+      "usage": 543,
+      "wins": 303,
+      "winRate": 55.5,
+      "avgElixir": 4,
       "cards": [
-        "skeletons",
-        "bats",
-        "barbarian-barrel",
-        "cannon",
-        "ice-wizard",
-        "knight",
-        "fireball",
-        "minion-giant"
+        "giant-snowball",
+        "minions",
+        "arrows",
+        "zappies",
+        "bowler",
+        "witch",
+        "giant",
+        "graveyard"
       ],
       "evolutions": [
-        "cannon",
-        "bats"
+        "witch",
+        "giant-snowball"
       ],
       "towerTroop": null,
-      "momentum": 1
+      "momentum": 0
     },
     {
-      "id": "meta-23",
-      "archetype": "Bait",
-      "usage": 559,
-      "wins": 322,
-      "winRate": 57.2,
-      "avgElixir": 3.3,
-      "cards": [
-        "goblins",
-        "suspicious-bush",
-        "the-log",
-        "skeleton-barrel",
-        "dart-goblin",
-        "royal-ghost",
-        "rascals",
-        "rocket"
-      ],
-      "evolutions": [
-        "skeleton-barrel",
-        "dart-goblin"
-      ],
-      "towerTroop": null,
-      "momentum": 0.261
-    },
-    {
-      "id": "meta-24",
+      "id": "meta-17",
       "archetype": "Beatdown",
-      "usage": 510,
-      "wins": 287,
-      "winRate": 55.9,
+      "usage": 539,
+      "wins": 317,
+      "winRate": 58.3,
       "avgElixir": 4.3,
       "cards": [
         "barbarian-barrel",
@@ -645,14 +477,182 @@
         "knight"
       ],
       "towerTroop": null,
-      "momentum": 0.351
+      "momentum": 0
+    },
+    {
+      "id": "meta-18",
+      "archetype": "Beatdown",
+      "usage": 483,
+      "wins": 230,
+      "winRate": 47.8,
+      "avgElixir": 4.5,
+      "cards": [
+        "berserker",
+        "barbarian-barrel",
+        "tornado",
+        "skeleton-dragons",
+        "electro-dragon",
+        "elite-barbarians",
+        "elixir-collector",
+        "golem"
+      ],
+      "evolutions": [
+        "elite-barbarians",
+        "electro-dragon"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-19",
+      "archetype": "Beatdown",
+      "usage": 473,
+      "wins": 209,
+      "winRate": 44.5,
+      "avgElixir": 4,
+      "cards": [
+        "heal-spirit",
+        "rage",
+        "arrows",
+        "mini-pekka",
+        "witch",
+        "giant",
+        "elite-barbarians",
+        "elixir-collector"
+      ],
+      "evolutions": [
+        "elite-barbarians",
+        "witch"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-20",
+      "archetype": "Siege",
+      "usage": 460,
+      "wins": 201,
+      "winRate": 44.1,
+      "avgElixir": 3.6,
+      "cards": [
+        "barbarian-barrel",
+        "ice-wizard",
+        "skeleton-barrel",
+        "minions",
+        "mortar",
+        "fireball",
+        "rascals",
+        "cannon-cart"
+      ],
+      "evolutions": [
+        "mortar",
+        "skeleton-barrel"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-21",
+      "archetype": "Bridge Spam",
+      "usage": 450,
+      "wins": 251,
+      "winRate": 55.4,
+      "avgElixir": 4,
+      "cards": [
+        "bandit",
+        "royal-ghost",
+        "arrows",
+        "battle-ram",
+        "electro-wizard",
+        "golden-knight",
+        "furnace",
+        "pekka"
+      ],
+      "evolutions": [
+        "battle-ram",
+        "royal-ghost"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-22",
+      "archetype": "Siege",
+      "usage": 424,
+      "wins": 191,
+      "winRate": 45.4,
+      "avgElixir": 4,
+      "cards": [
+        "barbarian-barrel",
+        "goblin-gang",
+        "mortar",
+        "mother-witch",
+        "fireball",
+        "goblinstein",
+        "minion-horde",
+        "cannon-cart"
+      ],
+      "evolutions": [
+        "minion-horde",
+        "mortar"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-23",
+      "archetype": "Beatdown",
+      "usage": 400,
+      "wins": 186,
+      "winRate": 46.7,
+      "avgElixir": 3.8,
+      "cards": [
+        "zap",
+        "bats",
+        "arrows",
+        "skeleton-army",
+        "mini-pekka",
+        "giant",
+        "minion-horde",
+        "sparky"
+      ],
+      "evolutions": [
+        "minion-horde",
+        "zap"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-24",
+      "archetype": "Bait",
+      "usage": 383,
+      "wins": 222,
+      "winRate": 57.4,
+      "avgElixir": 3.3,
+      "cards": [
+        "goblins",
+        "suspicious-bush",
+        "the-log",
+        "royal-ghost",
+        "skeleton-barrel",
+        "dart-goblin",
+        "rascals",
+        "rocket"
+      ],
+      "evolutions": [
+        "skeleton-barrel",
+        "dart-goblin"
+      ],
+      "towerTroop": null,
+      "momentum": 0
     },
     {
       "id": "meta-25",
       "archetype": "Control",
-      "usage": 498,
-      "wins": 267,
-      "winRate": 53.4,
+      "usage": 370,
+      "wins": 203,
+      "winRate": 54.5,
       "avgElixir": 3.9,
       "cards": [
         "giant-snowball",
@@ -669,38 +669,86 @@
         "musketeer"
       ],
       "towerTroop": null,
-      "momentum": 0.137
+      "momentum": 0
     },
     {
       "id": "meta-26",
-      "archetype": "Beatdown",
-      "usage": 453,
-      "wins": 238,
-      "winRate": 52.4,
-      "avgElixir": 4,
+      "archetype": "Bridge Spam",
+      "usage": 351,
+      "wins": 174,
+      "winRate": 49.6,
+      "avgElixir": 3.6,
       "cards": [
-        "zap",
-        "mega-minion",
-        "tombstone",
-        "skeleton-dragons",
-        "fireball",
-        "minion-giant",
-        "barbarians",
-        "lava-hound"
+        "heal-spirit",
+        "royal-ghost",
+        "bandit",
+        "battle-ram",
+        "golden-knight",
+        "electro-wizard",
+        "furnace",
+        "giant-skeleton"
       ],
       "evolutions": [
-        "barbarians",
-        "zap"
+        "battle-ram",
+        "royal-ghost"
       ],
       "towerTroop": null,
-      "momentum": 1
+      "momentum": 0
     },
     {
       "id": "meta-27",
       "archetype": "Beatdown",
-      "usage": 429,
-      "wins": 209,
+      "usage": 339,
+      "wins": 165,
       "winRate": 48.8,
+      "avgElixir": 4.4,
+      "cards": [
+        "barbarian-barrel",
+        "mega-minion",
+        "tornado",
+        "golden-knight",
+        "zappies",
+        "electro-dragon",
+        "elixir-collector",
+        "golem"
+      ],
+      "evolutions": [
+        "electro-dragon",
+        "lumberjack"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-28",
+      "archetype": "Bridge Spam",
+      "usage": 332,
+      "wins": 183,
+      "winRate": 54.7,
+      "avgElixir": 3.9,
+      "cards": [
+        "zap",
+        "royal-ghost",
+        "bandit",
+        "battle-ram",
+        "magic-archer",
+        "electro-wizard",
+        "fireball",
+        "pekka"
+      ],
+      "evolutions": [
+        "battle-ram",
+        "royal-ghost"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-29",
+      "archetype": "Beatdown",
+      "usage": 332,
+      "wins": 166,
+      "winRate": 50,
       "avgElixir": 3.6,
       "cards": [
         "heal-spirit",
@@ -717,62 +765,110 @@
         "zap"
       ],
       "towerTroop": null,
-      "momentum": 0.273
-    },
-    {
-      "id": "meta-28",
-      "archetype": "Control",
-      "usage": 423,
-      "wins": 222,
-      "winRate": 52.3,
-      "avgElixir": 3.3,
-      "cards": [
-        "skeletons",
-        "electro-spirit",
-        "barbarian-barrel",
-        "baby-dragon",
-        "mighty-miner",
-        "minion-giant",
-        "goblin-hut",
-        "lightning"
-      ],
-      "evolutions": [
-        "baby-dragon",
-        "skeletons"
-      ],
-      "towerTroop": null,
-      "momentum": 1
-    },
-    {
-      "id": "meta-29",
-      "archetype": "Beatdown",
-      "usage": 415,
-      "wins": 213,
-      "winRate": 51.2,
-      "avgElixir": 4.5,
-      "cards": [
-        "barbarian-barrel",
-        "tornado",
-        "dark-prince",
-        "lumberjack",
-        "skeleton-dragons",
-        "electro-dragon",
-        "elixir-collector",
-        "golem"
-      ],
-      "evolutions": [
-        "electro-dragon",
-        "lumberjack"
-      ],
-      "towerTroop": null,
-      "momentum": 0.351
+      "momentum": 0
     },
     {
       "id": "meta-30",
+      "archetype": "Beatdown",
+      "usage": 313,
+      "wins": 174,
+      "winRate": 55.1,
+      "avgElixir": 4,
+      "cards": [
+        "zap",
+        "mega-minion",
+        "tombstone",
+        "skeleton-dragons",
+        "fireball",
+        "minion-giant",
+        "barbarians",
+        "lava-hound"
+      ],
+      "evolutions": [
+        "zap",
+        "barbarians"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-31",
+      "archetype": "Control",
+      "usage": 289,
+      "wins": 139,
+      "winRate": 48.3,
+      "avgElixir": 2.9,
+      "cards": [
+        "skeletons",
+        "ice-golem",
+        "giant-snowball",
+        "barbarian-barrel",
+        "miner",
+        "musketeer",
+        "bomb-tower",
+        "balloon"
+      ],
+      "evolutions": [
+        "musketeer",
+        "giant-snowball"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-32",
+      "archetype": "Control",
+      "usage": 281,
+      "wins": 135,
+      "winRate": 48.2,
+      "avgElixir": 2.8,
+      "cards": [
+        "skeletons",
+        "bats",
+        "barbarian-barrel",
+        "cannon",
+        "ice-wizard",
+        "knight",
+        "fireball",
+        "minion-giant"
+      ],
+      "evolutions": [
+        "cannon",
+        "bats"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-33",
+      "archetype": "Beatdown",
+      "usage": 280,
+      "wins": 143,
+      "winRate": 51,
+      "avgElixir": 4.1,
+      "cards": [
+        "zap",
+        "miner",
+        "arrows",
+        "inferno-dragon",
+        "skeleton-dragons",
+        "balloon",
+        "barbarians",
+        "lava-hound"
+      ],
+      "evolutions": [
+        "barbarians",
+        "inferno-dragon"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-34",
       "archetype": "Siege",
-      "usage": 396,
-      "wins": 196,
-      "winRate": 49.5,
+      "usage": 268,
+      "wins": 125,
+      "winRate": 47,
       "avgElixir": 3,
       "cards": [
         "skeletons",
@@ -789,143 +885,23 @@
         "tesla"
       ],
       "towerTroop": null,
-      "momentum": 0.978
-    },
-    {
-      "id": "meta-31",
-      "archetype": "Bridge Spam",
-      "usage": 390,
-      "wins": 195,
-      "winRate": 50,
-      "avgElixir": 3.6,
-      "cards": [
-        "heal-spirit",
-        "royal-ghost",
-        "bandit",
-        "battle-ram",
-        "golden-knight",
-        "furnace",
-        "electro-wizard",
-        "giant-skeleton"
-      ],
-      "evolutions": [
-        "battle-ram",
-        "royal-ghost"
-      ],
-      "towerTroop": null,
-      "momentum": 0.273
-    },
-    {
-      "id": "meta-32",
-      "archetype": "Bridge Spam",
-      "usage": 383,
-      "wins": 192,
-      "winRate": 50.1,
-      "avgElixir": 3.3,
-      "cards": [
-        "skeletons",
-        "zap",
-        "little-prince",
-        "inferno-dragon",
-        "minion-giant",
-        "poison",
-        "goblin-cage",
-        "rune-giant"
-      ],
-      "evolutions": [
-        "inferno-dragon",
-        "zap"
-      ],
-      "towerTroop": null,
-      "momentum": 1
-    },
-    {
-      "id": "meta-33",
-      "archetype": "Bridge Spam",
-      "usage": 375,
-      "wins": 192,
-      "winRate": 51.1,
-      "avgElixir": 3.9,
-      "cards": [
-        "barbarian-barrel",
-        "royal-ghost",
-        "vines",
-        "battle-ram",
-        "zappies",
-        "mother-witch",
-        "wizard",
-        "giant-skeleton"
-      ],
-      "evolutions": [
-        "battle-ram",
-        "royal-ghost"
-      ],
-      "towerTroop": null,
-      "momentum": 0.351
-    },
-    {
-      "id": "meta-34",
-      "archetype": "Control",
-      "usage": 350,
-      "wins": 166,
-      "winRate": 47.6,
-      "avgElixir": 2.8,
-      "cards": [
-        "skeletons",
-        "fire-spirit",
-        "giant-snowball",
-        "ice-wizard",
-        "knight",
-        "goblin-drill",
-        "poison",
-        "tesla"
-      ],
-      "evolutions": [
-        "giant-snowball",
-        "goblin-drill"
-      ],
-      "towerTroop": null,
-      "momentum": 0.978
+      "momentum": 0
     },
     {
       "id": "meta-35",
-      "archetype": "Bridge Spam",
-      "usage": 345,
-      "wins": 174,
-      "winRate": 50.4,
-      "avgElixir": 3.8,
-      "cards": [
-        "heal-spirit",
-        "royal-ghost",
-        "bandit",
-        "arrows",
-        "battle-ram",
-        "archer-queen",
-        "barbarians",
-        "elixir-collector"
-      ],
-      "evolutions": [
-        "battle-ram",
-        "barbarians"
-      ],
-      "towerTroop": null,
-      "momentum": 0.273
-    },
-    {
-      "id": "meta-36",
       "archetype": "Control",
-      "usage": 343,
-      "wins": 162,
-      "winRate": 47.5,
+      "usage": 262,
+      "wins": 123,
+      "winRate": 47.3,
       "avgElixir": 3.4,
       "cards": [
         "barbarian-barrel",
-        "ice-wizard",
-        "tombstone",
         "knight",
+        "tombstone",
+        "ice-wizard",
         "tornado",
-        "baby-dragon",
         "poison",
+        "baby-dragon",
         "graveyard"
       ],
       "evolutions": [
@@ -933,86 +909,14 @@
         "knight"
       ],
       "towerTroop": null,
-      "momentum": 0.467
+      "momentum": 0
     },
     {
-      "id": "meta-37",
-      "archetype": "Control",
-      "usage": 340,
-      "wins": 164,
-      "winRate": 48.4,
-      "avgElixir": 2.9,
-      "cards": [
-        "skeletons",
-        "giant-snowball",
-        "ice-golem",
-        "barbarian-barrel",
-        "miner",
-        "musketeer",
-        "bomb-tower",
-        "balloon"
-      ],
-      "evolutions": [
-        "musketeer",
-        "giant-snowball"
-      ],
-      "towerTroop": null,
-      "momentum": 0.978
-    },
-    {
-      "id": "meta-38",
+      "id": "meta-36",
       "archetype": "Beatdown",
-      "usage": 340,
-      "wins": 170,
-      "winRate": 50,
-      "avgElixir": 4.1,
-      "cards": [
-        "zap",
-        "arrows",
-        "miner",
-        "inferno-dragon",
-        "skeleton-dragons",
-        "balloon",
-        "barbarians",
-        "lava-hound"
-      ],
-      "evolutions": [
-        "barbarians",
-        "inferno-dragon"
-      ],
-      "towerTroop": null,
-      "momentum": 0.101
-    },
-    {
-      "id": "meta-39",
-      "archetype": "Bridge Spam",
-      "usage": 321,
-      "wins": 177,
-      "winRate": 54.7,
-      "avgElixir": 3.9,
-      "cards": [
-        "zap",
-        "bandit",
-        "royal-ghost",
-        "battle-ram",
-        "magic-archer",
-        "electro-wizard",
-        "fireball",
-        "pekka"
-      ],
-      "evolutions": [
-        "battle-ram",
-        "royal-ghost"
-      ],
-      "towerTroop": null,
-      "momentum": 0.718
-    },
-    {
-      "id": "meta-40",
-      "archetype": "Beatdown",
-      "usage": 320,
-      "wins": 166,
-      "winRate": 51.7,
+      "usage": 252,
+      "wins": 142,
+      "winRate": 55.7,
       "avgElixir": 4.6,
       "cards": [
         "rage",
@@ -1029,7 +933,103 @@
         "minion-horde"
       ],
       "towerTroop": null,
-      "momentum": 0.211
+      "momentum": 0
+    },
+    {
+      "id": "meta-37",
+      "archetype": "Control",
+      "usage": 250,
+      "wins": 135,
+      "winRate": 53.6,
+      "avgElixir": 3.3,
+      "cards": [
+        "skeletons",
+        "electro-spirit",
+        "barbarian-barrel",
+        "baby-dragon",
+        "mighty-miner",
+        "minion-giant",
+        "goblin-hut",
+        "lightning"
+      ],
+      "evolutions": [
+        "baby-dragon",
+        "skeletons"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-38",
+      "archetype": "Bridge Spam",
+      "usage": 250,
+      "wins": 132,
+      "winRate": 52.5,
+      "avgElixir": 3.3,
+      "cards": [
+        "skeletons",
+        "zap",
+        "little-prince",
+        "inferno-dragon",
+        "minion-giant",
+        "rune-giant",
+        "poison",
+        "goblin-cage"
+      ],
+      "evolutions": [
+        "inferno-dragon",
+        "zap"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-39",
+      "archetype": "Beatdown",
+      "usage": 246,
+      "wins": 116,
+      "winRate": 47.5,
+      "avgElixir": 4.1,
+      "cards": [
+        "zap",
+        "bomber",
+        "arrows",
+        "mini-pekka",
+        "phoenix",
+        "night-witch",
+        "elite-barbarians",
+        "golem"
+      ],
+      "evolutions": [
+        "elite-barbarians",
+        "zap"
+      ],
+      "towerTroop": null,
+      "momentum": 0
+    },
+    {
+      "id": "meta-40",
+      "archetype": "Bridge Spam",
+      "usage": 242,
+      "wins": 130,
+      "winRate": 53.3,
+      "avgElixir": 3.8,
+      "cards": [
+        "heal-spirit",
+        "royal-ghost",
+        "bandit",
+        "arrows",
+        "battle-ram",
+        "archer-queen",
+        "barbarians",
+        "elixir-collector"
+      ],
+      "evolutions": [
+        "battle-ram",
+        "barbarians"
+      ],
+      "towerTroop": null,
+      "momentum": 0
     }
   ]
 }
