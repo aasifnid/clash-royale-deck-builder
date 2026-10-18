@@ -7,8 +7,8 @@
 //     of highest-elixir non-spell cards that define the build) so those fragments aggregate into
 //     one entry whose summed usage clears the bar. The most popular full variant represents it.
 //  2. computeMomentum — a card the ladder is newly piling into (e.g. a just-released legendary)
-//     shows a positive usage-share delta vs the previous snapshot. We surface that as a per-deck
-//     momentum score so a rising deck ranks up before its raw usage alone would justify it.
+//     at least doubles its usage share vs a baseline snapshot 2+ weeks old. We surface that as a
+//     per-deck momentum score so a rising deck ranks up before its raw usage alone would justify it.
 
 // Win-condition card -> archetype, priority order (most defining first). KEEP IN SYNC with the
 // copy in lib/archetypes.ts.
@@ -71,23 +71,29 @@ export function coreSignature(keys, { elixirByKey, typeByKey }) {
   return [wc ?? "nowc", ...signature].join("|");
 }
 
-/** Aggregate variants keyed by a signature function into { keys(best), count, wins, evo, tower }.
- *  `wins` is summed alongside `count` so a battle-log sample's win rate (wins/count) survives
- *  clustering. Variants without `wins` (e.g. current-deck samples) contribute 0. */
+/** Aggregate variants keyed by a signature function into { keys(best), count, wins, evo, tower,
+ *  members }. `wins` is summed alongside `count` so a battle-log sample's win rate (wins/count)
+ *  survives clustering. `members` keeps every exact 8-card variant (with its own games + wins) so
+ *  the engine can tell a list top players actually ran from an untested recombination of the core.
+ *  Variants without `wins` (e.g. current-deck samples) contribute 0. */
 function aggregateBy(variants, keyOf) {
   const groups = new Map();
   for (const v of variants) {
     const sig = keyOf(v.keys);
     if (sig == null) continue;
-    const g = groups.get(sig) ?? { count: 0, wins: 0, best: null, evo: new Map(), tower: new Map() };
+    const g = groups.get(sig) ?? { count: 0, wins: 0, best: null, evo: new Map(), tower: new Map(), members: [] };
     g.count += v.count;
     g.wins += v.wins ?? 0;
     if (!g.best || v.count > g.best.count) g.best = { keys: v.keys, count: v.count };
     for (const [k, n] of v.evo ?? []) g.evo.set(k, (g.evo.get(k) ?? 0) + n);
     for (const [k, n] of v.tower ?? []) g.tower.set(k, (g.tower.get(k) ?? 0) + n);
+    if (v.members) g.members.push(...v.members);
+    else g.members.push({ keys: v.keys, count: v.count, wins: v.wins ?? 0 });
     groups.set(sig, g);
   }
-  return [...groups.values()].map((g) => ({ keys: g.best.keys, count: g.count, wins: g.wins, evo: g.evo, tower: g.tower }));
+  return [...groups.values()].map((g) => ({
+    keys: g.best.keys, count: g.count, wins: g.wins, evo: g.evo, tower: g.tower, members: g.members,
+  }));
 }
 
 /** Cluster exact 8-card variants into cores. Input: [{ keys, count, evo:Map, tower:Map }].
@@ -130,29 +136,65 @@ export function cardUsageShares(decks) {
   return shares;
 }
 
-// A rising card must gain at least this much usage share vs last snapshot before momentum counts.
-// Below it, movement is treated as noise and momentum is 0 (so a quiet month doesn't amplify jitter).
-const MOMENTUM_MIN_DELTA = 0.01;
+// Rising-card momentum is measured against a BASELINE snapshot at least this many days old. Diffing
+// against "whatever ran last" made momentum useless: refreshes days (or minutes) apart show no rise,
+// and a missing previous file made every card look brand new, so it fired on all 40 decks at once.
+export const MOMENTUM_BASELINE_MIN_DAYS = 14;
+// Ignore baselines older than this — comparing across several seasons measures history, not a rise.
+export const MOMENTUM_BASELINE_MAX_DAYS = 60;
+// A card counts as rising only if it at least DOUBLED its usage share and now holds a meaningful
+// share. Calibrated on real snapshots (Sep 22 -> Oct 18 2026): Minion Giant 0.6% -> 1.9%, Bats
+// 0.5% -> 1.6%, Little Prince 0.2% -> 1.1% qualify; Fireball 2.9% -> 3.7% (ordinary drift) does not.
+const MOMENTUM_MIN_RATIO = 2;
+const MOMENTUM_MIN_SHARE = 0.0075;
 
-/** Annotate each current deck with a momentum score in [0,1]: how fast its fastest-rising card
- *  is gaining usage share vs the previous snapshot, normalized to the hottest card this refresh.
- *  A brand-new card (absent last snapshot) rises from 0, so decks built around it score high. */
-export function computeMomentum(currentDecks, previousDecks) {
+/** The newest snapshot in `history` ([{ at: ISO date, shares: {card: share} }]) that is between
+ *  MOMENTUM_BASELINE_MIN_DAYS and MOMENTUM_BASELINE_MAX_DAYS older than `now`, or null. */
+export function pickBaseline(history, now = new Date()) {
+  const DAY = 86_400_000;
+  const eligible = (history ?? [])
+    .map((h) => ({ ...h, age: (now - new Date(h.at)) / DAY }))
+    .filter((h) => h.age >= MOMENTUM_BASELINE_MIN_DAYS && h.age <= MOMENTUM_BASELINE_MAX_DAYS)
+    .sort((a, b) => a.age - b.age);
+  return eligible[0] ?? null;
+}
+
+/** Annotate each current deck with a momentum score in [0,1]: how fast its fastest-rising card is
+ *  gaining usage share vs the BASELINE shares (a Map or plain object, from pickBaseline), normalized
+ *  to the hottest card this refresh. No baseline -> 0 for everything (never a blanket boost). */
+export function computeMomentum(currentDecks, baselineShares) {
+  const none = () => currentDecks.map((d) => ({ ...d, momentum: 0 }));
+  if (!baselineShares) return none();
+  const prev = baselineShares instanceof Map ? baselineShares : new Map(Object.entries(baselineShares));
+  if (prev.size === 0) return none();
   const cur = cardUsageShares(currentDecks);
-  const prev = cardUsageShares(previousDecks ?? []);
-  const rawOf = (d) => {
-    let m = 0;
-    for (const k of d.cards) {
-      const delta = (cur.get(k) ?? 0) - (prev.get(k) ?? 0);
-      if (delta > m) m = delta;
-    }
-    return m;
+  const riseOf = (k) => {
+    const now = cur.get(k) ?? 0;
+    const was = prev.get(k) ?? 0;
+    if (now < MOMENTUM_MIN_SHARE || now < was * MOMENTUM_MIN_RATIO) return 0;
+    return now - was;
   };
-  const raws = currentDecks.map(rawOf);
+  const raws = currentDecks.map((d) => Math.max(0, ...d.cards.map(riseOf)));
   const maxRaw = Math.max(0, ...raws);
-  const meaningful = maxRaw >= MOMENTUM_MIN_DELTA;
-  return currentDecks.map((d, i) => ({
-    ...d,
-    momentum: meaningful ? Math.round((raws[i] / maxRaw) * 1000) / 1000 : 0,
-  }));
+  if (maxRaw === 0) return none();
+  return currentDecks.map((d, i) => ({ ...d, momentum: Math.round((raws[i] / maxRaw) * 1000) / 1000 }));
+}
+
+/** Card shares rounded for storage in the momentum history file (drops zero/negligible cards). */
+export function compactShares(shares) {
+  const out = {};
+  for (const [k, v] of [...shares].sort((a, b) => b[1] - a[1])) if (v >= 0.0001) out[k] = Math.round(v * 1e5) / 1e5;
+  return out;
+}
+
+/** Record one battle into an archetype-vs-archetype tally: matchups[a][b] = { games, wins } from
+ *  a's side. Both perspectives are recorded, so a mirror match adds 2 games / 1 win (= 50%). */
+export function addMatchup(matchups, a, b, aWon) {
+  const row = (matchups[a] ??= {});
+  const cell = (row[b] ??= { games: 0, wins: 0 });
+  cell.games++;
+  if (aWon) cell.wins++;
+  const back = ((matchups[b] ??= {})[a] ??= { games: 0, wins: 0 });
+  back.games++;
+  if (!aWon) back.wins++;
 }

@@ -69,6 +69,9 @@ export function enrichCandidate(cand: DeckCandidate) {
     source: cand.deck.source ?? "curated",
     usage: cand.deck.usage ?? 0,
     winRate: cand.deck.winRate ?? null,
+    // What the win rate is really based on for the 8 cards shown (exact list / one card off / an
+    // untested mix of the core), so the UI never claims a record these cards don't have.
+    evidence: cand.evidence,
     scores: cand.scores,
     substitutions: cand.substitutions,
     missingRoles: cand.missingRoles,

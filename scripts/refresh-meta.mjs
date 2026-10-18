@@ -10,15 +10,21 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { clusterDecks, classify, computeMomentum } from "./meta-cluster.mjs";
+import { clusterDecks, classify, computeMomentum, cardUsageShares, compactShares, pickBaseline, addMatchup } from "./meta-cluster.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "data", "meta-decks.json");
+// Card usage shares from past refreshes, so momentum compares against a snapshot 2+ weeks old.
+const HISTORY = join(ROOT, "data", "meta-history.json");
 const BASE = "https://proxy.royaleapi.dev/v1";
 const TOP_PLAYERS = 1000; // top-ladder leaderboard sample
 const CONCURRENCY = 10;
 const MIN_GAMES = 15; // a clustered deck needs at least this many battle instances to count (drop noise)
 const KEEP_DECKS = 40;
+// Per core, keep the most-played exact 8-card lists (with their own record) so the engine can tell a
+// list top players actually ran from an untested recombination. Below MIN_VARIANT_GAMES is noise.
+const KEEP_VARIANTS = 12;
+const MIN_VARIANT_GAMES = 3;
 const WINRATE_PRIOR = 30; // Bayesian shrink: pulls small-sample win rates toward 50% so a lightly-played deck can't fake a high rate
 const COMPETITIVE = /pvp|pathoflegend|ranked|ladder/i; // 1v1 competitive battle types only (skip boat/2v2/challenge)
 
@@ -121,6 +127,9 @@ function record(side, won) {
   decks.set(sig, entry);
 }
 
+// Real archetype-vs-archetype results from the same battles, replacing a hand-written guess table.
+const matchups = {};
+
 let battlesUsed = 0;
 for (const log of logs) {
   if (!Array.isArray(log)) continue;
@@ -135,6 +144,8 @@ for (const log of logs) {
     battlesUsed++;
     record(me, mc > oc);
     record(opp, oc > mc);
+    const keysOf = (side) => side.cards.map((c) => keyById.get(c.id)).filter(Boolean);
+    addMatchup(matchups, classify(keysOf(me)), classify(keysOf(opp)), mc > oc);
   }
 }
 console.log(`Aggregated ${battlesUsed} competitive battles into ${decks.size} distinct decks`);
@@ -166,18 +177,34 @@ const ranked = clustered
       // The 2 evolutions most commonly run in this deck, and the popular tower troop.
       evolutions: topByCount(d.evo, 2).map((e) => e.key),
       towerTroop: topByCount(d.tower, 1)[0]?.key ?? null,
+      // The exact lists top players ran inside this core, most-played first, each with its record.
+      variants: d.members
+        .filter((m) => m.count >= MIN_VARIANT_GAMES)
+        .sort((a, b) => b.count - a.count)
+        .slice(0, KEEP_VARIANTS)
+        .map((m) => ({ cards: [...m.keys].sort(), games: m.count, wins: m.wins })),
     };
   });
 
-// Rising-card momentum: diff each card's usage share against the previous snapshot (read BEFORE
-// we overwrite it) so a card the ladder is newly piling into surfaces before raw usage alone would.
-let previousDecks = [];
+// Rising-card momentum: compare each card's usage share against a baseline snapshot 2+ weeks old
+// from the history file, so a card the ladder is newly piling into surfaces before raw usage
+// alone would rank it. Then append this refresh to the history (pruned to ~3 months).
+let history = [];
 try {
-  previousDecks = JSON.parse(readFileSync(OUT, "utf8")).decks ?? [];
+  history = JSON.parse(readFileSync(HISTORY, "utf8")).snapshots ?? [];
 } catch {
-  // no prior snapshot (first run) — momentum falls back to 0 for everything.
+  // no history yet — momentum is 0 until a baseline 2+ weeks old exists.
 }
-const withMomentum = computeMomentum(ranked, previousDecks);
+const now = new Date();
+const baseline = pickBaseline(history, now);
+const withMomentum = computeMomentum(ranked, baseline?.shares ?? null);
+console.log(baseline ? `Momentum baseline: ${baseline.at} (${Math.round(baseline.age)} days old)` : "Momentum baseline: none 14+ days old yet (momentum = 0)");
+const DAY = 86_400_000;
+history = [
+  ...history.filter((h) => now - new Date(h.at) <= 90 * DAY && h.at.slice(0, 10) !== now.toISOString().slice(0, 10)),
+  { at: now.toISOString(), season, shares: compactShares(cardUsageShares(ranked)) },
+].sort((a, b) => a.at.localeCompare(b.at));
+writeFileSync(HISTORY, JSON.stringify({ snapshots: history }, null, 2) + "\n");
 
 writeFileSync(
   OUT,
@@ -189,6 +216,7 @@ writeFileSync(
       minGames: MIN_GAMES,
       // Forms real accounts USE → "this card has an evo/hero available", catalog or not.
       availableForms: { evolutions: [...evoForms].sort(), heroes: [...heroForms].sort() },
+      matchups,
       decks: withMomentum,
     },
     null,

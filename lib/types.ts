@@ -79,6 +79,13 @@ export interface DeckSlot {
   substitutes: string[]; // pro-known alternatives, best-first
 }
 
+/** One exact 8-card list top players ran inside a meta deck's core, with its own record. */
+export interface MetaVariant {
+  cards: string[]; // card keys, sorted
+  games: number;
+  wins: number;
+}
+
 /** A proven, battle-tested deck the generator is grounded in. */
 export interface ProvenDeck {
   id: string;
@@ -95,4 +102,5 @@ export interface ProvenDeck {
   momentum?: number; // for meta decks: 0..1 rising-card momentum vs the previous snapshot
   metaEvolutions?: string[]; // for meta decks: the evolutions top players run in this deck
   metaTowerTroop?: string | null; // for meta decks: the tower troop top players run
+  variants?: MetaVariant[]; // for meta decks: the exact lists top players ran in this core
 }

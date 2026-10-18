@@ -23,24 +23,78 @@ const CURATED = (provenDecks as ProvenDeck[])
   .filter((d) => !metaSigs.has(sig(d)));
 export const DECKS: ProvenDeck[] = [...META, ...CURATED];
 
-// Strongest = run by the most top players. Normalize usage to [0,1] against the most popular
-// meta deck so it can drive ranking; curated decks (no usage) get a modest baseline so they
-// surface only when the player can't field a real meta deck.
+// Popularity: log-scaled usage against the most-played meta deck, so 1,000 vs 300 games is a real
+// gap but not a 3x one. Curated decks (no battle data) get a low baseline so a real meta deck the
+// player can field always beats them, while they still surface for accounts that can't field one.
 const MAX_USAGE = Math.max(1, ...META.map((d) => d.usage ?? 0));
-// Curated decks are a fallback only: give them a low baseline so a real meta deck the player can
-// field always beats them, but they still surface for accounts that can't field any meta deck.
 const CURATED_STRENGTH = 0.12;
-// A rising card the ladder is newly piling into gets a strength boost on top of raw usage, so an
-// emerging deck surfaces before its usage count alone would rank it. Capped so momentum nudges,
-// never dominates, the established meta.
-const MOMENTUM_BOOST = 0.5;
-function strengthOf(deck: ProvenDeck): number {
-  const base = deck.usage != null ? Math.min(1, deck.usage / MAX_USAGE) : CURATED_STRENGTH;
-  // Tilt popularity by real battle-log win rate: a deck winning above 50% gets a boost, below
-  // 50% a trim, capped at ±0.2 so win rate nudges the ranking rather than overturning usage.
-  const wr = deck.winRate != null ? deck.winRate / 100 : 0.5;
-  const winFactor = 1 + Math.max(-0.2, Math.min(0.2, (wr - 0.5) * 1.5));
-  return Math.min(1, base * winFactor + MOMENTUM_BOOST * (deck.momentum ?? 0));
+// A rising card the ladder is newly piling into gets a strength boost on top of win rate and
+// usage, so an emerging deck surfaces early. Capped so momentum nudges, never dominates.
+const MOMENTUM_BOOST = 0.25;
+// Win-rate scale: top-ladder decks land roughly between 46% and 59% after shrinkage. 46% -> 0,
+// 58%+ -> 1, so the gap between a coin-flip deck and the best performer is the full range.
+const WR_FLOOR = 46;
+const WR_SPAN = 12;
+// Shrink an exact variant's own record toward its core's win rate by this many virtual games, so a
+// 4-1 list doesn't read 80% but a 300-game list speaks for itself.
+const VARIANT_PRIOR = 30;
+// A variant needs this many games before its record counts as evidence for an exact list.
+const MIN_EVIDENCE_GAMES = 5;
+// How much of the core's edge over 50% a resolved deck keeps, by how close it is to a real list.
+const EVIDENCE_KEEP = { exact: 1, close: 0.6, core: 0.25 } as const;
+
+export type EvidenceKind = "exact" | "close" | "core" | "none";
+
+/** The battle evidence behind the deck the player would ACTUALLY field (after substitutions):
+ *  "exact" = top players ran these 8 cards, "close" = one card off a real list, "core" = same win
+ *  condition but an untested mix, "none" = no battle data (curated, or the win condition is gone). */
+export interface Evidence {
+  kind: EvidenceKind;
+  games: number; // games behind the matched list (or the core, for "core")
+  winRate: number | null; // percent, the effective win rate used for strength
+}
+
+/** The deck's real lists. Older data without variants falls back to the canonical list itself. */
+function variantsOf(deck: ProvenDeck) {
+  if (deck.variants?.length) return deck.variants;
+  if (deck.usage == null || deck.winRate == null) return [];
+  const cards = deck.slots.map((s) => s.cardKey).sort();
+  return [{ cards, games: deck.usage, wins: Math.round((deck.winRate / 100) * deck.usage) }];
+}
+
+/** Match the resolved 8 against the real lists top players ran in this deck's core. */
+export function evidenceFor(deck: ProvenDeck, chosenKeys: string[]): Evidence {
+  const coreWr = deck.winRate;
+  const wc = deck.slots.find((s) => s.role === "win-condition")?.cardKey;
+  // Only lists that run this deck's win condition count: a skeleton with a different win condition
+  // swapped in must not borrow the original deck's record through its other seven cards.
+  const variants = variantsOf(deck).filter((v) => !wc || v.cards.includes(wc));
+  if (coreWr == null || variants.length === 0 || (wc && !chosenKeys.includes(wc))) {
+    return { kind: "none", games: 0, winRate: null };
+  }
+  const chosen = new Set(chosenKeys);
+  let best: { overlap: number; games: number; wins: number } | null = null;
+  for (const v of variants) {
+    if (v.games < MIN_EVIDENCE_GAMES) continue;
+    const overlap = v.cards.filter((k) => chosen.has(k)).length;
+    if (!best || overlap > best.overlap || (overlap === best.overlap && v.games > best.games)) {
+      best = { overlap, games: v.games, wins: v.wins };
+    }
+  }
+  const pull = (keep: number, wr: number) => Math.round((50 + (wr - 50) * keep) * 10) / 10;
+  if (best && best.overlap >= 7 && chosenKeys.length === 8) {
+    const own = ((best.wins + (VARIANT_PRIOR * coreWr) / 100) / (best.games + VARIANT_PRIOR)) * 100;
+    const kind = best.overlap === 8 ? "exact" : "close";
+    return { kind, games: best.games, winRate: pull(EVIDENCE_KEEP[kind], own) };
+  }
+  return { kind: "core", games: deck.usage ?? 0, winRate: pull(EVIDENCE_KEEP.core, coreWr) };
+}
+
+function strengthOf(deck: ProvenDeck, evidence: Evidence): number {
+  if (evidence.winRate == null) return CURATED_STRENGTH;
+  const wrScore = Math.max(0, Math.min(1, (evidence.winRate - WR_FLOOR) / WR_SPAN));
+  const popularity = Math.log1p(deck.usage ?? 0) / Math.log1p(MAX_USAGE);
+  return Math.min(1, 0.65 * wrScore + 0.35 * popularity + MOMENTUM_BOOST * (deck.momentum ?? 0));
 }
 
 // Cards that serve as a win condition in some deck — they should NOT be used to fill ordinary
@@ -84,6 +138,7 @@ export interface DeckCandidate {
   fieldable: boolean; // all 8 slots filled from owned cards
   competitiveLevel: number; // the player's fielding level this deck was judged against
   weakCards: number; // count of owned-but-under-leveled cards in the resolved deck
+  evidence: Evidence; // battle evidence behind the resolved 8 cards
   scores: { ownership: number; level: number; skill: number; arena: number; edge: number; meta: number; strength: number; coverage: number; total: number };
 }
 
@@ -157,6 +212,7 @@ function bestCardForSlot(
   collection: Collection,
   used: Set<string>,
   deckCanonicals: Set<string>,
+  proven: Set<string>,
 ): { chosenKey: string; level: number; isSubstitute: boolean } | null {
   const canonical = cardByKey(slot.cardKey);
   const targetElixir = canonical?.elixir ?? 4;
@@ -175,13 +231,17 @@ function bestCardForSlot(
     const dist = Math.abs(card.elixir - targetElixir);
     if (dist > 1.5) continue; // keep this slot's cost character
     const o = collection.owned[card.id];
-    const power = lvl + (o?.evolved ? 0.5 : 0) + (o?.hero ? 0.25 : 0);
+    // A card top players actually run in this deck's core is worth a level: one level lower but
+    // proven beats an untested pick, so substitutions stay close to lists with a real record.
+    const power = lvl + (o?.evolved ? 0.5 : 0) + (o?.hero ? 0.25 : 0) + (proven.has(key) ? PROVEN_PAIRING_BONUS : 0);
     if (!best || power > best.power || (power === best.power && dist < best.dist)) {
       best = { key, level: lvl, power, dist };
     }
   }
   return best ? { chosenKey: best.key, level: best.level, isSubstitute: best.key !== slot.cardKey } : null;
 }
+
+const PROVEN_PAIRING_BONUS = 1;
 
 /** Pass 2: fill a still-empty slot from ANY owned card that plays its role (best-leveled). */
 function roleFill(
@@ -217,6 +277,7 @@ function scoreDeck(
   // slots from owned role-mates. Guarantees 8 distinct cards.
   const used = new Set<string>();
   const deckCanonicals = new Set(deck.slots.map((s) => s.cardKey));
+  const proven = new Set(variantsOf(deck).filter((v) => v.games >= MIN_EVIDENCE_GAMES).flatMap((v) => v.cards));
   const slots: ResolvedSlot[] = new Array(deck.slots.length);
   const order = deck.slots.map((_, i) => i).sort((a, b) => slotWeight(deck.slots[b].role) - slotWeight(deck.slots[a].role));
   const pending: number[] = [];
@@ -231,7 +292,7 @@ function scoreDeck(
     // cards instead of their downgraded copies of the canonical list.
     const r = isCore
       ? resolveIntended(slot, collection, used)
-      : bestCardForSlot(slot, collection, used, deckCanonicals) ?? resolveIntended(slot, collection, used);
+      : bestCardForSlot(slot, collection, used, deckCanonicals, proven) ?? resolveIntended(slot, collection, used);
     if (r) {
       used.add(r.chosenKey);
       slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: r.chosenKey, isSubstitute: r.isSubstitute, isMissing: false, level: r.level, weak: false };
@@ -344,17 +405,17 @@ function scoreDeck(
   if (!hasAntiAir) coverage *= 0.82;
   if (!hasSpell) coverage *= 0.9;
 
-  // Meta strength (how many top players run this deck) and card-level fit are the two big
-  // drivers: we want the STRONGEST decks the player can actually field at level. Ownership and
-  // evolution-slot fit matter, ease-of-play is a small factor by default (handled below for the
-  // "forgiving" mode), and recent-loss meta is only a minor nudge.
-  const strength = strengthOf(deck);
+  // Strength is measured on the deck the player would ACTUALLY field: a meta list's win rate only
+  // carries over in full when the resolved 8 match a list top players ran, and fades toward 50% the
+  // further substitutions move it from any real list.
+  const evidence = evidenceFor(deck, chosenKeys);
+  const strength = strengthOf(deck, evidence);
   // Your card levels LEAD: from the pool of real top-player decks, surface the ones where YOUR
   // cards are highest-leveled (so it's built from your best cards, not a pro list stuffed with
-  // your level-10 cards). Meta popularity is the secondary tie-breaker, then ownership and your
-  // evolution-slot fit. This is "the strongest real deck you can field at your levels".
+  // your level-10 cards). Proven strength (win rate, then popularity) is next, then evolution-slot
+  // fit and ownership. This is "the strongest real deck you can field at your levels".
   let total =
-    (0.13 * ownership + 0.4 * level + 0.12 * strength + 0.22 * edge + 0.03 * skill + 0.03 * arena + 0.07 * meta) * 100;
+    (0.1 * ownership + 0.38 * level + 0.25 * strength + 0.17 * edge + 0.03 * skill + 0.02 * arena + 0.05 * meta) * 100;
   total *= coverage;
   // A deck you can't field a full 8 for is a poor recommendation — discount hard.
   if (!fieldable) total *= 0.5;
@@ -395,6 +456,7 @@ function scoreDeck(
     fieldable,
     competitiveLevel: target,
     weakCards,
+    evidence,
     scores: {
       ownership: Math.round(ownership * 100),
       level: Math.round(level * 100),

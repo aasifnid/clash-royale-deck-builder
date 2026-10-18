@@ -3,7 +3,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { clusterDecks, computeMomentum, classify } from "./meta-cluster.mjs";
+import { clusterDecks, computeMomentum, classify, cardUsageShares, pickBaseline, addMatchup } from "./meta-cluster.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const cards = JSON.parse(readFileSync(join(ROOT, "data", "cards.json"), "utf8"));
@@ -78,7 +78,7 @@ const previousDecks = [
   { cards: ["x-bow", "tesla", "ice-golem", "archers", "skeletons", "ice-spirit", "the-log", "fireball"], usage: 12 },
 ];
 const currentDecks = clusters.map((c) => ({ cards: c.keys, usage: c.count }));
-const withMomentum = computeMomentum(currentDecks, previousDecks);
+const withMomentum = computeMomentum(currentDecks, cardUsageShares(previousDecks));
 const roninOut = withMomentum.find((d) => d.cards.includes("ronin"));
 const hogOut = withMomentum.find((d) => d.cards.includes("hog-rider"));
 check("Ronin deck gets positive momentum", (roninOut?.momentum ?? 0) > 0, `m=${roninOut?.momentum}`);
@@ -87,8 +87,48 @@ check("An already-present deck has less momentum than Ronin", (hogOut?.momentum 
   `hog=${hogOut?.momentum} ronin=${roninOut?.momentum}`);
 
 // 4) A quiet month (same decks as before) should produce no momentum (noise guard).
-const quiet = computeMomentum(previousDecks.map((d) => ({ ...d })), previousDecks);
+const quiet = computeMomentum(previousDecks.map((d) => ({ ...d })), cardUsageShares(previousDecks));
 check("No momentum when nothing rose", quiet.every((d) => d.momentum === 0));
+
+// 5) No baseline (first run / missing history) must NOT fire on every deck — the old blanket bug.
+const noBase = computeMomentum(currentDecks, null);
+check("No baseline -> momentum 0 everywhere", noBase.every((d) => d.momentum === 0));
+
+// 6) Slow drift of an established card (well under 2x its share) is not "rising".
+const drift = computeMomentum(
+  [{ cards: hog.keys, usage: 30 }, { cards: golem.keys, usage: 18 }],
+  cardUsageShares([{ cards: hog.keys, usage: 22 }, { cards: golem.keys, usage: 18 }]),
+);
+check("Ordinary drift produces no momentum", drift.every((d) => d.momentum === 0));
+
+// 7) Baseline is the newest snapshot 14-60 days old; too-recent and too-old ones are skipped.
+const now = new Date("2026-10-22T07:00:00Z");
+const hist = [
+  { at: "2026-07-01T07:00:00Z", shares: {} },
+  { at: "2026-09-22T07:00:00Z", shares: {} },
+  { at: "2026-10-08T07:00:00Z", shares: {} },
+  { at: "2026-10-18T07:00:00Z", shares: {} },
+];
+check("Baseline = newest snapshot 14+ days old", pickBaseline(hist, now)?.at === "2026-10-08T07:00:00Z", pickBaseline(hist, now)?.at);
+check("No baseline when every snapshot is too recent", pickBaseline(hist.slice(3), now) === null);
+
+// 8) Clustering keeps every exact variant with its own record.
+const withWins = [
+  { ...V(roninBrews[0].keys, 6), wins: 4 },
+  { ...V(roninBrews[1].keys, 4), wins: 1 },
+];
+const kept = clusterDecks(withWins, ctx).find((c) => c.keys.includes("ronin"));
+check("Core keeps both variants", kept?.members?.length === 2, `${kept?.members?.length}`);
+check("Variant records survive clustering", kept?.members?.find((m) => m.count === 6)?.wins === 4);
+
+// 9) Matchup tally records both sides; a mirror match stays 50%.
+const mu = {};
+addMatchup(mu, "Cycle", "Beatdown", true);
+addMatchup(mu, "Cycle", "Beatdown", true);
+addMatchup(mu, "Cycle", "Cycle", false);
+check("Matchup winner side counted", mu.Cycle.Beatdown.games === 2 && mu.Cycle.Beatdown.wins === 2);
+check("Matchup loser side counted", mu.Beatdown.Cycle.games === 2 && mu.Beatdown.Cycle.wins === 0);
+check("Mirror match is 50%", mu.Cycle.Cycle.games === 2 && mu.Cycle.Cycle.wins === 1);
 
 console.log(`\n${failures === 0 ? "ALL PASS" : failures + " FAILURE(S)"}`);
 process.exit(failures === 0 ? 0 : 1);

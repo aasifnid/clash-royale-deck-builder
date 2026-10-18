@@ -1,6 +1,7 @@
-// Archetype classification + a coarse matchup model. Used to read the meta from a
-// player's battle log and to score how well a candidate deck answers what beats them.
+// Archetype classification + a matchup model measured from top-ladder battle logs. Used to read
+// the meta from a player's battle log and to score how well a candidate deck answers what beats them.
 
+import metaData from "@/data/meta-decks.json";
 import { cardById } from "./cards";
 
 export type Archetype = "Beatdown" | "Cycle" | "Control" | "Bridge Spam" | "Siege" | "Bait";
@@ -81,26 +82,26 @@ export function archetypeForWinCondition(key: string): Archetype | null {
   return null;
 }
 
-// Coarse attacker-vs-defender advantage (0.5 = even, >0.5 favors the attacker/row).
-// Heuristic generalizations of common Clash Royale archetype dynamics — used as a nudge,
-// not gospel.
-const MATCHUP: Record<Archetype, Record<Archetype, number>> = {
-  Beatdown:      { Beatdown: 0.5, Cycle: 0.45, Control: 0.45, "Bridge Spam": 0.55, Siege: 0.6, Bait: 0.5 },
-  Cycle:         { Beatdown: 0.55, Cycle: 0.5, Control: 0.5, "Bridge Spam": 0.45, Siege: 0.5, Bait: 0.45 },
-  Control:       { Beatdown: 0.55, Cycle: 0.5, Control: 0.5, "Bridge Spam": 0.45, Siege: 0.5, Bait: 0.45 },
-  "Bridge Spam": { Beatdown: 0.45, Cycle: 0.55, Control: 0.55, "Bridge Spam": 0.5, Siege: 0.6, Bait: 0.5 },
-  Siege:         { Beatdown: 0.55, Cycle: 0.5, Control: 0.5, "Bridge Spam": 0.4, Siege: 0.5, Bait: 0.5 },
-  Bait:          { Beatdown: 0.45, Cycle: 0.55, Control: 0.55, "Bridge Spam": 0.5, Siege: 0.5, Bait: 0.5 },
-};
+// Real archetype-vs-archetype results from the latest top-ladder battle logs (refresh-meta.mjs),
+// replacing the old hand-written guess table. matchups[a][b] = { games, wins } from a's side.
+const MATCHUPS = (metaData as { matchups?: Record<string, Record<string, { games: number; wins: number }>> }).matchups ?? {};
+// Shrink each rate toward 50% by this many virtual games, so a thin sample stays a gentle nudge.
+const MATCHUP_PRIOR = 50;
+
+/** Win probability for archetype `a` against archetype `b` at top ladder (0.5 when unknown). */
+export function matchupRate(a: string, b: string): number {
+  const cell = MATCHUPS[a]?.[b];
+  if (!cell) return 0.5;
+  return (cell.wins + MATCHUP_PRIOR * 0.5) / (cell.games + MATCHUP_PRIOR);
+}
 
 /** How well a deck's archetype answers a distribution of threats (archetype -> weight).
  *  Returns 0.5 (neutral) when there's no threat data. */
 export function metaFitScore(deckArchetype: string, threats: Record<string, number>): number {
   const entries = Object.entries(threats);
   const total = entries.reduce((sum, [, w]) => sum + w, 0);
-  const row = MATCHUP[deckArchetype as Archetype];
-  if (total === 0 || !row) return 0.5;
+  if (total === 0) return 0.5;
   let acc = 0;
-  for (const [arch, w] of entries) acc += (row[arch as Archetype] ?? 0.5) * w;
+  for (const [arch, w] of entries) acc += matchupRate(deckArchetype, arch) * w;
   return acc / total;
 }

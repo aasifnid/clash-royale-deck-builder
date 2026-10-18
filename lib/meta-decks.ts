@@ -6,7 +6,7 @@ import metaData from "@/data/meta-decks.json";
 import provenDecks from "@/data/proven-decks.json";
 import { cardByKey } from "./cards";
 import { winConditionKeyOf } from "./archetypes";
-import type { ProvenDeck } from "./types";
+import type { MetaVariant, ProvenDeck } from "./types";
 
 interface RawMetaDeck {
   id: string;
@@ -18,6 +18,7 @@ interface RawMetaDeck {
   cards: string[];
   evolutions?: string[];
   towerTroop?: string | null;
+  variants?: MetaVariant[];
 }
 
 // cardKey -> {role, substitutes} learned from the curated decks (first occurrence wins),
@@ -83,6 +84,7 @@ export const META_DECKS: ProvenDeck[] = ((metaData as { decks: RawMetaDeck[] }).
       momentum: d.momentum ?? 0,
       metaEvolutions: d.evolutions ?? [],
       metaTowerTroop: d.towerTroop ?? null,
+      variants: d.variants ?? [],
     } satisfies ProvenDeck;
   },
 );

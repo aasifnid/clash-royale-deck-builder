@@ -140,7 +140,17 @@ export function buildAroundCard(collection: Collection, focalKey: string, opts: 
     minArena: 0,
     slots,
     notes: skeleton.notes,
-    source: "curated",
+    // Carry the meta skeleton's battle data so the engine can judge the built 8 against the lists top
+    // players really ran: an unchanged meta list keeps its record, a reworked one fades toward 50%.
+    // A synthesized skeleton (win condition swapped in) loses its original win condition, so the
+    // engine treats it as having no evidence rather than borrowing another deck's record.
+    source: skeleton.source === "meta" && winConOf(DECKS.find((d) => d.id === skeleton.id) ?? skeleton) === winConOf(skeleton) ? "meta" : "curated",
+    usage: skeleton.usage,
+    winRate: skeleton.winRate,
+    momentum: skeleton.momentum,
+    variants: skeleton.variants,
+    metaEvolutions: skeleton.metaEvolutions,
+    metaTowerTroop: skeleton.metaTowerTroop,
   };
 
   return scoreBuiltDeck(built, collection, { ease: opts.ease, threats: opts.threats, locked: new Set([focalKey]) });

@@ -41,6 +41,7 @@ interface EnrichedPick {
   source: "curated" | "meta";
   usage: number;
   winRate?: number | null;
+  evidence?: { kind: "exact" | "close" | "core" | "none"; games: number; winRate: number | null };
   substitutions: { role: string; from: string; to: string }[];
   powerCards: { key: string; name: string; evolved: boolean; hero: boolean }[];
   evolutionSlots: string[];
@@ -484,15 +485,7 @@ function DeckResult({
               META
             </span>
           )}
-          {typeof pick.winRate === "number" && (
-            <span
-              className="rounded px-1.5 py-0.5 text-[10px] font-bold"
-              style={{ background: "var(--background)", color: pick.winRate >= 50 ? "#4ade80" : "var(--muted)" }}
-              title={`Win rate across ${pick.usage} sampled top-ladder battles`}
-            >
-              {pick.winRate}% win
-            </span>
-          )}
+          <EvidenceChip pick={pick} />
           <span className="text-[11px]" style={{ color: "var(--muted)" }} title="Difficulty · average elixir · the card level this deck was judged against, from the cards you actually field.">
             {pick.archetype} · <span style={{ color: difficultyColor(pick.coach.difficulty) }}>{pick.coach.difficulty}</span> · {pick.avgElixir} elixir · lvl {pick.competitiveLevel}
           </span>
@@ -578,5 +571,35 @@ function DeckResult({
         </p>
       )}
     </div>
+  );
+}
+
+/** Win-rate chip that only claims a record the shown 8 cards actually have: the exact list (or one
+ *  card off it) top players ran, or a muted "untested mix" when substitutions moved it off every
+ *  real list. Older responses without evidence fall back to the core's win rate. */
+function EvidenceChip({ pick }: { pick: Pick<EnrichedPick, "winRate" | "evidence" | "usage"> }) {
+  const ev = pick.evidence;
+  const style = (good: boolean) => ({ background: "var(--background)", color: good ? "#4ade80" : "var(--muted)" });
+  const cls = "rounded px-1.5 py-0.5 text-[10px] font-bold";
+  if (!ev) {
+    if (typeof pick.winRate !== "number") return null;
+    return <span className={cls} style={style(pick.winRate >= 50)} title={`Win rate across ${pick.usage} sampled top-ladder battles`}>{pick.winRate}% win</span>;
+  }
+  if (ev.kind === "none" || ev.winRate == null) return null;
+  if (ev.kind === "core") {
+    return (
+      <span className={cls} style={style(false)} title={`Top players run this core at ${pick.winRate}%, but not with these exact cards. Your substitutions make it an untested mix.`}>
+        untested mix
+      </span>
+    );
+  }
+  const title =
+    ev.kind === "exact"
+      ? `These exact 8 cards, across ${ev.games} sampled top-ladder battles`
+      : `One card off a list top players ran in ${ev.games} sampled battles`;
+  return (
+    <span className={cls} style={style(ev.winRate >= 50)} title={title}>
+      {ev.winRate}% win{ev.kind === "close" ? " · 1 card off" : ""}
+    </span>
   );
 }
