@@ -8,6 +8,7 @@ import { cardByKey } from "./cards";
 import { metaFitScore } from "./archetypes";
 import { META_DECKS } from "./meta-decks";
 import { cardsWithRole, ANTI_AIR } from "./roles";
+import type { LocalMeta } from "./localmeta";
 import type { Card, Collection, ProvenDeck } from "./types";
 
 const sig = (d: ProvenDeck) => d.slots.map((s) => s.cardKey).sort().join(",");
@@ -52,6 +53,27 @@ export interface Evidence {
   kind: EvidenceKind;
   games: number; // games behind the matched list (or the core, for "core")
   winRate: number | null; // percent, the effective win rate used for strength
+  // This exact 8's record in games near the player's trophies, when sampled often enough to count.
+  local?: { games: number; winRate: number };
+}
+
+// An exact list needs this many local games before its local record moves the win rate. Its
+// top-ladder evidence acts as a prior worth LOCAL_PRIOR games, so a thin local sample only nudges.
+const LOCAL_MIN_GAMES = 8;
+const LOCAL_PRIOR = 30;
+
+/** Blend the top-ladder evidence with this exact list's record near the player's trophies. */
+function withLocal(ev: Evidence, chosenKeys: string[], local: LocalMeta | null | undefined): Evidence {
+  if (!local || chosenKeys.length !== 8) return ev;
+  const rec = local.decks[[...chosenKeys].sort().join(",")];
+  if (!rec || rec.games < LOCAL_MIN_GAMES) return ev;
+  const prior = ev.winRate ?? 50;
+  const blended = ((rec.wins + (LOCAL_PRIOR * prior) / 100) / (rec.games + LOCAL_PRIOR)) * 100;
+  return {
+    ...ev,
+    winRate: Math.round(blended * 10) / 10,
+    local: { games: rec.games, winRate: Math.round((rec.wins / rec.games) * 1000) / 10 },
+  };
 }
 
 /** The deck's real lists. Older data without variants falls back to the canonical list itself. */
@@ -145,7 +167,8 @@ export interface DeckCandidate {
 interface RankOptions {
   archetype?: string; // filter to one archetype; omit/"auto" = all
   ease?: EasePreference; // default "forgiving"
-  threats?: Record<string, number>; // archetype -> loss count, from the player's battle log
+  threats?: Record<string, number>; // archetype -> weight (local decks faced, or battle-log losses)
+  local?: LocalMeta | null; // decks + results sampled near the player's trophies
 }
 
 // A card this many levels below the player's competitive level is treated as unusable.
@@ -270,6 +293,7 @@ function scoreDeck(
   threats: Record<string, number>,
   locked: Set<string> = new Set(),
   mode: "best-cards" | "as-played" = "best-cards",
+  local: LocalMeta | null = null,
 ): DeckCandidate {
   const target = targetLevel(collection);
   // Two-pass resolution. Pass 1 places the deck's intended cards (important slots first), so
@@ -411,7 +435,7 @@ function scoreDeck(
   // Strength is measured on the deck the player would ACTUALLY field: a meta list's win rate only
   // carries over in full when the resolved 8 match a list top players ran, and fades toward 50% the
   // further substitutions move it from any real list.
-  const evidence = evidenceFor(deck, chosenKeys);
+  const evidence = withLocal(evidenceFor(deck, chosenKeys), chosenKeys, local);
   const strength = strengthOf(deck, evidence);
   // Your card levels LEAD: from the pool of real top-player decks, surface the ones where YOUR
   // cards are highest-leveled (so it's built from your best cards, not a pro list stuffed with
@@ -489,17 +513,23 @@ export function rankDecks(collection: Collection, opts: RankOptions = {}): DeckC
 
   const threats = opts.threats ?? {};
   return pool
-    .map((d) => scoreBestVersion(d, collection, ease, threats))
+    .map((d) => scoreBestVersion(d, collection, ease, threats, opts.local ?? null))
     .sort((a, b) => b.scores.total - a.scores.total);
 }
 
 /** Score a deck rebuilt from the player's best cards AND each of its most-played real lists as
  *  played, keeping whichever scores highest. A proven list at slightly lower levels can then beat
  *  an untested mix of the player's highest cards, and vice versa when the levels gap is large. */
-function scoreBestVersion(deck: ProvenDeck, collection: Collection, ease: EasePreference, threats: Record<string, number>): DeckCandidate {
-  let best = scoreDeck(deck, collection, ease, threats);
+function scoreBestVersion(
+  deck: ProvenDeck,
+  collection: Collection,
+  ease: EasePreference,
+  threats: Record<string, number>,
+  local: LocalMeta | null,
+): DeckCandidate {
+  let best = scoreDeck(deck, collection, ease, threats, new Set(), "best-cards", local);
   for (const slots of deck.provenLists ?? []) {
-    const cand = scoreDeck({ ...deck, slots }, collection, ease, threats, new Set(), "as-played");
+    const cand = scoreDeck({ ...deck, slots }, collection, ease, threats, new Set(), "as-played", local);
     if (cand.scores.total > best.scores.total) best = cand;
   }
   return best;
@@ -511,9 +541,9 @@ function scoreBestVersion(deck: ProvenDeck, collection: Collection, ease: EasePr
 export function scoreBuiltDeck(
   deck: ProvenDeck,
   collection: Collection,
-  opts: { ease?: EasePreference; threats?: Record<string, number>; locked?: Set<string> } = {},
+  opts: { ease?: EasePreference; threats?: Record<string, number>; locked?: Set<string>; local?: LocalMeta | null } = {},
 ): DeckCandidate {
-  return scoreDeck(deck, collection, opts.ease ?? "any", opts.threats ?? {}, opts.locked ?? new Set());
+  return scoreDeck(deck, collection, opts.ease ?? "any", opts.threats ?? {}, opts.locked ?? new Set(), "best-cards", opts.local ?? null);
 }
 
 /** Distinct archetypes present in the library, for UI filter controls. */

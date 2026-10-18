@@ -9,10 +9,19 @@ import type { Collection } from "@/lib/types";
 import { type DeckCandidate, type EasePreference } from "@/lib/fieldability";
 import { rankWithBestCardDecks, bestCardPlan } from "@/lib/build";
 import { coachDecks, CoachError, type CoachPick } from "@/lib/coach";
-import { fetchBattleInsights } from "@/lib/battlelog";
+import { fetchBattleInsights, type BattleInsights } from "@/lib/battlelog";
+import { fetchLocalMeta, type LocalMeta } from "@/lib/localmeta";
 import { coachPickFor, enrichCandidate } from "@/lib/present";
 
 const SHORTLIST_SIZE = 6;
+
+// With enough games sampled near the player's trophies, score matchups against what they'll actually
+// face there; otherwise fall back to what has been beating them in their own last ~30 games.
+const LOCAL_THREAT_MIN_BATTLES = 50;
+function threatsFor(local: LocalMeta | null, insights: BattleInsights | null): Record<string, number> | undefined {
+  return local && local.battles >= LOCAL_THREAT_MIN_BATTLES ? local.faced : insights?.threats;
+}
+
 const MAX_PICKS = 3;
 
 /** Build coached picks from the deck library — no LLM. Prefers fully-fieldable decks, and
@@ -54,13 +63,16 @@ export async function POST(request: Request) {
   }
 
   // Read the player's recent ladder battles to learn the local meta + what beats them.
-  const insights = collection.tag ? await fetchBattleInsights(collection.tag) : null;
+  // ...and the LOCAL meta: decks and results sampled from games near the player's trophies.
+  const [insights, local] = collection.tag
+    ? await Promise.all([fetchBattleInsights(collection.tag), fetchLocalMeta(collection.tag, collection.trophies)])
+    : [null, null];
 
-  const ranked = rankWithBestCardDecks(collection, { archetype, ease, threats: insights?.threats });
+  const ranked = rankWithBestCardDecks(collection, { archetype, ease, threats: threatsFor(local, insights), local });
   const shortlist = ranked.slice(0, SHORTLIST_SIZE);
 
   if (shortlist.length === 0) {
-    return NextResponse.json({ aiUsed: false, picks: [], shortlist: [], insights, note: "No proven decks matched your filters." });
+    return NextResponse.json({ aiUsed: false, picks: [], shortlist: [], insights, local: null, note: "No proven decks matched your filters." });
   }
 
   // Map over the full ranked list so diversified picks (which may reach past the shortlist) resolve.
@@ -92,6 +104,8 @@ export async function POST(request: Request) {
   return NextResponse.json({
     aiUsed,
     insights,
+    // Size + archetype mix of the sample near the player's trophies (per-deck records stay server-side).
+    local: local ? { trophies: local.trophies, battles: local.battles, faced: local.faced } : null,
     // Which of the player's highest cards the recs were built around, and which higher cards were
     // skipped for being off-meta this month — so the UI can explain the cascade instead of the
     // player thinking their best cards were ignored.

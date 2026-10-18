@@ -14,6 +14,7 @@ import { DECKS, rankDecks, scoreBuiltDeck, type DeckCandidate, type EasePreferen
 import { META_DECKS } from "./meta-decks";
 import { cardByKey, cardById } from "./cards";
 import { winConditionKeyOf, archetypeForWinCondition } from "./archetypes";
+import type { LocalMeta } from "./localmeta";
 import type { Collection, ProvenDeck } from "./types";
 
 // Meta decks carry real usage; curated decks don't, so give them a small baseline so a real
@@ -110,6 +111,7 @@ function supportSkeleton(focalKey: string, collection: Collection): ProvenDeck {
 export interface BuildOptions {
   ease?: EasePreference;
   threats?: Record<string, number>;
+  local?: LocalMeta | null;
 }
 
 /** Build a deck around the focal card and score it through the shared engine. Returns a
@@ -153,7 +155,7 @@ export function buildAroundCard(collection: Collection, focalKey: string, opts: 
     metaTowerTroop: skeleton.metaTowerTroop,
   };
 
-  return scoreBuiltDeck(built, collection, { ease: opts.ease, threats: opts.threats, locked: new Set([focalKey]) });
+  return scoreBuiltDeck(built, collection, { ease: opts.ease, threats: opts.threats, local: opts.local, locked: new Set([focalKey]) });
 }
 
 // The 8-card signature of a deck, order-independent, for de-duping builds against the library.
@@ -228,6 +230,7 @@ interface RankOptions {
   archetype?: string;
   ease?: EasePreference;
   threats?: Record<string, number>;
+  local?: LocalMeta | null;
 }
 
 /** Rank the deck library for this collection AND guarantee the player's best cards are on the
@@ -245,7 +248,7 @@ export function rankWithBestCardDecks(collection: Collection, opts: RankOptions 
   for (const key of metaBackedAnchors(collection)) {
     let cand: DeckCandidate | null = null;
     try {
-      cand = buildAroundCard(collection, key, { ease: opts.ease, threats: opts.threats });
+      cand = buildAroundCard(collection, key, { ease: opts.ease, threats: opts.threats, local: opts.local });
     } catch {
       cand = null;
     }

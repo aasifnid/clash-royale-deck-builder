@@ -41,7 +41,7 @@ interface EnrichedPick {
   source: "curated" | "meta";
   usage: number;
   winRate?: number | null;
-  evidence?: { kind: "exact" | "close" | "core" | "none"; games: number; winRate: number | null };
+  evidence?: { kind: "exact" | "close" | "core" | "none"; games: number; winRate: number | null; local?: { games: number; winRate: number } };
   substitutions: { role: string; from: string; to: string }[];
   powerCards: { key: string; name: string; evolved: boolean; hero: boolean }[];
   evolutionSlots: string[];
@@ -64,6 +64,7 @@ interface CardRef {
 interface GenerateResponse {
   aiUsed: boolean;
   insights?: BattleInsights | null;
+  local?: { trophies: number | null; battles: number; faced: Record<string, number> } | null;
   bestCards?: { anchors: CardRef[]; skipped: CardRef[] };
   picks: EnrichedPick[];
   shortlist: EnrichedPick[];
@@ -402,6 +403,7 @@ export default function Generator({ collection, onSave }: Props) {
       {result && (
         <div className="flex flex-col gap-4">
           {((result.bestCards && result.bestCards.anchors.length > 0) ||
+            (result.local && result.local.battles > 0) ||
             (result.insights && result.insights.games > 0)) && (
             <div
               className="flex flex-col gap-1 rounded-lg p-3 text-sm"
@@ -417,6 +419,14 @@ export default function Generator({ collection, onSave }: Props) {
                       ({result.bestCards.skipped.map((c) => c.name).join(", ")} off-meta this month)
                     </span>
                   )}
+                </div>
+              )}
+              {result.local && result.local.battles > 0 && (
+                <div>
+                  <span style={{ color: "var(--muted)" }}>
+                    Near your trophies ({result.local.battles} games{result.local.trophies != null ? ` around ${result.local.trophies.toLocaleString()}` : ""}) — players run:
+                  </span>{" "}
+                  {topEntries(result.local.faced)}
                 </div>
               )}
               {result.insights && result.insights.games > 0 && (
@@ -585,6 +595,13 @@ function EvidenceChip({ pick }: { pick: Pick<EnrichedPick, "winRate" | "evidence
     if (typeof pick.winRate !== "number") return null;
     return <span className={cls} style={style(pick.winRate >= 50)} title={`Win rate across ${pick.usage} sampled top-ladder battles`}>{pick.winRate}% win</span>;
   }
+  if ((ev.kind === "none" || ev.kind === "core") && ev.local && ev.winRate != null) {
+    return (
+      <span className={cls} style={style(ev.winRate >= 50)} title={`Not a list top players run, but these exact 8 went ${ev.local.winRate}% over ${ev.local.games} games near your trophies.`}>
+        {ev.winRate}% win · near you
+      </span>
+    );
+  }
   if (ev.kind === "none" || ev.winRate == null) return null;
   if (ev.kind === "core") {
     return (
@@ -593,10 +610,11 @@ function EvidenceChip({ pick }: { pick: Pick<EnrichedPick, "winRate" | "evidence
       </span>
     );
   }
+  const localNote = ev.local ? ` Near your trophies: ${ev.local.winRate}% over ${ev.local.games} games (blended in).` : "";
   const title =
-    ev.kind === "exact"
-      ? `These exact 8 cards, across ${ev.games} sampled top-ladder battles`
-      : `One card off a list top players ran in ${ev.games} sampled battles`;
+    (ev.kind === "exact"
+      ? `These exact 8 cards, across ${ev.games} sampled top-ladder battles.`
+      : `One card off a list top players ran in ${ev.games} sampled battles.`) + localNote;
   return (
     <span className={cls} style={style(ev.winRate >= 50)} title={title}>
       {ev.winRate}% win{ev.kind === "close" ? " · 1 card off" : ""}

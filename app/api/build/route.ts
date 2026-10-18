@@ -8,9 +8,17 @@ import { NextResponse } from "next/server";
 import type { Collection } from "@/lib/types";
 import type { EasePreference } from "@/lib/fieldability";
 import { buildAroundCard } from "@/lib/build";
-import { fetchBattleInsights } from "@/lib/battlelog";
+import { fetchBattleInsights, type BattleInsights } from "@/lib/battlelog";
+import { fetchLocalMeta, type LocalMeta } from "@/lib/localmeta";
 import { coachPickFor, enrichCandidate } from "@/lib/present";
 import { cardByKey } from "@/lib/cards";
+
+// With enough games sampled near the player's trophies, score matchups against what they'll actually
+// face there; otherwise fall back to what has been beating them in their own last ~30 games.
+const LOCAL_THREAT_MIN_BATTLES = 50;
+function threatsFor(local: LocalMeta | null, insights: BattleInsights | null): Record<string, number> | undefined {
+  return local && local.battles >= LOCAL_THREAT_MIN_BATTLES ? local.faced : insights?.threats;
+}
 
 export async function POST(request: Request) {
   let body: { collection?: Collection; focalKey?: string; ease?: EasePreference };
@@ -29,9 +37,11 @@ export async function POST(request: Request) {
   }
 
   // Read the player's recent ladder battles to bias the build against what beats them.
-  const insights = collection.tag ? await fetchBattleInsights(collection.tag) : null;
+  const [insights, local] = collection.tag
+    ? await Promise.all([fetchBattleInsights(collection.tag), fetchLocalMeta(collection.tag, collection.trophies)])
+    : [null, null];
 
-  const cand = buildAroundCard(collection, focalKey, { ease, threats: insights?.threats });
+  const cand = buildAroundCard(collection, focalKey, { ease, threats: threatsFor(local, insights), local });
   const pick = { coach: coachPickFor(cand), ...enrichCandidate(cand) };
 
   return NextResponse.json({ insights, pick });
