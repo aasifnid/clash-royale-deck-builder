@@ -55,19 +55,26 @@ const ARCHETYPE_SKILL: Record<string, number> = {
   Bait: 3,
 };
 
+/** Slots (role + substitutes) for an 8-card list, using the curated role knowledge. */
+function slotsFor(cards: string[]) {
+  const wcKey = winConditionKeyOf(cards);
+  return cards.map((key) => {
+    const info = ROLE_MAP.get(key);
+    const isWC = key === wcKey;
+    const role = isWC ? "win-condition" : info && info.role !== "win-condition" ? info.role : "support";
+    return { cardKey: key, role, substitutes: deriveSubstitutes(key, role, cards) };
+  });
+}
+
+// The most-played exact lists per core that the engine also scores as-played, so a real list the
+// player can field competes with (and can beat) a mix rebuilt from their highest-level cards.
+const PROVEN_LISTS = 6;
+const MIN_LIST_GAMES = 5;
+
 export const META_DECKS: ProvenDeck[] = ((metaData as { decks: RawMetaDeck[] }).decks ?? []).map(
   (d) => {
     const wcKey = winConditionKeyOf(d.cards);
-    const slots = d.cards.map((key) => {
-      const info = ROLE_MAP.get(key);
-      const isWC = key === wcKey;
-      const role = isWC ? "win-condition" : info && info.role !== "win-condition" ? info.role : "support";
-      return {
-        cardKey: key,
-        role,
-        substitutes: deriveSubstitutes(key, role, d.cards),
-      };
-    });
+    const slots = slotsFor(d.cards);
     const wcName = wcKey ? (cardByKey(wcKey)?.name ?? wcKey) : d.archetype;
     return {
       id: d.id,
@@ -85,6 +92,10 @@ export const META_DECKS: ProvenDeck[] = ((metaData as { decks: RawMetaDeck[] }).
       metaEvolutions: d.evolutions ?? [],
       metaTowerTroop: d.towerTroop ?? null,
       variants: d.variants ?? [],
+      provenLists: (d.variants ?? [])
+        .filter((v) => v.games >= MIN_LIST_GAMES && (!wcKey || v.cards.includes(wcKey)))
+        .slice(0, PROVEN_LISTS)
+        .map((v) => slotsFor(v.cards)),
     } satisfies ProvenDeck;
   },
 );

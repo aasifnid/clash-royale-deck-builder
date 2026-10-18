@@ -103,4 +103,5 @@ export interface ProvenDeck {
   metaEvolutions?: string[]; // for meta decks: the evolutions top players run in this deck
   metaTowerTroop?: string | null; // for meta decks: the tower troop top players run
   variants?: MetaVariant[]; // for meta decks: the exact lists top players ran in this core
+  provenLists?: DeckSlot[][]; // for meta decks: the most-played variants as slots, scored as-played
 }

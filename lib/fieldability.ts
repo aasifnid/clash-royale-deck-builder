@@ -269,6 +269,7 @@ function scoreDeck(
   ease: EasePreference,
   threats: Record<string, number>,
   locked: Set<string> = new Set(),
+  mode: "best-cards" | "as-played" = "best-cards",
 ): DeckCandidate {
   const target = targetLevel(collection);
   // Two-pass resolution. Pass 1 places the deck's intended cards (important slots first), so
@@ -290,7 +291,9 @@ function scoreDeck(
     // Core slots stay the deck's own card (the archetype anchor). Every other slot is filled with
     // the player's STRONGEST role+cost-appropriate card, so the deck is built around their best
     // cards instead of their downgraded copies of the canonical list.
-    const r = isCore
+    // "as-played" keeps a real list's own cards wherever the player owns them (scoring the list top
+    // players actually ran); "best-cards" rebuilds the flex slots from the player's strongest cards.
+    const r = isCore || mode === "as-played"
       ? resolveIntended(slot, collection, used)
       : bestCardForSlot(slot, collection, used, deckCanonicals, proven) ?? resolveIntended(slot, collection, used);
     if (r) {
@@ -486,8 +489,20 @@ export function rankDecks(collection: Collection, opts: RankOptions = {}): DeckC
 
   const threats = opts.threats ?? {};
   return pool
-    .map((d) => scoreDeck(d, collection, ease, threats))
+    .map((d) => scoreBestVersion(d, collection, ease, threats))
     .sort((a, b) => b.scores.total - a.scores.total);
+}
+
+/** Score a deck rebuilt from the player's best cards AND each of its most-played real lists as
+ *  played, keeping whichever scores highest. A proven list at slightly lower levels can then beat
+ *  an untested mix of the player's highest cards, and vice versa when the levels gap is large. */
+function scoreBestVersion(deck: ProvenDeck, collection: Collection, ease: EasePreference, threats: Record<string, number>): DeckCandidate {
+  let best = scoreDeck(deck, collection, ease, threats);
+  for (const slots of deck.provenLists ?? []) {
+    const cand = scoreDeck({ ...deck, slots }, collection, ease, threats, new Set(), "as-played");
+    if (cand.scores.total > best.scores.total) best = cand;
+  }
+  return best;
 }
 
 /** Score a single ad-hoc deck (e.g. one the focal-card builder assembled) through the same
