@@ -10,7 +10,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { clusterDecks, classify, computeMomentum, cardUsageShares, compactShares, pickBaseline, addMatchup } from "./meta-cluster.mjs";
+import { clusterDecks, classify, computeMomentum, cardUsageShares, compactShares, pickBaseline, addMatchup, SHARE_BASIS } from "./meta-cluster.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "data", "meta-decks.json");
@@ -197,12 +197,14 @@ try {
 }
 const now = new Date();
 const baseline = pickBaseline(history, now);
-const withMomentum = computeMomentum(ranked, baseline?.shares ?? null);
-console.log(baseline ? `Momentum baseline: ${baseline.at} (${Math.round(baseline.age)} days old)` : "Momentum baseline: none 14+ days old yet (momentum = 0)");
+// Shares over every deck played (stable), not the clustered representatives (flex slots flip).
+const battleShares = cardUsageShares([...decks.values()].map((e) => ({ cards: e.keys, usage: e.count })));
+const withMomentum = computeMomentum(ranked, baseline?.shares ?? null, battleShares);
+console.log(baseline ? `Momentum baseline: ${baseline.at.slice(0, 10)} (${Math.round(baseline.age)} days old)` : "Momentum baseline: none 14+ days old yet (momentum = 0)");
 const DAY = 86_400_000;
 history = [
   ...history.filter((h) => now - new Date(h.at) <= 90 * DAY && h.at.slice(0, 10) !== now.toISOString().slice(0, 10)),
-  { at: now.toISOString(), season, shares: compactShares(cardUsageShares(ranked)) },
+  { at: now.toISOString(), season, basis: SHARE_BASIS, shares: compactShares(battleShares) },
 ].sort((a, b) => a.at.localeCompare(b.at));
 writeFileSync(HISTORY, JSON.stringify({ snapshots: history }, null, 2) + "\n");
 

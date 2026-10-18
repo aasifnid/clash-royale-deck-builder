@@ -140,6 +140,11 @@ export function cardUsageShares(decks) {
 // against "whatever ran last" made momentum useless: refreshes days (or minutes) apart show no rise,
 // and a missing previous file made every card look brand new, so it fired on all 40 decks at once.
 export const MOMENTUM_BASELINE_MIN_DAYS = 14;
+// Card shares are counted over EVERY deck played in the sampled battles, not the 40 clustered
+// representatives: a core's single representative list flips its flex slot between refreshes (e.g.
+// Fireball 1.8% -> 3.6% -> 2.9% across Oct 2026), which read as a fake "rise". Snapshots record the
+// basis they were counted on, and only a matching basis is compared.
+export const SHARE_BASIS = "all-battle-decks";
 // Ignore baselines older than this — comparing across several seasons measures history, not a rise.
 export const MOMENTUM_BASELINE_MAX_DAYS = 60;
 // A card counts as rising only if it at least DOUBLED its usage share and now holds a meaningful
@@ -153,6 +158,7 @@ const MOMENTUM_MIN_SHARE = 0.0075;
 export function pickBaseline(history, now = new Date()) {
   const DAY = 86_400_000;
   const eligible = (history ?? [])
+    .filter((h) => h.basis === SHARE_BASIS)
     .map((h) => ({ ...h, age: (now - new Date(h.at)) / DAY }))
     .filter((h) => h.age >= MOMENTUM_BASELINE_MIN_DAYS && h.age <= MOMENTUM_BASELINE_MAX_DAYS)
     .sort((a, b) => a.age - b.age);
@@ -161,13 +167,14 @@ export function pickBaseline(history, now = new Date()) {
 
 /** Annotate each current deck with a momentum score in [0,1]: how fast its fastest-rising card is
  *  gaining usage share vs the BASELINE shares (a Map or plain object, from pickBaseline), normalized
- *  to the hottest card this refresh. No baseline -> 0 for everything (never a blanket boost). */
-export function computeMomentum(currentDecks, baselineShares) {
+ *  to the hottest card this refresh. `currentShares` should be counted on the same basis as the
+ *  baseline (defaults to the decks themselves). No baseline -> 0 for everything. */
+export function computeMomentum(currentDecks, baselineShares, currentShares = null) {
   const none = () => currentDecks.map((d) => ({ ...d, momentum: 0 }));
   if (!baselineShares) return none();
   const prev = baselineShares instanceof Map ? baselineShares : new Map(Object.entries(baselineShares));
   if (prev.size === 0) return none();
-  const cur = cardUsageShares(currentDecks);
+  const cur = currentShares ?? cardUsageShares(currentDecks);
   const riseOf = (k) => {
     const now = cur.get(k) ?? 0;
     const was = prev.get(k) ?? 0;

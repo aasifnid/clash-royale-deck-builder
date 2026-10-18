@@ -3,7 +3,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { clusterDecks, computeMomentum, classify, cardUsageShares, pickBaseline, addMatchup } from "./meta-cluster.mjs";
+import { clusterDecks, computeMomentum, classify, cardUsageShares, pickBaseline, addMatchup, SHARE_BASIS } from "./meta-cluster.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const cards = JSON.parse(readFileSync(join(ROOT, "data", "cards.json"), "utf8"));
@@ -104,13 +104,15 @@ check("Ordinary drift produces no momentum", drift.every((d) => d.momentum === 0
 // 7) Baseline is the newest snapshot 14-60 days old; too-recent and too-old ones are skipped.
 const now = new Date("2026-10-22T07:00:00Z");
 const hist = [
-  { at: "2026-07-01T07:00:00Z", shares: {} },
-  { at: "2026-09-22T07:00:00Z", shares: {} },
-  { at: "2026-10-08T07:00:00Z", shares: {} },
-  { at: "2026-10-18T07:00:00Z", shares: {} },
+  { at: "2026-07-01T07:00:00Z", basis: SHARE_BASIS, shares: {} },
+  { at: "2026-09-22T07:00:00Z", basis: SHARE_BASIS, shares: {} },
+  { at: "2026-10-08T07:00:00Z", basis: SHARE_BASIS, shares: {} },
+  { at: "2026-10-18T07:00:00Z", basis: SHARE_BASIS, shares: {} },
 ];
 check("Baseline = newest snapshot 14+ days old", pickBaseline(hist, now)?.at === "2026-10-08T07:00:00Z", pickBaseline(hist, now)?.at);
 check("No baseline when every snapshot is too recent", pickBaseline(hist.slice(3), now) === null);
+check("Snapshots on a different counting basis are ignored",
+  pickBaseline([{ at: "2026-10-01T07:00:00Z", shares: {} }], now) === null);
 
 // 8) Clustering keeps every exact variant with its own record.
 const withWins = [
