@@ -1,7 +1,7 @@
 {
   "season": "2026-09",
   "sampledPlayers": 1000,
-  "sampledBattles": 22795,
+  "sampledBattles": 22702,
   "minGames": 15,
   "availableForms": {
     "evolutions": [
@@ -70,37 +70,267 @@
       "wizard"
     ]
   },
+  "matchups": {
+    "Control": {
+      "Cycle": {
+        "games": 1541,
+        "wins": 888
+      },
+      "Bridge Spam": {
+        "games": 1786,
+        "wins": 863
+      },
+      "Beatdown": {
+        "games": 3946,
+        "wins": 2103
+      },
+      "Siege": {
+        "games": 867,
+        "wins": 426
+      },
+      "Control": {
+        "games": 3610,
+        "wins": 1805
+      },
+      "Bait": {
+        "games": 901,
+        "wins": 503
+      }
+    },
+    "Cycle": {
+      "Control": {
+        "games": 1541,
+        "wins": 653
+      },
+      "Bait": {
+        "games": 459,
+        "wins": 279
+      },
+      "Bridge Spam": {
+        "games": 718,
+        "wins": 370
+      },
+      "Cycle": {
+        "games": 656,
+        "wins": 328
+      },
+      "Beatdown": {
+        "games": 1719,
+        "wins": 820
+      },
+      "Siege": {
+        "games": 347,
+        "wins": 220
+      }
+    },
+    "Bridge Spam": {
+      "Control": {
+        "games": 1786,
+        "wins": 923
+      },
+      "Cycle": {
+        "games": 718,
+        "wins": 348
+      },
+      "Bait": {
+        "games": 492,
+        "wins": 281
+      },
+      "Beatdown": {
+        "games": 2077,
+        "wins": 1007
+      },
+      "Siege": {
+        "games": 408,
+        "wins": 237
+      },
+      "Bridge Spam": {
+        "games": 888,
+        "wins": 444
+      }
+    },
+    "Beatdown": {
+      "Control": {
+        "games": 3946,
+        "wins": 1843
+      },
+      "Cycle": {
+        "games": 1719,
+        "wins": 899
+      },
+      "Bait": {
+        "games": 1179,
+        "wins": 617
+      },
+      "Bridge Spam": {
+        "games": 2077,
+        "wins": 1070
+      },
+      "Beatdown": {
+        "games": 4604,
+        "wins": 2302
+      },
+      "Siege": {
+        "games": 944,
+        "wins": 509
+      }
+    },
+    "Siege": {
+      "Control": {
+        "games": 867,
+        "wins": 441
+      },
+      "Cycle": {
+        "games": 347,
+        "wins": 127
+      },
+      "Bridge Spam": {
+        "games": 408,
+        "wins": 171
+      },
+      "Beatdown": {
+        "games": 944,
+        "wins": 435
+      },
+      "Bait": {
+        "games": 216,
+        "wins": 125
+      },
+      "Siege": {
+        "games": 206,
+        "wins": 103
+      }
+    },
+    "Bait": {
+      "Cycle": {
+        "games": 459,
+        "wins": 180
+      },
+      "Control": {
+        "games": 901,
+        "wins": 398
+      },
+      "Bait": {
+        "games": 240,
+        "wins": 120
+      },
+      "Bridge Spam": {
+        "games": 492,
+        "wins": 211
+      },
+      "Beatdown": {
+        "games": 1179,
+        "wins": 562
+      },
+      "Siege": {
+        "games": 216,
+        "wins": 91
+      }
+    }
+  },
   "decks": [
     {
       "id": "meta-1",
       "archetype": "Cycle",
-      "usage": 1211,
-      "wins": 630,
-      "winRate": 52,
+      "usage": 1268,
+      "wins": 638,
+      "winRate": 50.3,
       "avgElixir": 2.6,
       "cards": [
         "skeletons",
         "ice-spirit",
-        "the-log",
         "ice-golem",
+        "the-log",
         "cannon",
         "musketeer",
-        "hog-rider",
-        "fireball"
+        "fireball",
+        "hog-rider"
       ],
       "evolutions": [
         "cannon",
         "skeletons"
       ],
       "towerTroop": null,
-      "momentum": 0
+      "variants": [
+        {
+          "cards": [
+            "cannon",
+            "fireball",
+            "hog-rider",
+            "ice-golem",
+            "ice-spirit",
+            "musketeer",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 1239,
+          "wins": 630
+        },
+        {
+          "cards": [
+            "cannon",
+            "electro-spirit",
+            "hog-rider",
+            "ice-golem",
+            "musketeer",
+            "rocket",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 13,
+          "wins": 4
+        },
+        {
+          "cards": [
+            "cannon",
+            "electro-spirit",
+            "fireball",
+            "hog-rider",
+            "ice-golem",
+            "musketeer",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 5,
+          "wins": 0
+        },
+        {
+          "cards": [
+            "cannon",
+            "hog-rider",
+            "ice-golem",
+            "ice-spirit",
+            "lightning",
+            "musketeer",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 4,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "cannon",
+            "hog-rider",
+            "ice-golem",
+            "ice-spirit",
+            "musketeer",
+            "rocket",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 3,
+          "wins": 1
+        }
+      ],
+      "momentum": 1
     },
     {
       "id": "meta-2",
       "archetype": "Cycle",
-      "usage": 1196,
-      "wins": 639,
-      "winRate": 53.3,
+      "usage": 1218,
+      "wins": 635,
+      "winRate": 52.1,
       "avgElixir": 2.9,
       "cards": [
         "ice-spirit",
@@ -117,14 +347,142 @@
         "royal-hogs"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "archer-queen",
+            "cannon",
+            "earthquake",
+            "ice-spirit",
+            "royal-delivery",
+            "royal-hogs",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 1051,
+          "wins": 555
+        },
+        {
+          "cards": [
+            "archer-queen",
+            "cannon",
+            "earthquake",
+            "electro-spirit",
+            "royal-delivery",
+            "royal-hogs",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 94,
+          "wins": 42
+        },
+        {
+          "cards": [
+            "archer-queen",
+            "cannon",
+            "earthquake",
+            "ice-spirit",
+            "royal-delivery",
+            "royal-ghost",
+            "royal-hogs",
+            "skeletons"
+          ],
+          "games": 16,
+          "wins": 14
+        },
+        {
+          "cards": [
+            "archer-queen",
+            "cannon",
+            "earthquake",
+            "goblins",
+            "ice-spirit",
+            "royal-delivery",
+            "royal-hogs",
+            "the-log"
+          ],
+          "games": 14,
+          "wins": 9
+        },
+        {
+          "cards": [
+            "archer-queen",
+            "cannon",
+            "earthquake",
+            "fire-spirit",
+            "royal-delivery",
+            "royal-hogs",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 11,
+          "wins": 5
+        },
+        {
+          "cards": [
+            "archer-queen",
+            "bomber",
+            "cannon",
+            "earthquake",
+            "ice-spirit",
+            "royal-delivery",
+            "royal-hogs",
+            "skeletons"
+          ],
+          "games": 8,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "archer-queen",
+            "cannon",
+            "ice-spirit",
+            "poison",
+            "royal-delivery",
+            "royal-hogs",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 5,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "archer-queen",
+            "cannon",
+            "earthquake",
+            "electro-spirit",
+            "goblins",
+            "royal-delivery",
+            "royal-hogs",
+            "the-log"
+          ],
+          "games": 3,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "archer-queen",
+            "cannon",
+            "ice-spirit",
+            "rocket",
+            "royal-delivery",
+            "royal-hogs",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 3,
+          "wins": 1
+        }
+      ],
       "momentum": 0
     },
     {
       "id": "meta-3",
       "archetype": "Beatdown",
-      "usage": 1185,
-      "wins": 598,
-      "winRate": 50.5,
+      "usage": 1166,
+      "wins": 587,
+      "winRate": 50.3,
       "avgElixir": 3.4,
       "cards": [
         "heal-spirit",
@@ -141,14 +499,308 @@
         "zap"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "giant",
+            "heal-spirit",
+            "mini-pekka",
+            "skeletons",
+            "sparky",
+            "tornado",
+            "wizard",
+            "zap"
+          ],
+          "games": 425,
+          "wins": 236
+        },
+        {
+          "cards": [
+            "giant",
+            "heal-spirit",
+            "mini-pekka",
+            "sparky",
+            "tornado",
+            "vines",
+            "wizard",
+            "zap"
+          ],
+          "games": 381,
+          "wins": 177
+        },
+        {
+          "cards": [
+            "giant",
+            "mini-pekka",
+            "minions",
+            "sparky",
+            "tornado",
+            "vines",
+            "wizard",
+            "zap"
+          ],
+          "games": 109,
+          "wins": 57
+        },
+        {
+          "cards": [
+            "giant",
+            "heal-spirit",
+            "mini-pekka",
+            "minions",
+            "sparky",
+            "tornado",
+            "wizard",
+            "zap"
+          ],
+          "games": 69,
+          "wins": 42
+        },
+        {
+          "cards": [
+            "giant",
+            "heal-spirit",
+            "mini-pekka",
+            "skeleton-army",
+            "sparky",
+            "vines",
+            "wizard",
+            "zap"
+          ],
+          "games": 67,
+          "wins": 21
+        },
+        {
+          "cards": [
+            "arrows",
+            "giant",
+            "mini-pekka",
+            "minions",
+            "skeleton-army",
+            "sparky",
+            "wizard",
+            "zap"
+          ],
+          "games": 49,
+          "wins": 23
+        },
+        {
+          "cards": [
+            "giant",
+            "heal-spirit",
+            "mega-minion",
+            "mini-pekka",
+            "sparky",
+            "tornado",
+            "wizard",
+            "zap"
+          ],
+          "games": 22,
+          "wins": 15
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "bats",
+            "giant",
+            "heal-spirit",
+            "mini-pekka",
+            "sparky",
+            "tornado",
+            "wizard"
+          ],
+          "games": 7,
+          "wins": 4
+        },
+        {
+          "cards": [
+            "bats",
+            "giant",
+            "ice-wizard",
+            "mini-pekka",
+            "sparky",
+            "tornado",
+            "wizard",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "giant",
+            "mini-pekka",
+            "minions",
+            "skeletons",
+            "sparky",
+            "tornado",
+            "wizard",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 1
+        }
+      ],
       "momentum": 0
     },
     {
       "id": "meta-4",
+      "archetype": "Siege",
+      "usage": 1005,
+      "wins": 513,
+      "winRate": 51,
+      "avgElixir": 4,
+      "cards": [
+        "barbarian-barrel",
+        "goblin-gang",
+        "mortar",
+        "fireball",
+        "mother-witch",
+        "goblinstein",
+        "minion-horde",
+        "cannon-cart"
+      ],
+      "evolutions": [
+        "mortar",
+        "minion-horde"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "goblin-gang",
+            "goblinstein",
+            "minion-horde",
+            "mortar",
+            "mother-witch"
+          ],
+          "games": 776,
+          "wins": 389
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "goblinstein",
+            "minion-horde",
+            "mortar",
+            "mother-witch",
+            "skeletons"
+          ],
+          "games": 134,
+          "wins": 73
+        },
+        {
+          "cards": [
+            "cannon-cart",
+            "electro-spirit",
+            "fireball",
+            "goblinstein",
+            "minion-horde",
+            "mortar",
+            "mother-witch",
+            "skeletons"
+          ],
+          "games": 26,
+          "wins": 14
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "goblinstein",
+            "guards",
+            "minion-horde",
+            "mortar",
+            "mother-witch"
+          ],
+          "games": 18,
+          "wins": 6
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "goblin-gang",
+            "goblinstein",
+            "ice-wizard",
+            "minion-horde",
+            "mortar"
+          ],
+          "games": 13,
+          "wins": 10
+        },
+        {
+          "cards": [
+            "cannon-cart",
+            "fireball",
+            "goblin-gang",
+            "goblinstein",
+            "minion-horde",
+            "mortar",
+            "mother-witch",
+            "the-log"
+          ],
+          "games": 11,
+          "wins": 7
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "furnace",
+            "goblinstein",
+            "minion-giant",
+            "minion-horde",
+            "mortar"
+          ],
+          "games": 4,
+          "wins": 4
+        },
+        {
+          "cards": [
+            "cannon-cart",
+            "fireball",
+            "goblinstein",
+            "guards",
+            "minion-horde",
+            "mortar",
+            "mother-witch",
+            "the-log"
+          ],
+          "games": 3,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "goblin-gang",
+            "goblinstein",
+            "minion-horde",
+            "mortar",
+            "skeleton-dragons"
+          ],
+          "games": 3,
+          "wins": 3
+        }
+      ],
+      "momentum": 1
+    },
+    {
+      "id": "meta-5",
       "archetype": "Bridge Spam",
-      "usage": 1030,
-      "wins": 518,
-      "winRate": 50.3,
+      "usage": 998,
+      "wins": 486,
+      "winRate": 48.7,
       "avgElixir": 4,
       "cards": [
         "royal-ghost",
@@ -165,38 +817,184 @@
         "royal-ghost"
       ],
       "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-5",
-      "archetype": "Siege",
-      "usage": 977,
-      "wins": 512,
-      "winRate": 52.3,
-      "avgElixir": 4,
-      "cards": [
-        "barbarian-barrel",
-        "goblin-gang",
-        "mortar",
-        "fireball",
-        "mother-witch",
-        "goblinstein",
-        "minion-horde",
-        "cannon-cart"
+      "variants": [
+        {
+          "cards": [
+            "arrows",
+            "bandit",
+            "battle-ram",
+            "electro-wizard",
+            "furnace",
+            "golden-knight",
+            "pekka",
+            "royal-ghost"
+          ],
+          "games": 436,
+          "wins": 214
+        },
+        {
+          "cards": [
+            "bandit",
+            "battle-ram",
+            "electro-wizard",
+            "furnace",
+            "golden-knight",
+            "pekka",
+            "royal-ghost",
+            "zap"
+          ],
+          "games": 107,
+          "wins": 59
+        },
+        {
+          "cards": [
+            "arrows",
+            "battle-ram",
+            "electro-wizard",
+            "furnace",
+            "golden-knight",
+            "lumberjack",
+            "pekka",
+            "royal-ghost"
+          ],
+          "games": 99,
+          "wins": 45
+        },
+        {
+          "cards": [
+            "battle-ram",
+            "electro-wizard",
+            "fireball",
+            "furnace",
+            "golden-knight",
+            "pekka",
+            "royal-ghost",
+            "zap"
+          ],
+          "games": 54,
+          "wins": 29
+        },
+        {
+          "cards": [
+            "battle-ram",
+            "fireball",
+            "furnace",
+            "golden-knight",
+            "mother-witch",
+            "pekka",
+            "royal-ghost",
+            "zap"
+          ],
+          "games": 28,
+          "wins": 13
+        },
+        {
+          "cards": [
+            "arrows",
+            "battle-ram",
+            "electro-wizard",
+            "golden-knight",
+            "mirror",
+            "mother-witch",
+            "pekka",
+            "royal-ghost"
+          ],
+          "games": 28,
+          "wins": 15
+        },
+        {
+          "cards": [
+            "arrows",
+            "bandit",
+            "battle-ram",
+            "electro-wizard",
+            "golden-knight",
+            "minions",
+            "pekka",
+            "royal-ghost"
+          ],
+          "games": 27,
+          "wins": 12
+        },
+        {
+          "cards": [
+            "arrows",
+            "battle-ram",
+            "electro-wizard",
+            "golden-knight",
+            "mother-witch",
+            "pekka",
+            "royal-ghost",
+            "zap"
+          ],
+          "games": 26,
+          "wins": 10
+        },
+        {
+          "cards": [
+            "arrows",
+            "bandit",
+            "battle-ram",
+            "electro-wizard",
+            "golden-knight",
+            "mother-witch",
+            "pekka",
+            "royal-ghost"
+          ],
+          "games": 22,
+          "wins": 9
+        },
+        {
+          "cards": [
+            "bandit",
+            "battle-ram",
+            "electro-wizard",
+            "golden-knight",
+            "mother-witch",
+            "pekka",
+            "royal-ghost",
+            "zap"
+          ],
+          "games": 20,
+          "wins": 11
+        },
+        {
+          "cards": [
+            "arrows",
+            "bandit",
+            "battle-ram",
+            "electro-wizard",
+            "furnace",
+            "golden-knight",
+            "lumberjack",
+            "pekka"
+          ],
+          "games": 19,
+          "wins": 8
+        },
+        {
+          "cards": [
+            "arrows",
+            "battle-ram",
+            "electro-wizard",
+            "golden-knight",
+            "minions",
+            "mother-witch",
+            "pekka",
+            "royal-ghost"
+          ],
+          "games": 18,
+          "wins": 8
+        }
       ],
-      "evolutions": [
-        "minion-horde",
-        "mortar"
-      ],
-      "towerTroop": null,
       "momentum": 0
     },
     {
       "id": "meta-6",
       "archetype": "Control",
-      "usage": 911,
-      "wins": 519,
-      "winRate": 56.7,
+      "usage": 899,
+      "wins": 503,
+      "winRate": 55.8,
       "avgElixir": 2.8,
       "cards": [
         "skeletons",
@@ -213,14 +1011,308 @@
         "bats"
       ],
       "towerTroop": null,
-      "momentum": 0
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "bats",
+            "cannon",
+            "fireball",
+            "ice-wizard",
+            "knight",
+            "minion-giant",
+            "skeletons"
+          ],
+          "games": 836,
+          "wins": 470
+        },
+        {
+          "cards": [
+            "bats",
+            "cannon",
+            "ice-wizard",
+            "knight",
+            "minion-giant",
+            "poison",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 23,
+          "wins": 14
+        },
+        {
+          "cards": [
+            "archers",
+            "barbarian-barrel",
+            "cannon",
+            "fireball",
+            "ice-wizard",
+            "knight",
+            "minion-giant",
+            "skeletons"
+          ],
+          "games": 12,
+          "wins": 6
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "bats",
+            "cannon",
+            "electro-spirit",
+            "fireball",
+            "ice-wizard",
+            "knight",
+            "minion-giant"
+          ],
+          "games": 10,
+          "wins": 4
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "bats",
+            "cannon",
+            "ice-wizard",
+            "knight",
+            "minion-giant",
+            "poison",
+            "skeletons"
+          ],
+          "games": 7,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "bats",
+            "cannon",
+            "fireball",
+            "ice-wizard",
+            "knight",
+            "minion-giant",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 5,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon",
+            "ice-wizard",
+            "knight",
+            "lightning",
+            "minion-giant",
+            "minions",
+            "skeletons"
+          ],
+          "games": 3,
+          "wins": 2
+        }
+      ],
+      "momentum": 1
     },
     {
       "id": "meta-7",
+      "archetype": "Beatdown",
+      "usage": 896,
+      "wins": 485,
+      "winRate": 54,
+      "avgElixir": 4.3,
+      "cards": [
+        "barbarian-barrel",
+        "tornado",
+        "knight",
+        "baby-dragon",
+        "goblin-hut",
+        "bowler",
+        "lightning",
+        "electro-giant"
+      ],
+      "evolutions": [
+        "baby-dragon",
+        "electro-giant"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "bowler",
+            "electro-giant",
+            "goblin-hut",
+            "knight",
+            "lightning",
+            "tornado"
+          ],
+          "games": 233,
+          "wins": 132
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "bowler",
+            "electro-giant",
+            "goblin-hut",
+            "ice-wizard",
+            "lightning",
+            "tornado"
+          ],
+          "games": 97,
+          "wins": 60
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "berserker",
+            "bowler",
+            "electro-giant",
+            "goblin-hut",
+            "lightning",
+            "tornado"
+          ],
+          "games": 88,
+          "wins": 51
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "bowler",
+            "electro-giant",
+            "electro-wizard",
+            "goblin-cage",
+            "lightning",
+            "tornado"
+          ],
+          "games": 62,
+          "wins": 24
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "bowler",
+            "electro-giant",
+            "electro-wizard",
+            "goblin-hut",
+            "lightning",
+            "tornado"
+          ],
+          "games": 51,
+          "wins": 30
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "bowler",
+            "electro-giant",
+            "goblin-cage",
+            "knight",
+            "lightning",
+            "tornado"
+          ],
+          "games": 48,
+          "wins": 27
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "bowler",
+            "electro-giant",
+            "goblin-hut",
+            "guards",
+            "lightning",
+            "tornado"
+          ],
+          "games": 46,
+          "wins": 17
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "bowler",
+            "electro-giant",
+            "goblin-hut",
+            "lightning",
+            "skeletons",
+            "tornado"
+          ],
+          "games": 41,
+          "wins": 23
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "bowler",
+            "electro-giant",
+            "electro-spirit",
+            "electro-wizard",
+            "goblin-cage",
+            "lightning",
+            "tornado"
+          ],
+          "games": 38,
+          "wins": 26
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "bowler",
+            "electro-giant",
+            "goblin-cage",
+            "ice-wizard",
+            "lightning",
+            "tornado"
+          ],
+          "games": 29,
+          "wins": 11
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "bowler",
+            "electro-giant",
+            "goblin-cage",
+            "golden-knight",
+            "lightning",
+            "phoenix",
+            "tornado"
+          ],
+          "games": 13,
+          "wins": 9
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "bowler",
+            "electro-giant",
+            "goblin-cage",
+            "lightning",
+            "mega-minion",
+            "tornado"
+          ],
+          "games": 12,
+          "wins": 3
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-8",
       "archetype": "Control",
-      "usage": 871,
-      "wins": 454,
-      "winRate": 52.1,
+      "usage": 873,
+      "wins": 466,
+      "winRate": 53.3,
       "avgElixir": 2.8,
       "cards": [
         "skeletons",
@@ -237,134 +1329,44 @@
         "cannon"
       ],
       "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-8",
-      "archetype": "Beatdown",
-      "usage": 798,
-      "wins": 430,
-      "winRate": 53.7,
-      "avgElixir": 4.3,
-      "cards": [
-        "barbarian-barrel",
-        "knight",
-        "tornado",
-        "baby-dragon",
-        "goblin-hut",
-        "bowler",
-        "lightning",
-        "electro-giant"
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "bats",
+            "cannon",
+            "little-prince",
+            "miner",
+            "poison",
+            "rune-giant",
+            "skeletons"
+          ],
+          "games": 869,
+          "wins": 463
+        },
+        {
+          "cards": [
+            "bats",
+            "electro-spirit",
+            "little-prince",
+            "miner",
+            "poison",
+            "rune-giant",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 3,
+          "wins": 2
+        }
       ],
-      "evolutions": [
-        "baby-dragon",
-        "electro-giant"
-      ],
-      "towerTroop": null,
       "momentum": 0
     },
     {
       "id": "meta-9",
-      "archetype": "Beatdown",
-      "usage": 766,
-      "wins": 402,
-      "winRate": 52.4,
-      "avgElixir": 4.4,
-      "cards": [
-        "heal-spirit",
-        "rage",
-        "knight",
-        "archers",
-        "monk",
-        "elite-barbarians",
-        "elixir-collector",
-        "three-musketeers"
-      ],
-      "evolutions": [
-        "elite-barbarians",
-        "knight"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-10",
       "archetype": "Control",
-      "usage": 741,
-      "wins": 374,
-      "winRate": 50.5,
-      "avgElixir": 4,
-      "cards": [
-        "giant-snowball",
-        "minions",
-        "arrows",
-        "zappies",
-        "bowler",
-        "witch",
-        "graveyard",
-        "giant"
-      ],
-      "evolutions": [
-        "witch",
-        "giant-snowball"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-11",
-      "archetype": "Cycle",
-      "usage": 723,
-      "wins": 374,
-      "winRate": 51.7,
-      "avgElixir": 2.8,
-      "cards": [
-        "skeletons",
-        "electro-spirit",
-        "barbarian-barrel",
-        "firecracker",
-        "earthquake",
-        "mighty-miner",
-        "tesla",
-        "hog-rider"
-      ],
-      "evolutions": [
-        "tesla",
-        "firecracker"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-12",
-      "archetype": "Control",
-      "usage": 707,
-      "wins": 397,
-      "winRate": 55.9,
-      "avgElixir": 3.3,
-      "cards": [
-        "skeletons",
-        "barbarian-barrel",
-        "ice-wizard",
-        "archers",
-        "knight",
-        "tesla",
-        "minion-giant",
-        "lightning"
-      ],
-      "evolutions": [
-        "tesla",
-        "archers"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-13",
-      "archetype": "Control",
-      "usage": 694,
-      "wins": 401,
-      "winRate": 57.5,
+      "usage": 740,
+      "wins": 424,
+      "winRate": 57,
       "avgElixir": 3,
       "cards": [
         "skeletons",
@@ -381,62 +1383,472 @@
         "princess"
       ],
       "towerTroop": null,
-      "momentum": 0
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "electro-spirit",
+            "fireball",
+            "hunter",
+            "minion-giant",
+            "monk",
+            "princess",
+            "skeletons"
+          ],
+          "games": 625,
+          "wins": 366
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "fireball",
+            "hunter",
+            "ice-spirit",
+            "minion-giant",
+            "monk",
+            "princess",
+            "skeletons"
+          ],
+          "games": 93,
+          "wins": 49
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "electro-spirit",
+            "fireball",
+            "goblins",
+            "hunter",
+            "minion-giant",
+            "monk",
+            "princess"
+          ],
+          "games": 9,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "archers",
+            "barbarian-barrel",
+            "electro-spirit",
+            "hunter",
+            "lightning",
+            "minion-giant",
+            "monk",
+            "skeletons"
+          ],
+          "games": 9,
+          "wins": 6
+        }
+      ],
+      "momentum": 1
     },
     {
-      "id": "meta-14",
-      "archetype": "Siege",
-      "usage": 631,
-      "wins": 298,
-      "winRate": 47.4,
-      "avgElixir": 3.6,
-      "cards": [
-        "barbarian-barrel",
-        "skeleton-barrel",
-        "ice-wizard",
-        "minions",
-        "mortar",
-        "fireball",
-        "cannon-cart",
-        "rascals"
-      ],
-      "evolutions": [
-        "mortar",
-        "skeleton-barrel"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-15",
-      "archetype": "Beatdown",
-      "usage": 630,
-      "wins": 334,
-      "winRate": 52.9,
-      "avgElixir": 3,
+      "id": "meta-10",
+      "archetype": "Cycle",
+      "usage": 732,
+      "wins": 372,
+      "winRate": 50.8,
+      "avgElixir": 2.8,
       "cards": [
         "skeletons",
         "electro-spirit",
         "barbarian-barrel",
-        "royal-ghost",
-        "fisherman",
-        "hunter",
-        "fireball",
-        "royal-giant"
+        "firecracker",
+        "earthquake",
+        "mighty-miner",
+        "tesla",
+        "hog-rider"
       ],
       "evolutions": [
-        "royal-giant",
-        "royal-ghost"
+        "tesla",
+        "firecracker"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "earthquake",
+            "electro-spirit",
+            "firecracker",
+            "hog-rider",
+            "mighty-miner",
+            "skeletons",
+            "tesla"
+          ],
+          "games": 367,
+          "wins": 181
+        },
+        {
+          "cards": [
+            "earthquake",
+            "electro-spirit",
+            "firecracker",
+            "hog-rider",
+            "mighty-miner",
+            "skeletons",
+            "tesla",
+            "the-log"
+          ],
+          "games": 315,
+          "wins": 167
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "electro-spirit",
+            "hog-rider",
+            "lightning",
+            "mighty-miner",
+            "princess",
+            "skeletons",
+            "tesla"
+          ],
+          "games": 12,
+          "wins": 10
+        },
+        {
+          "cards": [
+            "earthquake",
+            "firecracker",
+            "hog-rider",
+            "ice-spirit",
+            "mighty-miner",
+            "skeletons",
+            "tesla",
+            "the-log"
+          ],
+          "games": 9,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "earthquake",
+            "electro-spirit",
+            "firecracker",
+            "goblins",
+            "hog-rider",
+            "mighty-miner",
+            "tesla",
+            "the-log"
+          ],
+          "games": 8,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "earthquake",
+            "firecracker",
+            "hog-rider",
+            "ice-spirit",
+            "mighty-miner",
+            "skeletons",
+            "tesla"
+          ],
+          "games": 6,
+          "wins": 2
+        }
+      ],
       "momentum": 0
     },
     {
-      "id": "meta-16",
+      "id": "meta-11",
       "archetype": "Beatdown",
-      "usage": 626,
-      "wins": 284,
-      "winRate": 45.6,
+      "usage": 729,
+      "wins": 396,
+      "winRate": 54.2,
+      "avgElixir": 4.4,
+      "cards": [
+        "heal-spirit",
+        "rage",
+        "knight",
+        "archers",
+        "monk",
+        "elite-barbarians",
+        "elixir-collector",
+        "three-musketeers"
+      ],
+      "evolutions": [
+        "elite-barbarians",
+        "knight"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "archers",
+            "elite-barbarians",
+            "elixir-collector",
+            "heal-spirit",
+            "knight",
+            "monk",
+            "rage",
+            "three-musketeers"
+          ],
+          "games": 255,
+          "wins": 143
+        },
+        {
+          "cards": [
+            "bandit",
+            "elite-barbarians",
+            "elixir-collector",
+            "heal-spirit",
+            "ice-golem",
+            "royal-ghost",
+            "three-musketeers",
+            "zap"
+          ],
+          "games": 159,
+          "wins": 81
+        },
+        {
+          "cards": [
+            "elite-barbarians",
+            "elixir-collector",
+            "golden-knight",
+            "heal-spirit",
+            "ice-golem",
+            "royal-ghost",
+            "three-musketeers",
+            "zap"
+          ],
+          "games": 122,
+          "wins": 70
+        },
+        {
+          "cards": [
+            "bomber",
+            "elite-barbarians",
+            "elixir-collector",
+            "heal-spirit",
+            "knight",
+            "monk",
+            "rage",
+            "three-musketeers"
+          ],
+          "games": 46,
+          "wins": 24
+        },
+        {
+          "cards": [
+            "elite-barbarians",
+            "elixir-collector",
+            "fisherman",
+            "heal-spirit",
+            "knight",
+            "rage",
+            "royal-ghost",
+            "three-musketeers"
+          ],
+          "games": 30,
+          "wins": 21
+        },
+        {
+          "cards": [
+            "archers",
+            "elite-barbarians",
+            "elixir-collector",
+            "heal-spirit",
+            "monk",
+            "skeletons",
+            "three-musketeers",
+            "zap"
+          ],
+          "games": 13,
+          "wins": 8
+        },
+        {
+          "cards": [
+            "elite-barbarians",
+            "elixir-collector",
+            "heal-spirit",
+            "ice-golem",
+            "little-prince",
+            "royal-ghost",
+            "three-musketeers",
+            "zap"
+          ],
+          "games": 12,
+          "wins": 5
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "battle-ram",
+            "elite-barbarians",
+            "elixir-collector",
+            "heal-spirit",
+            "ice-golem",
+            "minions",
+            "three-musketeers"
+          ],
+          "games": 9,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "archers",
+            "elite-barbarians",
+            "elixir-collector",
+            "heal-spirit",
+            "monk",
+            "ronin",
+            "three-musketeers",
+            "zap"
+          ],
+          "games": 6,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "archers",
+            "elite-barbarians",
+            "elixir-collector",
+            "heal-spirit",
+            "monk",
+            "rage",
+            "ronin",
+            "three-musketeers"
+          ],
+          "games": 6,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "elite-barbarians",
+            "elixir-collector",
+            "heal-spirit",
+            "knight",
+            "minions",
+            "monk",
+            "three-musketeers",
+            "zap"
+          ],
+          "games": 4,
+          "wins": 4
+        },
+        {
+          "cards": [
+            "elite-barbarians",
+            "elixir-collector",
+            "golden-knight",
+            "heal-spirit",
+            "ice-golem",
+            "minion-horde",
+            "three-musketeers",
+            "zap"
+          ],
+          "games": 4,
+          "wins": 0
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-12",
+      "archetype": "Control",
+      "usage": 720,
+      "wins": 358,
+      "winRate": 49.7,
+      "avgElixir": 4,
+      "cards": [
+        "giant-snowball",
+        "minions",
+        "arrows",
+        "zappies",
+        "bowler",
+        "witch",
+        "graveyard",
+        "giant"
+      ],
+      "evolutions": [
+        "witch",
+        "giant-snowball"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "arrows",
+            "bowler",
+            "giant",
+            "giant-snowball",
+            "graveyard",
+            "minions",
+            "witch",
+            "zappies"
+          ],
+          "games": 504,
+          "wins": 244
+        },
+        {
+          "cards": [
+            "arrows",
+            "bowler",
+            "giant",
+            "giant-snowball",
+            "graveyard",
+            "guards",
+            "witch",
+            "zappies"
+          ],
+          "games": 114,
+          "wins": 59
+        },
+        {
+          "cards": [
+            "arrows",
+            "bowler",
+            "giant",
+            "giant-snowball",
+            "graveyard",
+            "mini-pekka",
+            "witch",
+            "zappies"
+          ],
+          "games": 60,
+          "wins": 38
+        },
+        {
+          "cards": [
+            "arrows",
+            "bowler",
+            "giant",
+            "giant-snowball",
+            "graveyard",
+            "guards",
+            "minions",
+            "witch"
+          ],
+          "games": 27,
+          "wins": 9
+        },
+        {
+          "cards": [
+            "arrows",
+            "bowler",
+            "giant",
+            "giant-snowball",
+            "graveyard",
+            "knight",
+            "witch",
+            "zappies"
+          ],
+          "games": 5,
+          "wins": 5
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-13",
+      "archetype": "Beatdown",
+      "usage": 645,
+      "wins": 314,
+      "winRate": 48.7,
       "avgElixir": 4.1,
       "cards": [
         "zap",
@@ -453,38 +1865,404 @@
         "zap"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "arrows",
+            "bomber",
+            "elite-barbarians",
+            "golem",
+            "mini-pekka",
+            "night-witch",
+            "phoenix",
+            "zap"
+          ],
+          "games": 463,
+          "wins": 219
+        },
+        {
+          "cards": [
+            "arrows",
+            "elite-barbarians",
+            "golem",
+            "mini-pekka",
+            "minions",
+            "night-witch",
+            "phoenix",
+            "zap"
+          ],
+          "games": 115,
+          "wins": 64
+        },
+        {
+          "cards": [
+            "bomber",
+            "elite-barbarians",
+            "fireball",
+            "golem",
+            "mini-pekka",
+            "night-witch",
+            "phoenix",
+            "zap"
+          ],
+          "games": 32,
+          "wins": 18
+        },
+        {
+          "cards": [
+            "arrows",
+            "elite-barbarians",
+            "fireball",
+            "golem",
+            "mini-pekka",
+            "night-witch",
+            "phoenix",
+            "zap"
+          ],
+          "games": 7,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "electro-wizard",
+            "elite-barbarians",
+            "furnace",
+            "golem",
+            "heal-spirit",
+            "mini-pekka",
+            "zap"
+          ],
+          "games": 5,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "arrows",
+            "bomber",
+            "elite-barbarians",
+            "golem",
+            "mega-minion",
+            "mini-pekka",
+            "night-witch",
+            "zap"
+          ],
+          "games": 4,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "bomber",
+            "elite-barbarians",
+            "fireball",
+            "golem",
+            "mega-minion",
+            "mini-pekka",
+            "night-witch",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "arrows",
+            "elite-barbarians",
+            "golem",
+            "lightning",
+            "mini-pekka",
+            "night-witch",
+            "phoenix",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "electro-wizard",
+            "elite-barbarians",
+            "furnace",
+            "golem",
+            "heal-spirit",
+            "mini-pekka",
+            "skeleton-dragons",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "arrows",
+            "baby-dragon",
+            "barbarian-barrel",
+            "elite-barbarians",
+            "fireball",
+            "golem",
+            "mini-pekka",
+            "night-witch"
+          ],
+          "games": 3,
+          "wins": 0
+        }
+      ],
       "momentum": 0
     },
     {
-      "id": "meta-17",
-      "archetype": "Control",
-      "usage": 622,
-      "wins": 292,
-      "winRate": 47.1,
-      "avgElixir": 2.8,
+      "id": "meta-14",
+      "archetype": "Beatdown",
+      "usage": 620,
+      "wins": 329,
+      "winRate": 52.9,
+      "avgElixir": 3,
       "cards": [
-        "ice-spirit",
-        "wall-breakers",
-        "goblin-barrel",
-        "skeleton-army",
-        "princess",
-        "dart-goblin",
-        "cannon",
-        "valkyrie"
+        "skeletons",
+        "electro-spirit",
+        "barbarian-barrel",
+        "royal-ghost",
+        "fisherman",
+        "fireball",
+        "hunter",
+        "royal-giant"
       ],
       "evolutions": [
-        "skeleton-army",
-        "goblin-barrel"
+        "royal-giant",
+        "royal-ghost"
       ],
       "towerTroop": null,
-      "momentum": 0
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "electro-spirit",
+            "fireball",
+            "fisherman",
+            "hunter",
+            "royal-ghost",
+            "royal-giant",
+            "skeletons"
+          ],
+          "games": 608,
+          "wins": 325
+        },
+        {
+          "cards": [
+            "berserker",
+            "electro-spirit",
+            "fireball",
+            "fisherman",
+            "hunter",
+            "royal-ghost",
+            "royal-giant",
+            "the-log"
+          ],
+          "games": 4,
+          "wins": 2
+        }
+      ],
+      "momentum": 1
     },
     {
-      "id": "meta-18",
+      "id": "meta-15",
+      "archetype": "Siege",
+      "usage": 584,
+      "wins": 272,
+      "winRate": 46.7,
+      "avgElixir": 3.6,
+      "cards": [
+        "barbarian-barrel",
+        "skeleton-barrel",
+        "ice-wizard",
+        "goblin-gang",
+        "mortar",
+        "fireball",
+        "cannon-cart",
+        "rascals"
+      ],
+      "evolutions": [
+        "mortar",
+        "skeleton-barrel"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "goblin-gang",
+            "ice-wizard",
+            "mortar",
+            "rascals",
+            "skeleton-barrel"
+          ],
+          "games": 177,
+          "wins": 90
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "ice-wizard",
+            "minions",
+            "mortar",
+            "rascals",
+            "skeleton-barrel"
+          ],
+          "games": 177,
+          "wins": 82
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "goblins",
+            "minions",
+            "mortar",
+            "rascals",
+            "skeleton-barrel"
+          ],
+          "games": 102,
+          "wins": 55
+        },
+        {
+          "cards": [
+            "cannon-cart",
+            "goblins",
+            "ice-wizard",
+            "minion-giant",
+            "minions",
+            "mortar",
+            "rascals",
+            "skeleton-barrel"
+          ],
+          "games": 36,
+          "wins": 13
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "berserker",
+            "cannon-cart",
+            "fireball",
+            "minions",
+            "mortar",
+            "rascals",
+            "skeleton-barrel"
+          ],
+          "games": 11,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "cannon-cart",
+            "electro-spirit",
+            "fireball",
+            "goblins",
+            "minions",
+            "mortar",
+            "rascals",
+            "skeleton-barrel"
+          ],
+          "games": 8,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "ice-wizard",
+            "minion-giant",
+            "mortar",
+            "rascals",
+            "royal-ghost"
+          ],
+          "games": 8,
+          "wins": 4
+        },
+        {
+          "cards": [
+            "cannon-cart",
+            "electro-spirit",
+            "ice-wizard",
+            "minion-giant",
+            "minions",
+            "mortar",
+            "rascals",
+            "skeleton-barrel"
+          ],
+          "games": 6,
+          "wins": 4
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "ice-wizard",
+            "minion-giant",
+            "minions",
+            "mortar",
+            "rascals",
+            "skeleton-barrel"
+          ],
+          "games": 6,
+          "wins": 0
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "bats",
+            "cannon-cart",
+            "fireball",
+            "ice-wizard",
+            "minion-giant",
+            "mortar",
+            "rascals"
+          ],
+          "games": 4,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "fireball",
+            "goblin-gang",
+            "minions",
+            "mortar",
+            "rascals",
+            "skeleton-barrel"
+          ],
+          "games": 3,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon-cart",
+            "goblins",
+            "ice-wizard",
+            "minions",
+            "mortar",
+            "rascals",
+            "skeleton-barrel"
+          ],
+          "games": 3,
+          "wins": 1
+        }
+      ],
+      "momentum": 1
+    },
+    {
+      "id": "meta-16",
       "archetype": "Bridge Spam",
-      "usage": 558,
-      "wins": 310,
-      "winRate": 55.3,
+      "usage": 548,
+      "wins": 312,
+      "winRate": 56.6,
       "avgElixir": 3.8,
       "cards": [
         "heal-spirit",
@@ -501,14 +2279,318 @@
         "furnace"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "boss-bandit",
+            "furnace",
+            "golden-knight",
+            "heal-spirit",
+            "hunter",
+            "mother-witch",
+            "ronin",
+            "zap"
+          ],
+          "games": 307,
+          "wins": 176
+        },
+        {
+          "cards": [
+            "boss-bandit",
+            "furnace",
+            "golden-knight",
+            "hunter",
+            "mother-witch",
+            "ronin",
+            "royal-ghost",
+            "zap"
+          ],
+          "games": 114,
+          "wins": 61
+        },
+        {
+          "cards": [
+            "boss-bandit",
+            "electro-wizard",
+            "furnace",
+            "golden-knight",
+            "heal-spirit",
+            "hunter",
+            "ronin",
+            "zap"
+          ],
+          "games": 54,
+          "wins": 35
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "boss-bandit",
+            "furnace",
+            "golden-knight",
+            "hunter",
+            "mother-witch",
+            "ronin",
+            "zap"
+          ],
+          "games": 30,
+          "wins": 21
+        },
+        {
+          "cards": [
+            "bandit",
+            "boss-bandit",
+            "furnace",
+            "golden-knight",
+            "hunter",
+            "mother-witch",
+            "ronin",
+            "zap"
+          ],
+          "games": 9,
+          "wins": 6
+        },
+        {
+          "cards": [
+            "boss-bandit",
+            "golden-knight",
+            "heal-spirit",
+            "hunter",
+            "minions",
+            "mother-witch",
+            "ronin",
+            "zap"
+          ],
+          "games": 9,
+          "wins": 4
+        },
+        {
+          "cards": [
+            "boss-bandit",
+            "electro-wizard",
+            "furnace",
+            "golden-knight",
+            "hunter",
+            "ronin",
+            "royal-ghost",
+            "zap"
+          ],
+          "games": 8,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "boss-bandit",
+            "furnace",
+            "golden-knight",
+            "mother-witch",
+            "ronin",
+            "royal-ghost",
+            "zap",
+            "zappies"
+          ],
+          "games": 3,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "boss-bandit",
+            "electro-wizard",
+            "furnace",
+            "golden-knight",
+            "heal-spirit",
+            "mother-witch",
+            "ronin",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 1
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-17",
+      "archetype": "Control",
+      "usage": 541,
+      "wins": 250,
+      "winRate": 46.4,
+      "avgElixir": 2.8,
+      "cards": [
+        "ice-spirit",
+        "wall-breakers",
+        "goblin-barrel",
+        "skeleton-army",
+        "princess",
+        "dart-goblin",
+        "cannon",
+        "valkyrie"
+      ],
+      "evolutions": [
+        "skeleton-army",
+        "goblin-barrel"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "cannon",
+            "dart-goblin",
+            "goblin-barrel",
+            "ice-spirit",
+            "princess",
+            "skeleton-army",
+            "valkyrie",
+            "wall-breakers"
+          ],
+          "games": 475,
+          "wins": 212
+        },
+        {
+          "cards": [
+            "cannon",
+            "dart-goblin",
+            "electro-spirit",
+            "goblin-barrel",
+            "princess",
+            "skeleton-army",
+            "valkyrie",
+            "wall-breakers"
+          ],
+          "games": 42,
+          "wins": 23
+        },
+        {
+          "cards": [
+            "dart-goblin",
+            "electro-spirit",
+            "goblin-barrel",
+            "goblin-gang",
+            "princess",
+            "skeleton-army",
+            "valkyrie",
+            "wall-breakers"
+          ],
+          "games": 19,
+          "wins": 13
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-18",
+      "archetype": "Bridge Spam",
+      "usage": 517,
+      "wins": 253,
+      "winRate": 49,
+      "avgElixir": 2.9,
+      "cards": [
+        "skeletons",
+        "bats",
+        "barbarian-barrel",
+        "cannon",
+        "little-prince",
+        "rune-giant",
+        "minion-giant",
+        "poison"
+      ],
+      "evolutions": [
+        "cannon",
+        "bats"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "bats",
+            "cannon",
+            "little-prince",
+            "minion-giant",
+            "poison",
+            "rune-giant",
+            "skeletons"
+          ],
+          "games": 497,
+          "wins": 243
+        },
+        {
+          "cards": [
+            "archers",
+            "barbarian-barrel",
+            "cannon",
+            "little-prince",
+            "minion-giant",
+            "poison",
+            "rune-giant",
+            "skeletons"
+          ],
+          "games": 14,
+          "wins": 8
+        }
+      ],
       "momentum": 0
     },
     {
       "id": "meta-19",
+      "archetype": "Control",
+      "usage": 501,
+      "wins": 290,
+      "winRate": 57.4,
+      "avgElixir": 3.3,
+      "cards": [
+        "skeletons",
+        "barbarian-barrel",
+        "archers",
+        "ice-wizard",
+        "knight",
+        "tesla",
+        "minion-giant",
+        "lightning"
+      ],
+      "evolutions": [
+        "archers",
+        "tesla"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "archers",
+            "barbarian-barrel",
+            "ice-wizard",
+            "knight",
+            "lightning",
+            "minion-giant",
+            "skeletons",
+            "tesla"
+          ],
+          "games": 492,
+          "wins": 288
+        },
+        {
+          "cards": [
+            "archers",
+            "ice-wizard",
+            "knight",
+            "lightning",
+            "minion-giant",
+            "skeletons",
+            "tesla",
+            "the-log"
+          ],
+          "games": 3,
+          "wins": 0
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-20",
       "archetype": "Bridge Spam",
-      "usage": 490,
-      "wins": 267,
-      "winRate": 54.2,
+      "usage": 483,
+      "wins": 260,
+      "winRate": 53.6,
       "avgElixir": 3.9,
       "cards": [
         "barbarian-barrel",
@@ -525,62 +2607,100 @@
         "royal-ghost"
       ],
       "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-20",
-      "archetype": "Bridge Spam",
-      "usage": 477,
-      "wins": 231,
-      "winRate": 48.5,
-      "avgElixir": 2.9,
-      "cards": [
-        "skeletons",
-        "bats",
-        "barbarian-barrel",
-        "cannon",
-        "little-prince",
-        "rune-giant",
-        "minion-giant",
-        "poison"
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "battle-ram",
+            "giant-skeleton",
+            "mother-witch",
+            "royal-ghost",
+            "vines",
+            "wizard",
+            "zappies"
+          ],
+          "games": 420,
+          "wins": 229
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "battle-ram",
+            "giant-skeleton",
+            "lumberjack",
+            "mother-witch",
+            "vines",
+            "wizard",
+            "zappies"
+          ],
+          "games": 21,
+          "wins": 8
+        },
+        {
+          "cards": [
+            "battle-ram",
+            "giant-skeleton",
+            "giant-snowball",
+            "royal-ghost",
+            "skeleton-dragons",
+            "vines",
+            "wizard",
+            "zappies"
+          ],
+          "games": 11,
+          "wins": 6
+        },
+        {
+          "cards": [
+            "battle-ram",
+            "giant-skeleton",
+            "heal-spirit",
+            "lumberjack",
+            "mother-witch",
+            "vines",
+            "wizard",
+            "zappies"
+          ],
+          "games": 5,
+          "wins": 5
+        },
+        {
+          "cards": [
+            "battle-ram",
+            "bomber",
+            "electro-wizard",
+            "giant-skeleton",
+            "golden-knight",
+            "royal-ghost",
+            "wizard",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "battle-ram",
+            "giant-skeleton",
+            "royal-ghost",
+            "skeleton-dragons",
+            "vines",
+            "wizard",
+            "zappies"
+          ],
+          "games": 3,
+          "wins": 2
+        }
       ],
-      "evolutions": [
-        "bats",
-        "cannon"
-      ],
-      "towerTroop": null,
       "momentum": 0
     },
     {
       "id": "meta-21",
       "archetype": "Beatdown",
-      "usage": 468,
-      "wins": 264,
-      "winRate": 56,
-      "avgElixir": 4.1,
-      "cards": [
-        "barbarian-barrel",
-        "mega-minion",
-        "tornado",
-        "baby-dragon",
-        "dark-prince",
-        "goblin-cage",
-        "lightning",
-        "electro-giant"
-      ],
-      "evolutions": [
-        "baby-dragon",
-        "electro-giant"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-22",
-      "archetype": "Beatdown",
-      "usage": 459,
-      "wins": 238,
-      "winRate": 51.7,
+      "usage": 453,
+      "wins": 242,
+      "winRate": 53.2,
       "avgElixir": 4.5,
       "cards": [
         "berserker",
@@ -597,14 +2717,280 @@
         "electro-dragon"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "berserker",
+            "electro-dragon",
+            "elite-barbarians",
+            "elixir-collector",
+            "golem",
+            "skeleton-dragons",
+            "tornado"
+          ],
+          "games": 282,
+          "wins": 150
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "elite-barbarians",
+            "elixir-collector",
+            "golem",
+            "mini-pekka",
+            "vines",
+            "witch"
+          ],
+          "games": 65,
+          "wins": 38
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "elite-barbarians",
+            "elixir-collector",
+            "golem",
+            "mini-pekka",
+            "skeleton-dragons",
+            "vines",
+            "witch"
+          ],
+          "games": 38,
+          "wins": 22
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "elite-barbarians",
+            "elixir-collector",
+            "freeze",
+            "golem",
+            "mini-pekka",
+            "witch"
+          ],
+          "games": 26,
+          "wins": 17
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "berserker",
+            "electro-dragon",
+            "elite-barbarians",
+            "elixir-collector",
+            "golem",
+            "tornado",
+            "zappies"
+          ],
+          "games": 9,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "electro-dragon",
+            "elite-barbarians",
+            "elixir-collector",
+            "golem",
+            "minions",
+            "skeleton-dragons",
+            "tornado"
+          ],
+          "games": 6,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "electro-dragon",
+            "elite-barbarians",
+            "elixir-collector",
+            "golem",
+            "heal-spirit",
+            "ice-wizard",
+            "mini-pekka",
+            "tornado"
+          ],
+          "games": 5,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "electro-dragon",
+            "elite-barbarians",
+            "elixir-collector",
+            "golem",
+            "mini-pekka",
+            "skeleton-dragons",
+            "tornado"
+          ],
+          "games": 3,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "berserker",
+            "electro-dragon",
+            "elite-barbarians",
+            "elixir-collector",
+            "golem",
+            "lumberjack",
+            "skeleton-dragons",
+            "tornado"
+          ],
+          "games": 3,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "elite-barbarians",
+            "elixir-collector",
+            "freeze",
+            "golem",
+            "mini-pekka",
+            "skeleton-dragons",
+            "witch"
+          ],
+          "games": 3,
+          "wins": 1
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-22",
+      "archetype": "Beatdown",
+      "usage": 446,
+      "wins": 203,
+      "winRate": 45.8,
+      "avgElixir": 3.8,
+      "cards": [
+        "zap",
+        "bats",
+        "arrows",
+        "skeleton-army",
+        "mini-pekka",
+        "giant",
+        "minion-horde",
+        "sparky"
+      ],
+      "evolutions": [
+        "minion-horde",
+        "zap"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "arrows",
+            "bats",
+            "giant",
+            "mini-pekka",
+            "minion-horde",
+            "skeleton-army",
+            "sparky",
+            "zap"
+          ],
+          "games": 260,
+          "wins": 111
+        },
+        {
+          "cards": [
+            "dark-prince",
+            "giant",
+            "mini-pekka",
+            "minion-horde",
+            "mother-witch",
+            "rage",
+            "sparky",
+            "zap"
+          ],
+          "games": 53,
+          "wins": 31
+        },
+        {
+          "cards": [
+            "arrows",
+            "dark-prince",
+            "giant",
+            "goblin-gang",
+            "minion-horde",
+            "skeleton-army",
+            "sparky",
+            "zap"
+          ],
+          "games": 51,
+          "wins": 25
+        },
+        {
+          "cards": [
+            "arrows",
+            "giant",
+            "knight",
+            "mini-pekka",
+            "minion-horde",
+            "minions",
+            "sparky",
+            "zap"
+          ],
+          "games": 51,
+          "wins": 24
+        },
+        {
+          "cards": [
+            "arrows",
+            "giant",
+            "mini-pekka",
+            "minion-horde",
+            "minions",
+            "skeleton-army",
+            "sparky",
+            "zap"
+          ],
+          "games": 8,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "fireball",
+            "giant",
+            "mini-pekka",
+            "minion-horde",
+            "minions",
+            "skeleton-army",
+            "sparky",
+            "zap"
+          ],
+          "games": 6,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "arrows",
+            "bats",
+            "giant",
+            "mini-pekka",
+            "minion-horde",
+            "rage",
+            "skeleton-army",
+            "sparky"
+          ],
+          "games": 4,
+          "wins": 2
+        }
+      ],
       "momentum": 0
     },
     {
       "id": "meta-23",
       "archetype": "Beatdown",
-      "usage": 429,
-      "wins": 210,
-      "winRate": 49,
+      "usage": 433,
+      "wins": 213,
+      "winRate": 49.2,
       "avgElixir": 3.6,
       "cards": [
         "heal-spirit",
@@ -621,14 +3007,182 @@
         "zap"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "dark-prince",
+            "electro-wizard",
+            "goblin-giant",
+            "heal-spirit",
+            "mini-pekka",
+            "rage",
+            "sparky",
+            "zap"
+          ],
+          "games": 324,
+          "wins": 165
+        },
+        {
+          "cards": [
+            "electro-wizard",
+            "goblin-giant",
+            "heal-spirit",
+            "mini-pekka",
+            "minions",
+            "rage",
+            "sparky",
+            "zap"
+          ],
+          "games": 35,
+          "wins": 14
+        },
+        {
+          "cards": [
+            "goblin-giant",
+            "knight",
+            "mini-pekka",
+            "phoenix",
+            "rage",
+            "sparky",
+            "tornado",
+            "vines"
+          ],
+          "games": 32,
+          "wins": 18
+        },
+        {
+          "cards": [
+            "arrows",
+            "dark-prince",
+            "goblin-giant",
+            "mega-minion",
+            "mini-pekka",
+            "mother-witch",
+            "rage",
+            "sparky"
+          ],
+          "games": 8,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "dark-prince",
+            "electro-wizard",
+            "goblin-giant",
+            "mini-pekka",
+            "minions",
+            "rage",
+            "sparky",
+            "zap"
+          ],
+          "games": 6,
+          "wins": 0
+        },
+        {
+          "cards": [
+            "dark-prince",
+            "electro-wizard",
+            "goblin-giant",
+            "mega-minion",
+            "mini-pekka",
+            "sparky",
+            "vines",
+            "zap"
+          ],
+          "games": 5,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "bats",
+            "goblin-giant",
+            "ice-wizard",
+            "lightning",
+            "mini-pekka",
+            "sparky",
+            "tornado"
+          ],
+          "games": 4,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "dark-prince",
+            "electro-wizard",
+            "goblin-giant",
+            "mega-minion",
+            "mini-pekka",
+            "rage",
+            "sparky",
+            "zap"
+          ],
+          "games": 4,
+          "wins": 2
+        }
+      ],
       "momentum": 0
     },
     {
       "id": "meta-24",
       "archetype": "Beatdown",
-      "usage": 425,
-      "wins": 233,
-      "winRate": 54.5,
+      "usage": 424,
+      "wins": 248,
+      "winRate": 57.9,
+      "avgElixir": 4,
+      "cards": [
+        "zap",
+        "mega-minion",
+        "tombstone",
+        "minion-giant",
+        "fireball",
+        "skeleton-dragons",
+        "barbarians",
+        "lava-hound"
+      ],
+      "evolutions": [
+        "barbarians",
+        "zap"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "barbarians",
+            "fireball",
+            "lava-hound",
+            "mega-minion",
+            "minion-giant",
+            "skeleton-dragons",
+            "tombstone",
+            "zap"
+          ],
+          "games": 412,
+          "wins": 237
+        },
+        {
+          "cards": [
+            "arrows",
+            "barbarians",
+            "bomber",
+            "giant-snowball",
+            "lava-hound",
+            "mega-minion",
+            "minion-giant",
+            "minions"
+          ],
+          "games": 12,
+          "wins": 11
+        }
+      ],
+      "momentum": 1
+    },
+    {
+      "id": "meta-25",
+      "archetype": "Beatdown",
+      "usage": 412,
+      "wins": 221,
+      "winRate": 53.4,
       "avgElixir": 3.8,
       "cards": [
         "barbarian-barrel",
@@ -637,46 +3191,162 @@
         "inferno-dragon",
         "baby-dragon",
         "freeze",
-        "balloon",
-        "bowler"
+        "bowler",
+        "balloon"
       ],
       "evolutions": [
         "inferno-dragon",
         "baby-dragon"
       ],
       "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-25",
-      "archetype": "Beatdown",
-      "usage": 415,
-      "wins": 192,
-      "winRate": 46.5,
-      "avgElixir": 3.8,
-      "cards": [
-        "zap",
-        "bats",
-        "arrows",
-        "skeleton-army",
-        "mini-pekka",
-        "giant",
-        "minion-horde",
-        "sparky"
+      "variants": [
+        {
+          "cards": [
+            "baby-dragon",
+            "balloon",
+            "barbarian-barrel",
+            "bowler",
+            "freeze",
+            "inferno-dragon",
+            "knight",
+            "tornado"
+          ],
+          "games": 272,
+          "wins": 144
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "balloon",
+            "barbarian-barrel",
+            "bowler",
+            "freeze",
+            "inferno-dragon",
+            "lumberjack",
+            "tornado"
+          ],
+          "games": 107,
+          "wins": 65
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "balloon",
+            "bowler",
+            "freeze",
+            "ice-wizard",
+            "inferno-dragon",
+            "knight",
+            "tornado"
+          ],
+          "games": 19,
+          "wins": 6
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "balloon",
+            "bowler",
+            "freeze",
+            "inferno-dragon",
+            "knight",
+            "lumberjack",
+            "tornado"
+          ],
+          "games": 4,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "balloon",
+            "bowler",
+            "freeze",
+            "golden-knight",
+            "inferno-dragon",
+            "lumberjack",
+            "tornado"
+          ],
+          "games": 3,
+          "wins": 3
+        }
       ],
-      "evolutions": [
-        "minion-horde",
-        "zap"
-      ],
-      "towerTroop": null,
       "momentum": 0
     },
     {
       "id": "meta-26",
+      "archetype": "Bridge Spam",
+      "usage": 412,
+      "wins": 206,
+      "winRate": 50,
+      "avgElixir": 3.9,
+      "cards": [
+        "zap",
+        "royal-ghost",
+        "bandit",
+        "magic-archer",
+        "battle-ram",
+        "fireball",
+        "electro-wizard",
+        "pekka"
+      ],
+      "evolutions": [
+        "battle-ram",
+        "royal-ghost"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "bandit",
+            "battle-ram",
+            "electro-wizard",
+            "fireball",
+            "magic-archer",
+            "pekka",
+            "royal-ghost",
+            "zap"
+          ],
+          "games": 310,
+          "wins": 160
+        },
+        {
+          "cards": [
+            "bandit",
+            "battle-ram",
+            "dark-prince",
+            "electro-wizard",
+            "fireball",
+            "magic-archer",
+            "pekka",
+            "zap"
+          ],
+          "games": 85,
+          "wins": 40
+        },
+        {
+          "cards": [
+            "bandit",
+            "battle-ram",
+            "electro-wizard",
+            "magic-archer",
+            "pekka",
+            "poison",
+            "royal-ghost",
+            "zap"
+          ],
+          "games": 10,
+          "wins": 3
+        }
+      ],
+      "momentum": 1
+    },
+    {
+      "id": "meta-27",
       "archetype": "Siege",
-      "usage": 402,
-      "wins": 187,
-      "winRate": 46.8,
+      "usage": 394,
+      "wins": 176,
+      "winRate": 45,
       "avgElixir": 3,
       "cards": [
         "skeletons",
@@ -693,14 +3363,252 @@
         "tesla"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "archers",
+            "electro-spirit",
+            "fireball",
+            "knight",
+            "skeletons",
+            "tesla",
+            "the-log",
+            "x-bow"
+          ],
+          "games": 334,
+          "wins": 147
+        },
+        {
+          "cards": [
+            "archers",
+            "fireball",
+            "ice-spirit",
+            "knight",
+            "skeletons",
+            "tesla",
+            "the-log",
+            "x-bow"
+          ],
+          "games": 30,
+          "wins": 14
+        },
+        {
+          "cards": [
+            "archers",
+            "electro-spirit",
+            "knight",
+            "rocket",
+            "skeletons",
+            "tesla",
+            "the-log",
+            "x-bow"
+          ],
+          "games": 29,
+          "wins": 14
+        }
+      ],
+      "momentum": 1
+    },
+    {
+      "id": "meta-28",
+      "archetype": "Beatdown",
+      "usage": 384,
+      "wins": 204,
+      "winRate": 52.9,
+      "avgElixir": 4.1,
+      "cards": [
+        "barbarian-barrel",
+        "mega-minion",
+        "tornado",
+        "baby-dragon",
+        "dark-prince",
+        "goblin-cage",
+        "lightning",
+        "electro-giant"
+      ],
+      "evolutions": [
+        "baby-dragon",
+        "electro-giant"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "dark-prince",
+            "electro-giant",
+            "goblin-cage",
+            "lightning",
+            "mega-minion",
+            "tornado"
+          ],
+          "games": 114,
+          "wins": 47
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "dark-prince",
+            "electro-giant",
+            "goblin-hut",
+            "lightning",
+            "phoenix",
+            "tornado"
+          ],
+          "games": 55,
+          "wins": 34
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "dark-prince",
+            "electro-giant",
+            "goblin-hut",
+            "ice-wizard",
+            "lightning",
+            "tornado"
+          ],
+          "games": 40,
+          "wins": 30
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "bomber",
+            "dark-prince",
+            "electro-giant",
+            "goblin-hut",
+            "lightning",
+            "royal-delivery",
+            "tornado"
+          ],
+          "games": 37,
+          "wins": 22
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "dark-prince",
+            "electro-giant",
+            "electro-spirit",
+            "goblin-hut",
+            "lightning",
+            "royal-delivery",
+            "tornado"
+          ],
+          "games": 32,
+          "wins": 22
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "dark-prince",
+            "electro-giant",
+            "goblin-cage",
+            "hunter",
+            "lightning",
+            "tornado"
+          ],
+          "games": 27,
+          "wins": 13
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "dark-prince",
+            "electro-giant",
+            "fireball",
+            "goblin-cage",
+            "mega-minion",
+            "tornado"
+          ],
+          "games": 22,
+          "wins": 11
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "dark-prince",
+            "electro-giant",
+            "goblin-hut",
+            "lightning",
+            "mega-minion",
+            "tornado"
+          ],
+          "games": 7,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "dark-prince",
+            "electro-giant",
+            "goblin-cage",
+            "lightning",
+            "mother-witch",
+            "tornado"
+          ],
+          "games": 7,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "bomber",
+            "dark-prince",
+            "electro-giant",
+            "goblin-cage",
+            "lightning",
+            "minions",
+            "tornado"
+          ],
+          "games": 7,
+          "wins": 0
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "cannon",
+            "dark-prince",
+            "electro-giant",
+            "electro-wizard",
+            "lightning",
+            "tornado"
+          ],
+          "games": 6,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "dark-prince",
+            "earthquake",
+            "electro-giant",
+            "goblin-hut",
+            "royal-delivery",
+            "tornado"
+          ],
+          "games": 5,
+          "wins": 4
+        }
+      ],
       "momentum": 0
     },
     {
-      "id": "meta-27",
+      "id": "meta-29",
       "archetype": "Bait",
-      "usage": 400,
-      "wins": 220,
-      "winRate": 54.7,
+      "usage": 375,
+      "wins": 192,
+      "winRate": 51.1,
       "avgElixir": 3.3,
       "cards": [
         "goblins",
@@ -717,134 +3625,86 @@
         "dart-goblin"
       ],
       "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-28",
-      "archetype": "Bridge Spam",
-      "usage": 390,
-      "wins": 184,
-      "winRate": 47.4,
-      "avgElixir": 3.9,
-      "cards": [
-        "zap",
-        "royal-ghost",
-        "bandit",
-        "battle-ram",
-        "magic-archer",
-        "electro-wizard",
-        "fireball",
-        "pekka"
+      "variants": [
+        {
+          "cards": [
+            "dart-goblin",
+            "goblins",
+            "rascals",
+            "rocket",
+            "royal-ghost",
+            "skeleton-barrel",
+            "suspicious-bush",
+            "the-log"
+          ],
+          "games": 332,
+          "wins": 178
+        },
+        {
+          "cards": [
+            "berserker",
+            "dart-goblin",
+            "fireball",
+            "rascals",
+            "royal-ghost",
+            "skeleton-barrel",
+            "suspicious-bush",
+            "the-log"
+          ],
+          "games": 20,
+          "wins": 7
+        },
+        {
+          "cards": [
+            "dart-goblin",
+            "fireball",
+            "goblins",
+            "rascals",
+            "royal-ghost",
+            "skeleton-barrel",
+            "suspicious-bush",
+            "the-log"
+          ],
+          "games": 8,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "dart-goblin",
+            "freeze",
+            "goblins",
+            "rascals",
+            "royal-ghost",
+            "skeleton-barrel",
+            "suspicious-bush",
+            "the-log"
+          ],
+          "games": 4,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "dart-goblin",
+            "goblins",
+            "rascals",
+            "royal-ghost",
+            "skeleton-barrel",
+            "suspicious-bush",
+            "the-log",
+            "vines"
+          ],
+          "games": 4,
+          "wins": 1
+        }
       ],
-      "evolutions": [
-        "battle-ram",
-        "royal-ghost"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-29",
-      "archetype": "Beatdown",
-      "usage": 375,
-      "wins": 220,
-      "winRate": 58,
-      "avgElixir": 4,
-      "cards": [
-        "zap",
-        "mega-minion",
-        "tombstone",
-        "skeleton-dragons",
-        "minion-giant",
-        "fireball",
-        "barbarians",
-        "lava-hound"
-      ],
-      "evolutions": [
-        "zap",
-        "barbarians"
-      ],
-      "towerTroop": null,
       "momentum": 0
     },
     {
       "id": "meta-30",
-      "archetype": "Bait",
-      "usage": 366,
-      "wins": 196,
-      "winRate": 53.3,
-      "avgElixir": 2.9,
-      "cards": [
-        "ice-spirit",
-        "the-log",
-        "skeleton-army",
-        "knight",
-        "goblin-barrel",
-        "princess",
-        "dart-goblin",
-        "inferno-tower"
-      ],
-      "evolutions": [
-        "goblin-barrel",
-        "skeleton-army"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-31",
-      "archetype": "Beatdown",
-      "usage": 354,
-      "wins": 174,
-      "winRate": 49.2,
-      "avgElixir": 4,
-      "cards": [
-        "heal-spirit",
-        "rage",
-        "arrows",
-        "mini-pekka",
-        "giant",
-        "witch",
-        "elite-barbarians",
-        "elixir-collector"
-      ],
-      "evolutions": [
-        "elite-barbarians",
-        "witch"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-32",
       "archetype": "Control",
-      "usage": 338,
-      "wins": 177,
-      "winRate": 52.2,
-      "avgElixir": 3.4,
-      "cards": [
-        "barbarian-barrel",
-        "ice-wizard",
-        "tombstone",
-        "knight",
-        "tornado",
-        "baby-dragon",
-        "poison",
-        "graveyard"
-      ],
-      "evolutions": [
-        "baby-dragon",
-        "knight"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-33",
-      "archetype": "Control",
-      "usage": 315,
-      "wins": 174,
-      "winRate": 54.8,
+      "usage": 368,
+      "wins": 205,
+      "winRate": 55.3,
       "avgElixir": 3.3,
       "cards": [
         "zap",
@@ -861,38 +3721,372 @@
         "zap"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "goblin-cage",
+            "goblin-curse",
+            "goblin-demolisher",
+            "inferno-dragon",
+            "little-prince",
+            "miner",
+            "rune-giant",
+            "zap"
+          ],
+          "games": 232,
+          "wins": 133
+        },
+        {
+          "cards": [
+            "goblin-demolisher",
+            "goblin-hut",
+            "inferno-dragon",
+            "little-prince",
+            "miner",
+            "rune-giant",
+            "the-log",
+            "zap"
+          ],
+          "games": 75,
+          "wins": 42
+        },
+        {
+          "cards": [
+            "fireball",
+            "goblin-cage",
+            "goblin-demolisher",
+            "inferno-dragon",
+            "little-prince",
+            "miner",
+            "rune-giant",
+            "zap"
+          ],
+          "games": 28,
+          "wins": 18
+        },
+        {
+          "cards": [
+            "berserker",
+            "goblin-curse",
+            "goblin-demolisher",
+            "goblin-hut",
+            "inferno-dragon",
+            "miner",
+            "rune-giant",
+            "zap"
+          ],
+          "games": 21,
+          "wins": 8
+        },
+        {
+          "cards": [
+            "goblin-cage",
+            "goblin-demolisher",
+            "inferno-dragon",
+            "little-prince",
+            "miner",
+            "rune-giant",
+            "the-log",
+            "zap"
+          ],
+          "games": 5,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "goblin-curse",
+            "goblin-demolisher",
+            "goblin-hut",
+            "inferno-dragon",
+            "little-prince",
+            "miner",
+            "rune-giant",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "goblin-cage",
+            "goblin-curse",
+            "inferno-dragon",
+            "little-prince",
+            "miner",
+            "minion-giant",
+            "rune-giant",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 1
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-31",
+      "archetype": "Bait",
+      "usage": 341,
+      "wins": 181,
+      "winRate": 52.8,
+      "avgElixir": 2.9,
+      "cards": [
+        "ice-spirit",
+        "the-log",
+        "skeleton-army",
+        "knight",
+        "goblin-barrel",
+        "princess",
+        "dart-goblin",
+        "inferno-tower"
+      ],
+      "evolutions": [
+        "goblin-barrel",
+        "skeleton-army"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "dart-goblin",
+            "goblin-barrel",
+            "ice-spirit",
+            "inferno-tower",
+            "knight",
+            "princess",
+            "skeleton-army",
+            "the-log"
+          ],
+          "games": 331,
+          "wins": 177
+        },
+        {
+          "cards": [
+            "dart-goblin",
+            "electro-spirit",
+            "goblin-barrel",
+            "inferno-tower",
+            "knight",
+            "princess",
+            "skeleton-army",
+            "the-log"
+          ],
+          "games": 8,
+          "wins": 3
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-32",
+      "archetype": "Cycle",
+      "usage": 336,
+      "wins": 184,
+      "winRate": 54.4,
+      "avgElixir": 2.6,
+      "cards": [
+        "electro-spirit",
+        "skeletons",
+        "barbarian-barrel",
+        "firecracker",
+        "cannon",
+        "earthquake",
+        "mighty-miner",
+        "hog-rider"
+      ],
+      "evolutions": [
+        "firecracker",
+        "cannon"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon",
+            "earthquake",
+            "electro-spirit",
+            "firecracker",
+            "hog-rider",
+            "mighty-miner",
+            "skeletons"
+          ],
+          "games": 145,
+          "wins": 90
+        },
+        {
+          "cards": [
+            "cannon",
+            "earthquake",
+            "electro-spirit",
+            "firecracker",
+            "hog-rider",
+            "mighty-miner",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 133,
+          "wins": 61
+        },
+        {
+          "cards": [
+            "bomber",
+            "earthquake",
+            "firecracker",
+            "hog-rider",
+            "ice-spirit",
+            "mighty-miner",
+            "minions",
+            "skeletons"
+          ],
+          "games": 33,
+          "wins": 19
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon",
+            "earthquake",
+            "firecracker",
+            "hog-rider",
+            "ice-spirit",
+            "mighty-miner",
+            "skeletons"
+          ],
+          "games": 17,
+          "wins": 10
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-33",
+      "archetype": "Control",
+      "usage": 333,
+      "wins": 178,
+      "winRate": 53.2,
+      "avgElixir": 3.4,
+      "cards": [
+        "barbarian-barrel",
+        "knight",
+        "ice-wizard",
+        "tombstone",
+        "tornado",
+        "baby-dragon",
+        "poison",
+        "graveyard"
+      ],
+      "evolutions": [
+        "knight",
+        "baby-dragon"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "baby-dragon",
+            "barbarian-barrel",
+            "graveyard",
+            "ice-wizard",
+            "knight",
+            "poison",
+            "tombstone",
+            "tornado"
+          ],
+          "games": 332,
+          "wins": 178
+        }
+      ],
       "momentum": 0
     },
     {
       "id": "meta-34",
-      "archetype": "Bridge Spam",
-      "usage": 279,
-      "wins": 167,
-      "winRate": 58.9,
-      "avgElixir": 2.6,
+      "archetype": "Beatdown",
+      "usage": 314,
+      "wins": 160,
+      "winRate": 50.9,
+      "avgElixir": 4,
       "cards": [
-        "skeletons",
-        "electro-spirit",
-        "bats",
-        "the-log",
-        "little-prince",
-        "minion-giant",
-        "rune-giant",
-        "poison"
+        "heal-spirit",
+        "rage",
+        "arrows",
+        "mini-pekka",
+        "giant",
+        "witch",
+        "elite-barbarians",
+        "elixir-collector"
       ],
       "evolutions": [
-        "skeletons",
-        "bats"
+        "elite-barbarians",
+        "witch"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "arrows",
+            "elite-barbarians",
+            "elixir-collector",
+            "giant",
+            "heal-spirit",
+            "mini-pekka",
+            "rage",
+            "witch"
+          ],
+          "games": 277,
+          "wins": 141
+        },
+        {
+          "cards": [
+            "elite-barbarians",
+            "elixir-collector",
+            "giant",
+            "heal-spirit",
+            "mini-pekka",
+            "rage",
+            "vines",
+            "witch"
+          ],
+          "games": 26,
+          "wins": 15
+        },
+        {
+          "cards": [
+            "arrows",
+            "elite-barbarians",
+            "elixir-collector",
+            "giant",
+            "heal-spirit",
+            "minions",
+            "night-witch",
+            "zap"
+          ],
+          "games": 6,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "arrows",
+            "elite-barbarians",
+            "elixir-collector",
+            "giant",
+            "mini-pekka",
+            "minions",
+            "witch",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 2
+        }
+      ],
       "momentum": 0
     },
     {
       "id": "meta-35",
       "archetype": "Control",
       "usage": 273,
-      "wins": 124,
-      "winRate": 45.9,
+      "wins": 123,
+      "winRate": 45.5,
       "avgElixir": 2.9,
       "cards": [
         "skeletons",
@@ -909,38 +4103,58 @@
         "skeletons"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "balloon",
+            "barbarian-barrel",
+            "bomb-tower",
+            "giant-snowball",
+            "ice-golem",
+            "miner",
+            "musketeer",
+            "skeletons"
+          ],
+          "games": 251,
+          "wins": 118
+        },
+        {
+          "cards": [
+            "balloon",
+            "barbarian-barrel",
+            "bomb-tower",
+            "giant-snowball",
+            "ice-golem",
+            "miner",
+            "minions",
+            "musketeer"
+          ],
+          "games": 7,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "balloon",
+            "barbarian-barrel",
+            "bomb-tower",
+            "giant-snowball",
+            "goblins",
+            "ice-golem",
+            "miner",
+            "musketeer"
+          ],
+          "games": 5,
+          "wins": 2
+        }
+      ],
       "momentum": 0
     },
     {
       "id": "meta-36",
       "archetype": "Control",
-      "usage": 258,
-      "wins": 122,
-      "winRate": 47.6,
-      "avgElixir": 2.6,
-      "cards": [
-        "fire-spirit",
-        "skeletons",
-        "giant-snowball",
-        "bomber",
-        "knight",
-        "goblin-drill",
-        "poison",
-        "tesla"
-      ],
-      "evolutions": [
-        "giant-snowball",
-        "goblin-drill"
-      ],
-      "towerTroop": null,
-      "momentum": 0
-    },
-    {
-      "id": "meta-37",
-      "archetype": "Control",
-      "usage": 258,
-      "wins": 149,
-      "winRate": 56.9,
+      "usage": 259,
+      "wins": 150,
+      "winRate": 57.1,
       "avgElixir": 2.6,
       "cards": [
         "skeletons",
@@ -957,21 +4171,105 @@
         "dart-goblin"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "dart-goblin",
+            "electro-spirit",
+            "goblin-barrel",
+            "inferno-tower",
+            "mighty-miner",
+            "skeletons",
+            "the-log",
+            "wall-breakers"
+          ],
+          "games": 258,
+          "wins": 150
+        }
+      ],
+      "momentum": 0
+    },
+    {
+      "id": "meta-37",
+      "archetype": "Control",
+      "usage": 248,
+      "wins": 114,
+      "winRate": 46.4,
+      "avgElixir": 2.6,
+      "cards": [
+        "fire-spirit",
+        "skeletons",
+        "giant-snowball",
+        "bomber",
+        "knight",
+        "goblin-drill",
+        "poison",
+        "tesla"
+      ],
+      "evolutions": [
+        "giant-snowball",
+        "goblin-drill"
+      ],
+      "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "bomber",
+            "fire-spirit",
+            "giant-snowball",
+            "goblin-drill",
+            "knight",
+            "poison",
+            "skeletons",
+            "tesla"
+          ],
+          "games": 237,
+          "wins": 108
+        },
+        {
+          "cards": [
+            "bomber",
+            "giant-snowball",
+            "goblin-drill",
+            "knight",
+            "mirror",
+            "poison",
+            "skeletons",
+            "tesla"
+          ],
+          "games": 3,
+          "wins": 2
+        },
+        {
+          "cards": [
+            "bomber",
+            "fire-spirit",
+            "giant-snowball",
+            "goblin-drill",
+            "knight",
+            "rocket",
+            "skeletons",
+            "tesla"
+          ],
+          "games": 3,
+          "wins": 2
+        }
+      ],
       "momentum": 0
     },
     {
       "id": "meta-38",
       "archetype": "Beatdown",
-      "usage": 257,
-      "wins": 134,
-      "winRate": 51.9,
+      "usage": 245,
+      "wins": 127,
+      "winRate": 51.6,
       "avgElixir": 4.1,
       "cards": [
         "zap",
         "mega-minion",
         "tombstone",
-        "fireball",
         "skeleton-dragons",
+        "fireball",
         "barbarians",
         "balloon",
         "lava-hound"
@@ -981,54 +4279,270 @@
         "zap"
       ],
       "towerTroop": null,
-      "momentum": 0
+      "variants": [
+        {
+          "cards": [
+            "balloon",
+            "barbarians",
+            "fireball",
+            "lava-hound",
+            "mega-minion",
+            "skeleton-dragons",
+            "tombstone",
+            "zap"
+          ],
+          "games": 104,
+          "wins": 55
+        },
+        {
+          "cards": [
+            "arrows",
+            "balloon",
+            "barbarians",
+            "inferno-dragon",
+            "lava-hound",
+            "miner",
+            "skeleton-dragons",
+            "zap"
+          ],
+          "games": 93,
+          "wins": 53
+        },
+        {
+          "cards": [
+            "arrows",
+            "baby-dragon",
+            "balloon",
+            "barbarians",
+            "lava-hound",
+            "phoenix",
+            "tombstone",
+            "vines"
+          ],
+          "games": 13,
+          "wins": 4
+        },
+        {
+          "cards": [
+            "arrows",
+            "balloon",
+            "barbarians",
+            "freeze",
+            "guards",
+            "inferno-dragon",
+            "lava-hound",
+            "skeleton-dragons"
+          ],
+          "games": 10,
+          "wins": 1
+        },
+        {
+          "cards": [
+            "arrows",
+            "balloon",
+            "barbarians",
+            "bomber",
+            "giant-snowball",
+            "inferno-dragon",
+            "lava-hound",
+            "void"
+          ],
+          "games": 9,
+          "wins": 6
+        },
+        {
+          "cards": [
+            "baby-dragon",
+            "balloon",
+            "barbarians",
+            "fireball",
+            "lava-hound",
+            "mega-minion",
+            "tombstone",
+            "zap"
+          ],
+          "games": 5,
+          "wins": 3
+        },
+        {
+          "cards": [
+            "arrows",
+            "balloon",
+            "barbarians",
+            "inferno-dragon",
+            "lava-hound",
+            "miner",
+            "minions",
+            "zap"
+          ],
+          "games": 3,
+          "wins": 1
+        }
+      ],
+      "momentum": 1
     },
     {
       "id": "meta-39",
       "archetype": "Beatdown",
-      "usage": 233,
-      "wins": 121,
-      "winRate": 51.7,
-      "avgElixir": 3.8,
+      "usage": 243,
+      "wins": 112,
+      "winRate": 46.5,
+      "avgElixir": 4.1,
       "cards": [
-        "heal-spirit",
-        "zap",
         "rage",
-        "dark-prince",
-        "electro-wizard",
-        "giant",
-        "elite-barbarians",
-        "sparky"
+        "elixir-golem",
+        "arrows",
+        "mini-pekka",
+        "inferno-dragon",
+        "night-witch",
+        "witch",
+        "golem"
       ],
       "evolutions": [
-        "elite-barbarians",
-        "zap"
+        "witch",
+        "inferno-dragon"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "arrows",
+            "elixir-golem",
+            "golem",
+            "inferno-dragon",
+            "mini-pekka",
+            "night-witch",
+            "rage",
+            "witch"
+          ],
+          "games": 236,
+          "wins": 110
+        }
+      ],
       "momentum": 0
     },
     {
       "id": "meta-40",
-      "archetype": "Control",
-      "usage": 233,
-      "wins": 136,
-      "winRate": 57.4,
-      "avgElixir": 3.4,
+      "archetype": "Bridge Spam",
+      "usage": 238,
+      "wins": 141,
+      "winRate": 58.2,
+      "avgElixir": 2.6,
       "cards": [
-        "wall-breakers",
-        "barbarian-barrel",
-        "skeleton-barrel",
-        "dart-goblin",
-        "dark-prince",
-        "goblin-hut",
-        "fireball",
-        "rascals"
+        "skeletons",
+        "electro-spirit",
+        "bats",
+        "the-log",
+        "little-prince",
+        "minion-giant",
+        "rune-giant",
+        "poison"
       ],
       "evolutions": [
-        "wall-breakers",
-        "skeleton-barrel"
+        "skeletons",
+        "bats"
       ],
       "towerTroop": null,
+      "variants": [
+        {
+          "cards": [
+            "bats",
+            "electro-spirit",
+            "little-prince",
+            "minion-giant",
+            "poison",
+            "rune-giant",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 122,
+          "wins": 76
+        },
+        {
+          "cards": [
+            "bats",
+            "electro-spirit",
+            "little-prince",
+            "minion-giant",
+            "poison",
+            "rage",
+            "rune-giant",
+            "skeletons"
+          ],
+          "games": 30,
+          "wins": 13
+        },
+        {
+          "cards": [
+            "bats",
+            "electro-spirit",
+            "little-prince",
+            "minion-giant",
+            "poison",
+            "royal-delivery",
+            "rune-giant",
+            "skeletons"
+          ],
+          "games": 29,
+          "wins": 19
+        },
+        {
+          "cards": [
+            "bats",
+            "cannon",
+            "little-prince",
+            "minion-giant",
+            "poison",
+            "rune-giant",
+            "skeletons",
+            "the-log"
+          ],
+          "games": 18,
+          "wins": 16
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "bats",
+            "electro-spirit",
+            "little-prince",
+            "minion-giant",
+            "poison",
+            "rune-giant",
+            "skeletons"
+          ],
+          "games": 16,
+          "wins": 7
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon",
+            "electro-spirit",
+            "little-prince",
+            "minion-giant",
+            "poison",
+            "rune-giant",
+            "skeletons"
+          ],
+          "games": 13,
+          "wins": 6
+        },
+        {
+          "cards": [
+            "barbarian-barrel",
+            "cannon",
+            "little-prince",
+            "minion-giant",
+            "minions",
+            "poison",
+            "rune-giant",
+            "skeletons"
+          ],
+          "games": 9,
+          "wins": 4
+        }
+      ],
       "momentum": 0
     }
   ]
