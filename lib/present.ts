@@ -14,19 +14,54 @@ export function difficultyFor(skillFloor: number): CoachPick["difficulty"] {
   return "Medium";
 }
 
-/** A one-line, personalized "why this deck for you" using the player's real state. */
-export function personalizedSummary(cand: DeckCandidate): string {
-  const wc = cand.slots.find((s) => s.role === "win-condition" && !s.isMissing) ?? cand.slots.find((s) => !s.isMissing);
-  const wcNote = wc ? ` Win condition ${cardByKey(wc.chosenKey!)?.name ?? wc.canonicalKey} is at level ${wc.level}.` : "";
+const nameOf = (key: string) => cardByKey(key)?.name ?? key;
 
+/** What the shown 8 cards really are, for the deck title and badge: the exact list top players ran,
+ *  one card off it, or the player's own version of a top-player core. Curated decks keep their name. */
+export function listKind(cand: DeckCandidate): "real" | "close" | "yours" | "curated" {
+  if (cand.deck.source !== "meta") return "curated";
+  if (cand.evidence.kind === "exact") return "real";
+  if (cand.evidence.kind === "close") return "close";
+  return "yours";
+}
+
+export function displayName(cand: DeckCandidate): string {
+  const kind = listKind(cand);
+  if (cand.deck.id === "deck-check") {
+    // Deck Check grades the player's own deck: say what it is, not what it was built from.
+    if (kind === "real") return "Your deck · a top-player list";
+    if (kind === "close") return "Your deck · 1 card off a top-player list";
+    return "Your deck";
+  }
+  const wc = cand.deck.winCondition;
+  if (kind === "real") return `${wc} · top-player list`;
+  if (kind === "close") return `${wc} · 1 card off a top-player list`;
+  if (kind === "yours") return `${wc} · your version of a top-player deck`;
+  return cand.deck.name;
+}
+
+/** A short, personalized "why this deck for you" from the player's real state. It names every swap
+ *  and its reason, and never claims a record the shown 8 cards don't have. */
+export function personalizedSummary(cand: DeckCandidate): string {
   if (!cand.fieldable) {
-    const missing = cand.missingRoles.map((k) => cardByKey(k)?.name ?? k);
-    return `Closest ${cand.deck.archetype} deck to what you own — you're missing ${missing.join(", ")}.`;
+    const missing = cand.missingRoles.map(nameOf);
+    return `Closest ${cand.deck.archetype} deck to what you own. You're missing ${missing.join(", ")}.`;
   }
-  if (cand.substitutions.length > 0) {
-    return `A ${cand.deck.archetype} deck you can field, using ${cand.substitutions.length} substitute(s) for cards you don't own.${wcNote}`;
-  }
-  return `You own all 8 cards for this ${cand.deck.archetype} deck.${wcNote}`;
+  const parts: string[] = [];
+  const ev = cand.evidence;
+  if (ev.kind === "exact") parts.push(`Top players ran these exact 8 cards across ${ev.games} sampled games.`);
+  else if (ev.kind === "close") parts.push("One card off a list top players ran.");
+  else if (cand.deck.source === "meta") parts.push("Top players haven't run these exact 8, so treat its win rate as an estimate.");
+
+  const by = (r: string) => cand.substitutions.filter((s) => s.reason === r);
+  const pairs = (list: typeof cand.substitutions) => list.map((s) => `${nameOf(s.from)} → ${nameOf(s.to)}`).join(", ");
+  if (by("upgrade").length) parts.push(`Swapped for your higher-level cards: ${pairs(by("upgrade"))}.`);
+  if (by("underleveled").length) parts.push(`Replaced under-leveled cards: ${pairs(by("underleveled"))}.`);
+  if (by("missing").length) parts.push(`Filled cards you don't own: ${pairs(by("missing"))}.`);
+
+  const levels = cand.slots.filter((s) => !s.isMissing).map((s) => s.level);
+  if (levels.length) parts.push(`Your lowest card here is level ${Math.min(...levels)}.`);
+  return parts.join(" ");
 }
 
 /** The free (non-LLM) coaching pick for a single candidate, drawn from the deck library's
@@ -58,7 +93,10 @@ export function enrichCandidate(cand: DeckCandidate) {
 
   return {
     deckId: cand.deck.id,
-    name: cand.deck.name,
+    name: displayName(cand),
+    // "real" = these exact 8 are a top-player list; "close" = one card off; "yours" = the player's
+    // own version of a top-player core; "curated" = from the hand-written fallback library.
+    listKind: listKind(cand),
     archetype: cand.deck.archetype,
     winCondition: cand.deck.winCondition,
     skillFloor: cand.deck.skillFloor,
@@ -87,6 +125,7 @@ export function enrichCandidate(cand: DeckCandidate) {
         name: s.chosenKey ? (cardByKey(s.chosenKey)?.name ?? s.chosenKey) : (need?.name ?? s.canonicalKey),
         level: s.level,
         isSubstitute: s.isSubstitute,
+        swap: s.swap,
         isMissing: s.isMissing,
         underLeveled: s.weak,
         evolved: s.chosenKey ? evoKeys.has(s.chosenKey) : false,

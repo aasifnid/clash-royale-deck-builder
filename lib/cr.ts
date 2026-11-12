@@ -86,6 +86,7 @@ interface ApiPlayer {
   cards: ApiCard[];
   supportCards?: ApiSupportCard[]; // owned tower troops
   currentDeckSupportCards?: ApiSupportCard[]; // active tower troop(s)
+  currentDeck?: { id: number }[]; // the 8 cards in the player's selected in-game deck
 }
 
 /** Convert the API's rarity-relative level to the in-game displayed level (max 16). */
@@ -266,6 +267,9 @@ export async function fetchCollection(rawTag: string): Promise<Collection> {
     owned,
     towerTroops,
     activeTowerTroop: data.currentDeckSupportCards?.[0]?.id ?? null,
+    currentDeck: (data.currentDeck ?? [])
+      .map((c) => cardById(c.id)?.key)
+      .filter((k): k is string => Boolean(k)),
     syncedAt: new Date().toISOString(),
     unknownCards,
   };

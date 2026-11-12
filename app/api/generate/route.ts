@@ -12,6 +12,7 @@ import { coachDecks, CoachError, type CoachPick } from "@/lib/coach";
 import { fetchBattleInsights, type BattleInsights } from "@/lib/battlelog";
 import { fetchLocalMeta, type LocalMeta } from "@/lib/localmeta";
 import { coachPickFor, enrichCandidate } from "@/lib/present";
+import { diversePicks } from "@/lib/picks";
 
 const SHORTLIST_SIZE = 6;
 
@@ -22,31 +23,9 @@ function threatsFor(local: LocalMeta | null, insights: BattleInsights | null): R
   return local && local.battles >= LOCAL_THREAT_MIN_BATTLES ? local.faced : insights?.threats;
 }
 
-const MAX_PICKS = 3;
-
-/** Build coached picks from the deck library — no LLM. Prefers fully-fieldable decks, and
- *  diversifies the picks by win condition so the player never sees the same deck three times. */
+/** Coached picks from the ranked decks - no LLM. */
 function buildStaticPicks(ranked: DeckCandidate[]): CoachPick[] {
-  const fieldable = ranked.filter((c) => c.fieldable);
-  const pool = fieldable.length > 0 ? fieldable : ranked;
-
-  // Pick best first, then the next-best decks with a DIFFERENT win condition, so the 3 picks
-  // are genuinely distinct archetypes (no two Balloon decks, etc.).
-  const chosen: DeckCandidate[] = [];
-  const seenWc = new Set<string>();
-  for (const cand of pool) {
-    if (chosen.length >= MAX_PICKS) break;
-    if (seenWc.has(cand.deck.winCondition)) continue;
-    seenWc.add(cand.deck.winCondition);
-    chosen.push(cand);
-  }
-  // If there weren't enough distinct win conditions, top up with the next best decks.
-  for (const cand of pool) {
-    if (chosen.length >= MAX_PICKS) break;
-    if (!chosen.includes(cand)) chosen.push(cand);
-  }
-
-  return chosen.map(coachPickFor);
+  return diversePicks(ranked).map(coachPickFor);
 }
 
 export async function POST(request: Request) {

@@ -56,7 +56,7 @@ const ARCHETYPE_SKILL: Record<string, number> = {
 };
 
 /** Slots (role + substitutes) for an 8-card list, using the curated role knowledge. */
-function slotsFor(cards: string[]) {
+export function slotsFor(cards: string[]) {
   const wcKey = winConditionKeyOf(cards);
   return cards.map((key) => {
     const info = ROLE_MAP.get(key);

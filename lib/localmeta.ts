@@ -91,6 +91,10 @@ export async function fetchLocalMeta(rawTag: string, trophies: number | null): P
     const d = (data.decks[sig] ??= { games: 0, wins: 0 });
     d.games++;
     if (won) d.wins++;
+    // The player's own deck appears in every game of their own log (and in their opponents' logs),
+    // so counting it would make "what you face" mostly a mirror of what you play. Their deck keeps
+    // its record above, but is left out of the field they face.
+    if (side.tag && normalizeTag(side.tag) === tag) return;
     const arch = classifyDeck(side.cards!.map((c) => c.id));
     if (!arch) return;
     data.faced[arch] = (data.faced[arch] ?? 0) + 1;

@@ -16,6 +16,7 @@ import SyncBar from "@/components/SyncBar";
 import CollectionDashboard from "@/components/CollectionDashboard";
 import TowerTroops from "@/components/TowerTroops";
 import Generator from "@/components/Generator";
+import DeckCheck from "@/components/DeckCheck";
 import SavedDecks from "@/components/SavedDecks";
 
 export default function Home() {
@@ -90,15 +91,16 @@ export default function Home() {
           Clash Royale <span style={{ color: "var(--accent-2)" }}>Deck Builder</span>
         </h1>
         <p className="mt-3 max-w-2xl text-base leading-relaxed" style={{ color: "var(--muted)" }}>
-          The strongest current top-ladder decks you can actually field — matched to your real cards, levels, and
-          evolutions. No generic lists assuming maxed cards you don&apos;t have.
+          A second opinion on your deck, backed by real battle results: how it actually performs near your trophies,
+          which cards are holding it back, and the strongest top-player decks you can field at your levels.
         </p>
       </header>
 
       {ready && (
         <div className="flex flex-col gap-6">
           <SyncBar collection={collection} onSynced={handleSynced} />
-          {/* Primary action first */}
+          {/* Check what you play first (the in-game Deck Wizard can already build a deck), then find new ones */}
+          <DeckCheck collection={collection} onSave={handleSave} />
           <Generator collection={collection} onSave={handleSave} />
           <SavedDecks decks={decks} onDelete={handleDelete} />
           {/* Your account: cards + tower troops in one panel */}

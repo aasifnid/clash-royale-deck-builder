@@ -37,6 +37,9 @@ export const WIN_CONDITIONS = [
   // (cheap defensive cores + Tesla/Hut + Lightning). Lowest priority so Rune Giant decks that run
   // it stay Bridge Spam. KEEP IN SYNC with lib/archetypes.ts.
   ["minion-giant", "Control"],
+  // Skeleton Barrel (Nov 2026 audit): a real chip win condition, lowest priority so decks that
+  // splash it keep their main win condition. KEEP IN SYNC with lib/archetypes.ts.
+  ["skeleton-barrel", "Bait"],
 ];
 
 /** Archetype of a deck (by card keys). Falls back to Control when no known win condition. */

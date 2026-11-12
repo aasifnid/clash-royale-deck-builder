@@ -59,7 +59,7 @@ const PLAYBOOK: Record<string, Builder> = {
     playTips: `Don't overcommit. You win on chip and small even trades, not one big attack — patience is the deck.`,
   }),
   Control: (wc, c) => ({
-    gameplan: `Win the long game: trade efficiently on defense with ${c.support} and ${c.building}, build an elixir lead, then counter-push ${wc} with the survivors so your attack costs almost nothing. Hold ${c.spell} for their swarm and ${c.bigSpell} to finish a low tower. You're grinding them down, not racing.`,
+    gameplan: `Win the long game: trade efficiently on defense with ${c.support}${c.hasBuilding ? ` and ${c.building}` : ""}, build an elixir lead, then counter-push ${wc} with the survivors so your attack costs almost nothing. Hold ${c.spell} for their swarm and ${c.bigSpell} to finish a low tower. You're grinding them down, not racing.`,
     counters: `Heavy beatdown that out-trades you over time, and pressure in the lane you're not defending — don't get split-pushed.`,
     playTips: `Use ${wc} and ${c.spell} for value, not blind damage. Only go for the tower when it's safe.`,
   }),
@@ -74,7 +74,7 @@ const PLAYBOOK: Record<string, Builder> = {
     playTips: `Placement wins the game — drill exactly where you drop ${wc} so it hits the tower and helps you defend.`,
   }),
   Bait: (wc, c) => ({
-    gameplan: `Bait their small spell with ${c.support}, and once it's gone drop ${wc} or your other bait card for free value. Defend with ${c.building}, keeping swarm cards spread so one spell can't hit several. In double elixir, flood faster than they can answer each one.`,
+    gameplan: `Bait their small spell with ${c.support}, and once it's gone drop ${wc} or your other bait card for free value. Defend with ${c.hasBuilding ? c.building : c.support}, keeping swarm cards spread so one spell can't hit several. In double elixir, flood faster than they can answer each one.`,
     counters: `Decks with two small spells, or splash that clears your cheap bait before you capitalise.`,
     playTips: `Track their small spell at all times. Only commit ${wc} after you've seen it used, so the punish is free.`,
   }),

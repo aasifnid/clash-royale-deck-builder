@@ -5,6 +5,7 @@
 
 import provenDecks from "@/data/proven-decks.json";
 import { CARDS } from "./cards";
+import { WIN_CONDITION_KEYS } from "./archetypes";
 import type { ProvenDeck } from "./types";
 
 // Cards that can hit air — also used by the coverage check.
@@ -31,7 +32,12 @@ for (const d of provenDecks as ProvenDeck[]) {
   }
 }
 
-// 2) Type-based fallback for everything else, plus air-defense tagging.
+// 2) Every classifier win condition plays the win-condition role, including cards newer than the
+//    curated library (Minion Giant, Goblinstein, Rune Giant...), so they are never mistaken for
+//    ordinary support.
+for (const key of WIN_CONDITION_KEYS) add(key, "win-condition");
+
+// 3) Type-based fallback for everything else, plus air-defense tagging.
 for (const c of CARDS) {
   if (!ROLE_OF.has(c.key)) {
     if (c.type === "Spell") add(c.key, c.elixir <= 3 ? "spell-small" : "spell-big");

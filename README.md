@@ -1,15 +1,20 @@
 # Clash Royale Deck Builder
 
-A personal deck builder that recommends **proven, winning decks filtered to the cards you actually own** — at the levels you own them — and coaches you on each like a top player would.
+A personal Clash Royale companion: a **second opinion on the deck you play**, and the **strongest top-player decks you can field at your real card levels**, both backed by real battle results.
 
-The gap it fills: generic "best deck" guides assume card levels and unlocks you may not have. This tool only ever suggests decks you can field, then has an AI coach rank and explain them.
+The gap it fills: the in-game Deck Wizard (Nov 2026) can already build a deck. It doesn't show whether that exact list has actually won, how it does against the decks near your trophies, or which of your cards are holding it back. This tool does.
 
 ## How it works
 
-1. **Sync your account** by player tag (public — no password), or add cards by hand. Card levels, evolutions, champions, and king-tower level are stored locally and fully editable.
-2. **A deterministic engine** scores every deck in a library of ~30 proven archetype decks against your collection: ownership, card-level fit for your arena, ease of play, substitutions for missing cards.
-3. **Pro coaching** — each deck carries a written-in gameplan, win condition, counters, and play tips, plus a personalized line about your card levels and substitutions. This is fully free and offline.
-4. **Optional AI layer** — if (and only if) an `ANTHROPIC_API_KEY` is set, Claude re-ranks and rephrases the shortlist instead. The tool is fully functional without it.
+1. **Sync your account** by player tag (public, no password), or add cards by hand. Card levels, evolutions, heroes, king-tower level and your selected in-game deck are stored locally and editable.
+2. **Check your deck.** Grade your current deck, or paste a deck link (from the game or the Deck Wizard): its real win rate if top players run it, its expected result against the decks sampled near your trophies, under-leveled cards, shape problems (no spell, nothing that hits air, too many win conditions), and at most one or two swaps, each backed by a real list's record.
+3. **Find new decks.** A deterministic engine ranks the current top-ladder meta (`data/meta-decks.json`, refreshed twice a month from ~1,000 top players' battle logs) against your collection:
+   - **Real lists first.** Proven win rate on the exact 8 cards you'd field leads the score, then your card levels, then how the deck fares against what you face.
+   - **Honest swaps.** A listed card you don't own, or own under-leveled, is replaced by a same-type card. Beyond that, at most two optional swaps for much higher-level cards. Every swap is named with its reason, and a deck is only labelled a top-player list when the shown 8 cards really are one (or one card off).
+   - **Three different decks.** Picks differ by win condition and share at most four cards.
+4. **Coaching.** Each deck gets a game plan, counters and play tips generated from its archetype and actual cards. Fully free and offline. If an `ANTHROPIC_API_KEY` is set, an optional AI layer re-ranks and rephrases instead.
+
+The hand-written library in `data/proven-decks.json` (32 decks, last edited Jul 2026) is now only a fallback for accounts that can't field a meta deck, and the source of card roles and substitutes.
 
 ## Stack
 
@@ -49,8 +54,9 @@ Then add `CR_API_TOKEN` and `ANTHROPIC_API_KEY` as Environment Variables in the 
 
 ## Maintenance
 
-- `node scripts/refresh-cards.mjs` re-pulls the card master data (run after a balance/season update; the roster changes ~monthly).
-- `data/proven-decks.json` is the deck library — edit it to add decks or update the meta. Each deck has 8 slots with a role, a skill-floor rating (1–5), and pro-known substitutes per slot.
+- **Data refresh is automatic.** `.github/workflows/refresh-meta.yml` runs on the 8th and 22nd: it re-pulls cards and the meta, commits, and runs `scripts/meta-check.mjs`, which opens an issue when a meta deck has a win condition the classifier doesn't know. The fix is to add it to `WIN_CONDITIONS` in **both** `lib/archetypes.ts` and `scripts/meta-cluster.mjs`.
+- **Tests:** `npm test` runs the engine tests against a real account snapshot (`tests/fixtures/account-2026-11.json`) plus the meta-cluster tests. CI (`.github/workflows/test.yml`) runs them with typecheck and lint on every push.
+- `node scripts/refresh-cards.mjs` / `node scripts/refresh-meta.mjs` refresh the data by hand (needs `CR_API_TOKEN`).
 
 ## Optional config
 

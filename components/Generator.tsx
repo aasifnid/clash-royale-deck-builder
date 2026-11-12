@@ -9,18 +9,19 @@ import { difficultyColor, RARITY_COLOR } from "@/lib/ui";
 import { retryImageOnError } from "@/lib/img";
 import type { SavedDeck } from "@/lib/store";
 
-interface PickCard {
+export interface PickCard {
   role: string;
   key: string | null;
   name: string | null;
   level: number;
   isSubstitute: boolean;
+  swap?: "missing" | "underleveled" | "upgrade" | null;
   isMissing: boolean;
   underLeveled: boolean;
   evolved: boolean;
   hero: boolean;
 }
-interface EnrichedPick {
+export interface EnrichedPick {
   coach: {
     deckId: string;
     summary: string;
@@ -32,6 +33,9 @@ interface EnrichedPick {
   };
   deckId: string;
   name: string;
+  // What the shown 8 really are: an exact top-player list, one card off one, the player's own
+  // version of a top-player core, or a curated fallback deck. Older responses omit it.
+  listKind?: "real" | "close" | "yours" | "curated";
   archetype: string;
   winCondition: string;
   avgElixir: number;
@@ -42,7 +46,7 @@ interface EnrichedPick {
   usage: number;
   winRate?: number | null;
   evidence?: { kind: "exact" | "close" | "core" | "none"; games: number; winRate: number | null; local?: { games: number; winRate: number } };
-  substitutions: { role: string; from: string; to: string }[];
+  substitutions: { role: string; from: string; to: string; reason?: string }[];
   powerCards: { key: string; name: string; evolved: boolean; hero: boolean }[];
   evolutionSlots: string[];
   heroSlots: string[];
@@ -88,7 +92,9 @@ const EASES: { value: EasePreference; label: string }[] = [
   { value: "challenge", label: "High skill" },
 ];
 
-function DeckCards({ cards }: { cards: PickCard[] }) {
+const SWAP_LABEL: Record<string, string> = { upgrade: "higher level", underleveled: "yours was low", missing: "not owned" };
+
+export function DeckCards({ cards }: { cards: PickCard[] }) {
   return (
     <div className="flex flex-wrap gap-2">
       {cards.map((c, i) => {
@@ -102,7 +108,7 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
             key={i}
             className="text-center"
             style={{ width: 92 }}
-            title={`${c.name ?? c.role}${card ? ` · ${card.elixir} elixir` : ""}${c.isSubstitute ? " · substitute" : ""}`}
+            title={`${c.name ?? c.role}${card ? ` · ${card.elixir} elixir` : ""}${c.isSubstitute ? ` · swapped in (${SWAP_LABEL[c.swap ?? "missing"] ?? "substitute"})` : ""}`}
           >
             <div className="relative" style={{ opacity: c.isMissing ? 0.55 : 1 }}>
               {card && !c.isMissing && (
@@ -139,7 +145,7 @@ function DeckCards({ cards }: { cards: PickCard[] }) {
                 >
                   <div className="truncate text-[12px] font-bold leading-tight text-white" style={{ textShadow: "0 1px 2px rgba(0,0,0,1)" }} title={c.name ?? c.role}>
                     {c.name ?? c.role}
-                    {c.isSubstitute ? " (sub)" : ""}
+                    {c.isSubstitute ? " (swap)" : ""}
                   </div>
                   <div className="text-[12px] font-extrabold" style={{ color: c.isMissing ? "#f3a0a0" : low ? "#fbbf24" : "#fff", textShadow: "0 1px 1px rgba(0,0,0,1)" }}>
                     {c.isMissing ? "don't have" : low ? `Lv ${c.level} · low` : `Lv ${c.level}`}
@@ -261,10 +267,11 @@ export default function Generator({ collection, onSave }: Props) {
   return (
     <section className="rounded-xl p-6" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
       <h2 className="text-lg font-bold">
-        <span style={{ color: "var(--accent-2)" }}>Step 2</span> · Get your decks
+        <span style={{ color: "var(--accent-2)" }}>Step 3</span> · Find new decks
       </h2>
       <p className="mb-3 mt-1 text-sm" style={{ color: "var(--muted)" }}>
-        Three top-ladder decks ranked to your cards, each with evolutions and a game plan.
+        Three genuinely different top-player decks you can field, ranked by their real win rates and your card
+        levels. Any card we swap is named, with the reason.
       </p>
 
       <div className="mb-3 flex flex-wrap items-end gap-4">
@@ -470,7 +477,7 @@ function Field({ label, value }: { label: string; value: string }) {
 
 /** One deck card: header badges, the 8-card grid, coaching, and evolution/substitution notes.
  *  Rendered for both the ranked library picks and the focal-card "built for you" deck. */
-function DeckResult({
+export function DeckResult({
   pick,
   copied,
   onCopy,
@@ -486,11 +493,11 @@ function DeckResult({
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <h3 className="text-base font-bold">{pick.name}</h3>
-          {pick.source === "meta" && (
+          {(pick.listKind ? pick.listKind === "real" || pick.listKind === "close" : pick.source === "meta") && (
             <span
               className="rounded px-1.5 py-0.5 text-[10px] font-bold"
               style={{ background: "var(--accent)", color: "#fff" }}
-              title={`Seen in ${pick.usage} sampled top-ladder battles`}
+              title={`A list top players actually run (core seen in ${pick.usage} sampled top-ladder battles)`}
             >
               META
             </span>
@@ -574,9 +581,12 @@ function DeckResult({
       )}
       {pick.substitutions.length > 0 && (
         <p className="mt-2 text-xs" style={{ color: "var(--muted)" }}>
-          Substitutions:{" "}
+          Swaps:{" "}
           {pick.substitutions
-            .map((s) => `${cardByKey(s.from)?.name ?? s.from} → ${cardByKey(s.to)?.name ?? s.to}`)
+            .map(
+              (s) =>
+                `${cardByKey(s.from)?.name ?? s.from} → ${cardByKey(s.to)?.name ?? s.to}${s.reason ? ` (${SWAP_LABEL[s.reason] ?? s.reason})` : ""}`,
+            )
             .join(", ")}
         </p>
       )}

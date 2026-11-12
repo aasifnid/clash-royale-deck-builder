@@ -1,0 +1,1019 @@
+{
+ "tag": null,
+ "name": null,
+ "trophies": 11788,
+ "arena": 28,
+ "arenaName": "Summit of Heroes",
+ "experienceLevel": 42,
+ "wins": 3919,
+ "losses": 3835,
+ "battleCount": 7754,
+ "kingLevel": 16,
+ "owned": {
+  "26000000": {
+   "id": 26000000,
+   "level": 14,
+   "evolved": true,
+   "hero": true,
+   "evoAvailable": true,
+   "heroAvailable": true
+  },
+  "26000001": {
+   "id": 26000001,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000002": {
+   "id": 26000002,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000003": {
+   "id": 26000003,
+   "level": 12,
+   "evolved": false,
+   "hero": true,
+   "evoAvailable": true,
+   "heroAvailable": true
+  },
+  "26000004": {
+   "id": 26000004,
+   "level": 14,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000005": {
+   "id": 26000005,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000006": {
+   "id": 26000006,
+   "level": 14,
+   "evolved": false,
+   "hero": true,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000007": {
+   "id": 26000007,
+   "level": 14,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000008": {
+   "id": 26000008,
+   "level": 11,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000009": {
+   "id": 26000009,
+   "level": 15,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000010": {
+   "id": 26000010,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000011": {
+   "id": 26000011,
+   "level": 15,
+   "evolved": false,
+   "hero": true,
+   "evoAvailable": true,
+   "heroAvailable": true
+  },
+  "26000012": {
+   "id": 26000012,
+   "level": 15,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000013": {
+   "id": 26000013,
+   "level": 14,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000014": {
+   "id": 26000014,
+   "level": 12,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": true
+  },
+  "26000015": {
+   "id": 26000015,
+   "level": 16,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000016": {
+   "id": 26000016,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000017": {
+   "id": 26000017,
+   "level": 16,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": true
+  },
+  "26000018": {
+   "id": 26000018,
+   "level": 14,
+   "evolved": false,
+   "hero": true,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000019": {
+   "id": 26000019,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000020": {
+   "id": 26000020,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000021": {
+   "id": 26000021,
+   "level": 15,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000022": {
+   "id": 26000022,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000023": {
+   "id": 26000023,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000024": {
+   "id": 26000024,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000025": {
+   "id": 26000025,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000026": {
+   "id": 26000026,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000027": {
+   "id": 26000027,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000028": {
+   "id": 26000028,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000029": {
+   "id": 26000029,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000030": {
+   "id": 26000030,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000031": {
+   "id": 26000031,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000032": {
+   "id": 26000032,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000033": {
+   "id": 26000033,
+   "level": 15,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000034": {
+   "id": 26000034,
+   "level": 15,
+   "evolved": false,
+   "hero": true,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000035": {
+   "id": 26000035,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000036": {
+   "id": 26000036,
+   "level": 14,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000037": {
+   "id": 26000037,
+   "level": 14,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000038": {
+   "id": 26000038,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000039": {
+   "id": 26000039,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000040": {
+   "id": 26000040,
+   "level": 14,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000041": {
+   "id": 26000041,
+   "level": 15,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000042": {
+   "id": 26000042,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000043": {
+   "id": 26000043,
+   "level": 12,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000044": {
+   "id": 26000044,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000045": {
+   "id": 26000045,
+   "level": 13,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000046": {
+   "id": 26000046,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000047": {
+   "id": 26000047,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000048": {
+   "id": 26000048,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000049": {
+   "id": 26000049,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000050": {
+   "id": 26000050,
+   "level": 14,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000051": {
+   "id": 26000051,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000052": {
+   "id": 26000052,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000053": {
+   "id": 26000053,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000054": {
+   "id": 26000054,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000055": {
+   "id": 26000055,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000056": {
+   "id": 26000056,
+   "level": 16,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000057": {
+   "id": 26000057,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000058": {
+   "id": 26000058,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000059": {
+   "id": 26000059,
+   "level": 15,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000060": {
+   "id": 26000060,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000061": {
+   "id": 26000061,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000062": {
+   "id": 26000062,
+   "level": 12,
+   "evolved": false,
+   "hero": true,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000063": {
+   "id": 26000063,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000064": {
+   "id": 26000064,
+   "level": 15,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000065": {
+   "id": 26000065,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000067": {
+   "id": 26000067,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000068": {
+   "id": 26000068,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000069": {
+   "id": 26000069,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000072": {
+   "id": 26000072,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000074": {
+   "id": 26000074,
+   "level": 15,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000077": {
+   "id": 26000077,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000080": {
+   "id": 26000080,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000083": {
+   "id": 26000083,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000084": {
+   "id": 26000084,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000085": {
+   "id": 26000085,
+   "level": 14,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "26000087": {
+   "id": 26000087,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000093": {
+   "id": 26000093,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000095": {
+   "id": 26000095,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000096": {
+   "id": 26000096,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000097": {
+   "id": 26000097,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000099": {
+   "id": 26000099,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000101": {
+   "id": 26000101,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000102": {
+   "id": 26000102,
+   "level": 11,
+   "evolved": false,
+   "hero": true,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "26000103": {
+   "id": 26000103,
+   "level": 16,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000106": {
+   "id": 26000106,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "26000107": {
+   "id": 26000107,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "27000000": {
+   "id": 27000000,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "27000001": {
+   "id": 27000001,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "27000002": {
+   "id": 27000002,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "27000003": {
+   "id": 27000003,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "27000004": {
+   "id": 27000004,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "27000005": {
+   "id": 27000005,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "27000006": {
+   "id": 27000006,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "27000007": {
+   "id": 27000007,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "27000008": {
+   "id": 27000008,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "27000009": {
+   "id": 27000009,
+   "level": 10,
+   "evolved": false,
+   "hero": true,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "27000010": {
+   "id": 27000010,
+   "level": 11,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "27000012": {
+   "id": 27000012,
+   "level": 12,
+   "evolved": true,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "27000013": {
+   "id": 27000013,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "28000000": {
+   "id": 28000000,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000001": {
+   "id": 28000001,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000002": {
+   "id": 28000002,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000003": {
+   "id": 28000003,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000004": {
+   "id": 28000004,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "28000005": {
+   "id": 28000005,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000006": {
+   "id": 28000006,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "28000007": {
+   "id": 28000007,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000008": {
+   "id": 28000008,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "28000009": {
+   "id": 28000009,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000010": {
+   "id": 28000010,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000011": {
+   "id": 28000011,
+   "level": 12,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000012": {
+   "id": 28000012,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000013": {
+   "id": 28000013,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000014": {
+   "id": 28000014,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000015": {
+   "id": 28000015,
+   "level": 14,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": true
+  },
+  "28000016": {
+   "id": 28000016,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000017": {
+   "id": 28000017,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": true,
+   "heroAvailable": false
+  },
+  "28000018": {
+   "id": 28000018,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000023": {
+   "id": 28000023,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000024": {
+   "id": 28000024,
+   "level": 11,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000025": {
+   "id": 28000025,
+   "level": 10,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  },
+  "28000026": {
+   "id": 28000026,
+   "level": 13,
+   "evolved": false,
+   "hero": false,
+   "evoAvailable": false,
+   "heroAvailable": false
+  }
+ },
+ "towerTroops": {
+  "159000000": {
+   "id": 159000000,
+   "level": 16
+  },
+  "159000001": {
+   "id": 159000001,
+   "level": 10
+  },
+  "159000002": {
+   "id": 159000002,
+   "level": 10
+  },
+  "159000004": {
+   "id": 159000004,
+   "level": 11
+  }
+ },
+ "activeTowerTroop": 159000000,
+ "syncedAt": "2026-11-12T00:00:00.000Z",
+ "unknownCards": []
+}

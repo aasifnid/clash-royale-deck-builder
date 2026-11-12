@@ -8,6 +8,18 @@ export function deckLink(cards: Card[]): string {
   return `https://link.clashroyale.com/deck/en?deck=${ids}`;
 }
 
+/** Read the 8 cards out of a Clash Royale "copy deck" link (the format the game shares, including
+ *  decks built with the in-game Deck Wizard). Returns card ids, or null if there's no valid deck. */
+export function parseDeckLink(text: string): number[] | null {
+  const m = text.match(/deck=([0-9;%3Bb]+)/i);
+  if (!m) return null;
+  const ids = decodeURIComponent(m[1])
+    .split(";")
+    .map((s) => Number(s))
+    .filter((n) => Number.isInteger(n) && n > 0);
+  return ids.length === 8 && new Set(ids).size === 8 ? ids : null;
+}
+
 /** Elixir cost distribution (count of cards at each elixir value 1..10). */
 export function elixirCurve(cards: Card[]): { elixir: number; count: number }[] {
   const counts = new Map<number, number>();

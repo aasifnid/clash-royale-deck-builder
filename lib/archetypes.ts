@@ -59,7 +59,16 @@ const WIN_CONDITIONS: [string, Archetype][] = [
   // Giant is the one card all three share. Lowest priority so Rune Giant decks that run it stay
   // Bridge Spam. KEEP IN SYNC with scripts/meta-cluster.mjs.
   ["minion-giant", "Control"],
+  // Skeleton Barrel (Nov 2026 audit): a real chip win condition, especially as an Evolution, that
+  // was being dropped into ordinary support slots next to another win condition. Lowest priority
+  // so a deck that merely splashes it still classifies by its main win condition. KEEP IN SYNC
+  // with scripts/meta-cluster.mjs.
+  ["skeleton-barrel", "Bait"],
 ];
+
+/** Every card that can anchor a deck as its win condition. A rebuild never places one of these in
+ *  a support slot, so a deck keeps a single, focused win condition. */
+export const WIN_CONDITION_KEYS: ReadonlySet<string> = new Set(WIN_CONDITIONS.map(([k]) => k));
 
 /** Classify a deck (by card ids) into an archetype, or null if no known win condition. */
 export function classifyDeck(cardIds: number[]): Archetype | null {

@@ -66,6 +66,9 @@ export interface Collection {
   owned: Record<number, OwnedCard>; // keyed by card id
   towerTroops: Record<number, OwnedTowerTroop>; // owned tower troops, keyed by id
   activeTowerTroop: number | null; // id of the tower troop in the current deck
+  // The 8 card keys of the deck the player has selected in-game at sync time (from the API's
+  // currentDeck), so Deck Check can grade what they actually play. Absent on older saves.
+  currentDeck?: string[];
   syncedAt: string | null; // ISO timestamp of last successful sync
   // Master data for owned cards too new to be in bundled data/cards.json, synthesized from the
   // player API at sync time so a freshly-released card still shows up without a data refresh.

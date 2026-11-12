@@ -5,7 +5,7 @@
 
 import provenDecks from "@/data/proven-decks.json";
 import { cardByKey } from "./cards";
-import { metaFitScore } from "./archetypes";
+import { metaFitScore, WIN_CONDITION_KEYS as CLASSIFIER_WIN_CONDITIONS } from "./archetypes";
 import { META_DECKS } from "./meta-decks";
 import { cardsWithRole, ANTI_AIR } from "./roles";
 import type { LocalMeta } from "./localmeta";
@@ -121,16 +121,20 @@ function strengthOf(deck: ProvenDeck, evidence: Evidence): number {
 
 // Cards that serve as a win condition in some deck — they should NOT be used to fill ordinary
 // support slots, or decks pile up multiple win conditions and stop being coherent.
-const WIN_CONDITION_KEYS = new Set<string>();
+const WIN_CONDITION_KEYS = new Set<string>(CLASSIFIER_WIN_CONDITIONS);
 for (const d of DECKS) for (const s of d.slots) if (s.role === "win-condition") WIN_CONDITION_KEYS.add(s.cardKey);
 
 export type EasePreference = "forgiving" | "any" | "challenge";
+export type SwapReason = "missing" | "underleveled" | "upgrade";
 
 export interface ResolvedSlot {
   role: string;
   canonicalKey: string;
   chosenKey: string | null; // the card the player would actually field, or null if none owned
   isSubstitute: boolean;
+  // Why the card differs from the list: the player doesn't own the listed card, it is under-leveled
+  // for their account, or an optional swap for a much higher-level card of the same type.
+  swap: SwapReason | null;
   isMissing: boolean;
   level: number; // 0 if missing
   weak: boolean; // owned but more than COMPETITIVE_GAP below the player's fielding level
@@ -149,7 +153,7 @@ export interface DeckCandidate {
   slots: ResolvedSlot[];
   cards: Card[]; // the resolved 8 (or fewer, if slots are missing)
   missingRoles: string[]; // roles with no owned card
-  substitutions: { role: string; from: string; to: string }[];
+  substitutions: { role: string; from: string; to: string; reason: SwapReason }[];
   powerCards: PowerCard[]; // deck cards the player has in Evolution/Hero form
   evolutionSlots: string[]; // up to 2 card names to run evolved
   heroSlots: string[]; // up to 1 card name to run as hero
@@ -179,6 +183,21 @@ const COMPETITIVE_GAP = 3;
 // Swap the canonical card for an owned substitute only if the sub is more than this many
 // levels higher — keeps deck integrity for close calls, fixes egregious under-leveling.
 const LEVEL_UPGRADE_TOLERANCE = 2;
+// At most this many OPTIONAL swaps (a listed card the player owns at a fine level, swapped for a
+// much higher-level same-type card). Missing and under-leveled cards are always replaced on top.
+export const MAX_OPTIONAL_SWAPS = 2;
+// An optional swap must gain at least this many levels to be worth leaving the proven list.
+const MIN_UPGRADE_GAIN = 2;
+// A rebuild may move the list's average elixir by at most this much before it's discounted.
+const MAX_ELIXIR_DRIFT = 0.5;
+// The realistic range of a field-weighted matchup rate, stretched onto 0..1 for scoring.
+const META_FIT_LOW = 0.44;
+const META_FIT_HIGH = 0.56;
+
+const avgCost = (keys: string[]) => {
+  const costs = keys.map((k) => cardByKey(k)?.elixir).filter((e): e is number => e != null);
+  return costs.length ? costs.reduce((a, b) => a + b, 0) / costs.length : 0;
+};
 
 /** The player's realistic competitive level: the 80th percentile of their owned card levels.
  *  Higher than the median so the long tail of never-leveled junk cards doesn't drag it down,
@@ -251,6 +270,9 @@ function bestCardForSlot(
     // Don't let a support slot grab a champion or another win condition — keeps the deck to a
     // single, focused win condition instead of a pile of threats.
     if (card.rarity === "Champion" || WIN_CONDITION_KEYS.has(key)) continue;
+    // A swap keeps the slot's card type: a spell stays a spell and a building stays a building, so
+    // a rebuild can't quietly drop a deck's only damage spell for another troop.
+    if (canonical && card.type !== canonical.type) continue;
     const dist = Math.abs(card.elixir - targetElixir);
     if (dist > 1.5) continue; // keep this slot's cost character
     const o = collection.owned[card.id];
@@ -296,49 +318,89 @@ function scoreDeck(
   local: LocalMeta | null = null,
 ): DeckCandidate {
   const target = targetLevel(collection);
-  // Two-pass resolution. Pass 1 places the deck's intended cards (important slots first), so
-  // a card always claims ITS slot before being borrowed to fill another — never starving a
-  // canonical slot into a false "missing". Pass 2 fills any still-empty non-win-condition
-  // slots from owned role-mates. Guarantees 8 distinct cards.
+  const levelFloor = Math.max(1, target - COMPETITIVE_GAP);
+  // List-first resolution. The deck stays the list top players ran wherever the player can field
+  // it, and every change is a counted, explained swap:
+  //   A. core slots (win condition, champion, a locked focal card) and every listed card the
+  //      player owns are placed as listed, important slots first, so no slot is starved;
+  //   B. a listed card the player doesn't own is filled from a same-type role-mate ("missing");
+  //   C. a listed card under-leveled for this account is swapped for a stronger same-type card
+  //      ("underleveled") - a dead card loses its duels, so this is never capped;
+  //   D. "best-cards" mode then allows up to MAX_OPTIONAL_SWAPS swaps for a much higher-level
+  //      card ("upgrade"), biggest gain first. "as-played" stops after B.
+  // Capping D is what keeps a recommendation a real deck: an earlier version rebuilt every flex
+  // slot from the player's highest cards, turning a top-player list into 7 swaps the evidence
+  // could no longer vouch for, and the same few high cards into every pick.
   const used = new Set<string>();
   const deckCanonicals = new Set(deck.slots.map((s) => s.cardKey));
   const proven = new Set(variantsOf(deck).filter((v) => v.games >= MIN_EVIDENCE_GAMES).flatMap((v) => v.cards));
-  const slots: ResolvedSlot[] = new Array(deck.slots.length);
+  const slots: (ResolvedSlot | undefined)[] = new Array(deck.slots.length);
+  const isCore = (slot: ProvenDeck["slots"][number]) =>
+    slot.role === "win-condition" || slot.role === "champion" || locked.has(slot.cardKey);
+  const place = (i: number, chosenKey: string | null, level: number, swap: SwapReason | null) => {
+    const slot = deck.slots[i];
+    if (chosenKey) used.add(chosenKey);
+    slots[i] = {
+      role: slot.role,
+      canonicalKey: slot.cardKey,
+      chosenKey,
+      isSubstitute: chosenKey !== null && chosenKey !== slot.cardKey,
+      swap: chosenKey !== null && chosenKey !== slot.cardKey ? swap : null,
+      isMissing: chosenKey === null,
+      level,
+      weak: false,
+    };
+  };
   const order = deck.slots.map((_, i) => i).sort((a, b) => slotWeight(deck.slots[b].role) - slotWeight(deck.slots[a].role));
-  const pending: number[] = [];
+
+  // A. Listed cards the player owns, as listed.
+  const unowned: number[] = [];
   for (const i of order) {
+    const key = deck.slots[i].cardKey;
+    const lvl = used.has(key) ? null : ownedLevelOf(collection, key);
+    if (lvl !== null) place(i, key, lvl, null);
+    else unowned.push(i);
+  }
+  // B. Listed cards the player doesn't own: same-type best fit, then a curated substitute, then any
+  //    role-mate. Core slots only accept the curated substitute, never an unrelated card.
+  for (const i of unowned) {
     const slot = deck.slots[i];
-    // Core slots stay the deck's own card (the archetype anchor). A locked card (the focal card
-    // of a "build around this card" request) is treated as core too, so the engine keeps it in
-    // place instead of swapping it for a higher-level owned role-mate.
-    const isCore = slot.role === "win-condition" || slot.role === "champion" || locked.has(slot.cardKey);
-    // Core slots stay the deck's own card (the archetype anchor). Every other slot is filled with
-    // the player's STRONGEST role+cost-appropriate card, so the deck is built around their best
-    // cards instead of their downgraded copies of the canonical list.
-    // "as-played" keeps a real list's own cards wherever the player owns them (scoring the list top
-    // players actually ran); "best-cards" rebuilds the flex slots from the player's strongest cards.
-    const r = isCore || mode === "as-played"
+    const fill = isCore(slot)
       ? resolveIntended(slot, collection, used)
-      : bestCardForSlot(slot, collection, used, deckCanonicals, proven) ?? resolveIntended(slot, collection, used);
-    if (r) {
-      used.add(r.chosenKey);
-      slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: r.chosenKey, isSubstitute: r.isSubstitute, isMissing: false, level: r.level, weak: false };
-    } else {
-      pending.push(i);
+      : (bestCardForSlot(slot, collection, used, deckCanonicals, proven) ?? resolveIntended(slot, collection, used) ?? roleFill(slot, collection, used));
+    if (fill) place(i, fill.chosenKey, fill.level, "missing");
+    else place(i, null, 0, null);
+  }
+  if (mode === "best-cards") {
+    // C + D. Candidate swaps for listed cards, recomputed after each swap so two slots never claim
+    // the same replacement card.
+    let optionalLeft = MAX_OPTIONAL_SWAPS;
+    for (;;) {
+      let best: { i: number; key: string; level: number; gain: number; reason: SwapReason } | null = null;
+      for (let i = 0; i < deck.slots.length; i++) {
+        const cur = slots[i];
+        const slot = deck.slots[i];
+        if (!cur || cur.isMissing || cur.swap || isCore(slot)) continue;
+        const weak = cur.level <= levelFloor;
+        if (!weak && optionalLeft === 0) continue;
+        const alt = bestCardForSlot(slot, collection, used, deckCanonicals, proven);
+        if (!alt || alt.chosenKey === cur.chosenKey) continue;
+        const gain = alt.level - cur.level;
+        if (gain < (weak ? 1 : MIN_UPGRADE_GAIN)) continue;
+        // Under-leveled fixes always go first; among optional swaps, the biggest gain wins.
+        const reason: SwapReason = weak ? "underleveled" : "upgrade";
+        const rank = (r: SwapReason, g: number) => (r === "underleveled" ? 100 : 0) + g;
+        if (!best || rank(reason, gain) > rank(best.reason, best.gain)) {
+          best = { i, key: alt.chosenKey, level: alt.level, gain, reason };
+        }
+      }
+      if (!best) break;
+      used.delete(slots[best.i]!.chosenKey!);
+      place(best.i, best.key, best.level, best.reason);
+      if (best.reason === "upgrade") optionalLeft--;
     }
   }
-  for (const i of pending) {
-    const slot = deck.slots[i];
-    const fillable = slot.role !== "win-condition" && slot.role !== "champion" && !locked.has(slot.cardKey);
-    const r = fillable ? roleFill(slot, collection, used) : null;
-    if (r) {
-      used.add(r.chosenKey);
-      slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: r.chosenKey, isSubstitute: true, isMissing: false, level: r.level, weak: false };
-    } else {
-      slots[i] = { role: slot.role, canonicalKey: slot.cardKey, chosenKey: null, isSubstitute: false, isMissing: true, level: 0, weak: false };
-    }
-  }
-  const levelFloor = Math.max(1, target - COMPETITIVE_GAP);
+  const resolved = slots as ResolvedSlot[];
 
   // Ownership: weighted fraction of slots the player can fill.
   let ownedWeight = 0;
@@ -351,7 +413,7 @@ function scoreDeck(
   // lose their duels and quietly lose games. We count them to penalize the deck below.
   let weakCards = 0;
 
-  for (const s of slots) {
+  for (const s of resolved) {
     const w = slotWeight(s.role);
     totalWeight += w;
     if (!s.isMissing) {
@@ -371,7 +433,7 @@ function scoreDeck(
 
   // Which of this deck's cards the player owns in Evolution / Hero form.
   const powerCards: PowerCard[] = [];
-  for (const s of slots) {
+  for (const s of resolved) {
     if (s.isMissing || !s.chosenKey) continue;
     const card = cardByKey(s.chosenKey);
     const o = card ? collection.owned[card.id] : undefined;
@@ -380,7 +442,7 @@ function scoreDeck(
     }
   }
 
-  // Assign the 2 evolution slots + 1 hero slot. Prefer the evolutions TOP PLAYERS actually run
+  // Assign the 2 evolution resolved + 1 hero slot. Prefer the evolutions TOP PLAYERS actually run
   // in this deck (from real meta usage), then win-condition / champion, so the recommendation
   // matches the meta instead of "any evolved card you happen to own".
   const metaEvoSet = new Set(deck.metaEvolutions ?? []);
@@ -403,8 +465,8 @@ function scoreDeck(
     ...heroPCs.slice(1).map((p) => `${p.name} (Hero)`),
   ];
 
-  // Edge = how well the deck fills your special slots. Evolutions weigh more (2 slots,
-  // bigger power swing) than the single hero slot. Empty evolution slots score low.
+  // Edge = how well the deck fills your special resolved. Evolutions weigh more (2 resolved,
+  // bigger power swing) than the single hero slot. Empty evolution resolved score low.
   const edge = 0.7 * (evoTop.length / 2) + 0.3 * heroTop.length;
 
   // Skill fit vs the player's stated ease preference (skillFloor 1 = easy .. 5 = hard).
@@ -417,32 +479,44 @@ function scoreDeck(
   const arena =
     collection.arena == null ? 0.8 : collection.arena >= deck.minArena ? 1 : 0.5;
 
-  const fieldable = slots.every((s) => !s.isMissing);
+  const fieldable = resolved.every((s) => !s.isMissing);
 
-  // Meta fit: how well this deck's archetype answers what's beating the player on ladder.
-  // Neutral (0.5) when there's no battle-log threat data.
-  const meta = metaFitScore(deck.archetype, threats);
+  // Meta fit: how well this deck's archetype does against what the player faces (decks sampled near
+  // their trophies, else what beat them recently). Averaged over a real field, the matchup rate only
+  // moves between ~44% and ~56%, so it is stretched onto 0..1 before weighting; left raw, even a
+  // large weight barely moved the ranking. Neutral (0.5) with no data.
+  const fit = metaFitScore(deck.archetype, threats);
+  const meta = Math.max(0, Math.min(1, (fit - META_FIT_LOW) / (META_FIT_HIGH - META_FIT_LOW)));
 
   // Coverage: after substitutions, does the resolved deck still answer air and carry a spell?
   // An incoherent resolution (e.g. no anti-air) gets discounted, not silently surfaced.
-  const chosenKeys = slots.map((s) => s.chosenKey).filter((k): k is string => Boolean(k));
+  const chosenKeys = resolved.map((s) => s.chosenKey).filter((k): k is string => Boolean(k));
   const hasAntiAir = chosenKeys.some((k) => ANTI_AIR.has(k));
   const hasSpell = chosenKeys.some((k) => cardByKey(k)?.type === "Spell");
   let coverage = 1;
   if (!hasAntiAir) coverage *= 0.82;
   if (!hasSpell) coverage *= 0.9;
+  // One focused win condition (a second is fine, e.g. Golem + Night Witch support): three or more
+  // threats means a pile of win conditions rather than a deck.
+  const winCons = chosenKeys.filter((k) => WIN_CONDITION_KEYS.has(k)).length;
+  if (winCons >= 3) coverage *= 0.85;
+  // Swaps must keep the list's elixir character: a cycle deck that drifts heavy no longer plays
+  // like the list its evidence comes from.
+  const listCost = avgCost(deck.slots.map((s) => s.cardKey));
+  if (resolved.some((s) => s.swap) && Math.abs(avgCost(chosenKeys) - listCost) > MAX_ELIXIR_DRIFT) coverage *= 0.9;
 
   // Strength is measured on the deck the player would ACTUALLY field: a meta list's win rate only
   // carries over in full when the resolved 8 match a list top players ran, and fades toward 50% the
   // further substitutions move it from any real list.
   const evidence = withLocal(evidenceFor(deck, chosenKeys), chosenKeys, local);
   const strength = strengthOf(deck, evidence);
-  // Your card levels LEAD: from the pool of real top-player decks, surface the ones where YOUR
-  // cards are highest-leveled (so it's built from your best cards, not a pro list stuffed with
-  // your level-10 cards). Proven strength (win rate, then popularity) is next, then evolution-slot
-  // fit and ownership. This is "the strongest real deck you can field at your levels".
+  // Proven strength LEADS: a real list's record (win rate, then popularity) on the exact cards the
+  // player would field. Card levels are next, so a list stuffed with low cards still sinks, and
+  // under-leveled cards are swapped out above before scoring. How the deck fares against what the
+  // player actually faces comes third. Levels used to lead (0.38 vs 0.25), which let an untested
+  // mix of the player's highest cards outrank the real lists those cards were drawn from.
   let total =
-    (0.1 * ownership + 0.38 * level + 0.25 * strength + 0.17 * edge + 0.03 * skill + 0.02 * arena + 0.05 * meta) * 100;
+    (0.1 * ownership + 0.25 * level + 0.35 * strength + 0.1 * edge + 0.03 * skill + 0.02 * arena + 0.15 * meta) * 100;
   total *= coverage;
   // A deck you can't field a full 8 for is a poor recommendation — discount hard.
   if (!fieldable) total *= 0.5;
@@ -459,7 +533,7 @@ function scoreDeck(
     else if (deck.skillFloor === 3) total *= 0.96;
   }
 
-  const cards = slots.filter((s) => s.chosenKey).map((s) => cardByKey(s.chosenKey!)!);
+  const cards = resolved.filter((s) => s.chosenKey).map((s) => cardByKey(s.chosenKey!)!);
   const avgElixir =
     cards.length > 0
       ? Math.round((cards.reduce((sum, c) => sum + c.elixir, 0) / cards.length) * 10) / 10
@@ -467,12 +541,12 @@ function scoreDeck(
 
   return {
     deck,
-    slots,
+    slots: resolved,
     cards,
-    missingRoles: slots.filter((s) => s.isMissing).map((s) => s.canonicalKey),
-    substitutions: slots
+    missingRoles: resolved.filter((s) => s.isMissing).map((s) => s.canonicalKey),
+    substitutions: resolved
       .filter((s) => s.isSubstitute && s.chosenKey)
-      .map((s) => ({ role: s.role, from: s.canonicalKey, to: s.chosenKey! })),
+      .map((s) => ({ role: s.role, from: s.canonicalKey, to: s.chosenKey!, reason: s.swap ?? "missing" })),
     powerCards,
     evolutionSlots,
     heroSlots,
@@ -517,9 +591,9 @@ export function rankDecks(collection: Collection, opts: RankOptions = {}): DeckC
     .sort((a, b) => b.scores.total - a.scores.total);
 }
 
-/** Score a deck rebuilt from the player's best cards AND each of its most-played real lists as
- *  played, keeping whichever scores highest. A proven list at slightly lower levels can then beat
- *  an untested mix of the player's highest cards, and vice versa when the levels gap is large. */
+/** Score the deck's core list and each of its most-played real lists, both as played and with up to
+ *  MAX_OPTIONAL_SWAPS level upgrades, keeping whichever scores highest. A proven list at slightly
+ *  lower levels can then beat a tuned version of it, and vice versa when the level gap is large. */
 function scoreBestVersion(
   deck: ProvenDeck,
   collection: Collection,
@@ -529,8 +603,10 @@ function scoreBestVersion(
 ): DeckCandidate {
   let best = scoreDeck(deck, collection, ease, threats, new Set(), "best-cards", local);
   for (const slots of deck.provenLists ?? []) {
-    const cand = scoreDeck({ ...deck, slots }, collection, ease, threats, new Set(), "as-played", local);
-    if (cand.scores.total > best.scores.total) best = cand;
+    for (const mode of ["as-played", "best-cards"] as const) {
+      const cand = scoreDeck({ ...deck, slots }, collection, ease, threats, new Set(), mode, local);
+      if (cand.scores.total > best.scores.total) best = cand;
+    }
   }
   return best;
 }
@@ -541,9 +617,15 @@ function scoreBestVersion(
 export function scoreBuiltDeck(
   deck: ProvenDeck,
   collection: Collection,
-  opts: { ease?: EasePreference; threats?: Record<string, number>; locked?: Set<string>; local?: LocalMeta | null } = {},
+  opts: {
+    ease?: EasePreference;
+    threats?: Record<string, number>;
+    locked?: Set<string>;
+    local?: LocalMeta | null;
+    mode?: "best-cards" | "as-played"; // "as-played" grades the 8 exactly as given (Deck Check)
+  } = {},
 ): DeckCandidate {
-  return scoreDeck(deck, collection, opts.ease ?? "any", opts.threats ?? {}, opts.locked ?? new Set(), "best-cards", opts.local ?? null);
+  return scoreDeck(deck, collection, opts.ease ?? "any", opts.threats ?? {}, opts.locked ?? new Set(), opts.mode ?? "best-cards", opts.local ?? null);
 }
 
 /** Distinct archetypes present in the library, for UI filter controls. */
