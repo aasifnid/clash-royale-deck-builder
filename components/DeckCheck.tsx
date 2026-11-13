@@ -25,11 +25,16 @@ interface CheckResponse {
   local: { trophies: number | null; battles: number } | null;
 }
 
-const VERDICT: Record<CheckResponse["verdict"], { title: string; color: string }> = {
+const VERDICT: Record<CheckResponse["verdict"] | "proven", { title: string; color: string }> = {
   keep: { title: "Keep it. This deck holds up for your cards.", color: "#4ade80" },
+  proven: { title: "Keep it. You're winning with it, and your results beat any estimate.", color: "#4ade80" },
   tweak: { title: "Good base. A small change makes it stronger.", color: "#facc15" },
   switch: { title: "There's a clearly stronger deck for your cards.", color: "#f87171" },
 };
+
+// A "keep" earned by the player's own winning record reads differently from a theoretical keep.
+const verdictKey = (r: CheckResponse): keyof typeof VERDICT =>
+  r.verdict === "keep" && r.yourRecord && r.yourRecord.games >= 10 && r.yourRecord.wins / r.yourRecord.games >= 0.55 ? "proven" : r.verdict;
 
 const names = (keys: string[]) => keys.map((k) => cardByKey(k)?.name ?? k).join(" + ");
 
@@ -155,9 +160,9 @@ export default function DeckCheck({ collection, onSave }: Props) {
 
       {result && (
         <div className="flex flex-col gap-4">
-          <div className="rounded-lg p-3" style={{ background: "var(--surface-2)", borderLeft: `4px solid ${VERDICT[result.verdict].color}` }}>
-            <div className="text-base font-bold" style={{ color: VERDICT[result.verdict].color }}>
-              {VERDICT[result.verdict].title}
+          <div className="rounded-lg p-3" style={{ background: "var(--surface-2)", borderLeft: `4px solid ${VERDICT[verdictKey(result)].color}` }}>
+            <div className="text-base font-bold" style={{ color: VERDICT[verdictKey(result)].color }}>
+              {VERDICT[verdictKey(result)].title}
             </div>
             {result.matchups.vsField != null && (
               <p className="mt-1 text-sm">
@@ -197,13 +202,12 @@ export default function DeckCheck({ collection, onSave }: Props) {
                 .
               </p>
             )}
-            {result.shapeFix && (
+            {result.shapeFix && result.shapeFix.scoreGain > 0 && (
               <p className="mt-2 text-sm">
                 <span className="font-bold">{result.shapeFix.need === "spell" ? "Add a spell" : "Add air defense"}:</span>{" "}
                 {names([result.shapeFix.remove])} → {names([result.shapeFix.add])}
-                {result.shapeFix.scoreGain > 0
-                  ? `. It's the best ${result.shapeFix.need === "spell" ? "spell" : "anti-air"} swap from your cards (+${result.shapeFix.scoreGain} on our score).`
-                  : ". It's the least costly fix from your cards."}
+                . It&apos;s the best {result.shapeFix.need === "spell" ? "spell" : "anti-air"} swap from your cards (+
+                {result.shapeFix.scoreGain} on our score).
               </p>
             )}
             {result.provenSwap && (

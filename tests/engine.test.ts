@@ -140,3 +140,15 @@ test("the upgrade plan names owned cards below the target level", () => {
 test("deck signatures ignore card order", () => {
   assert.equal(deckSignature(["zap", "hog-rider"]), deckSignature(["hog-rider", "zap"]));
 });
+
+test("your own winning record makes a deck a 'keep' despite a structural warning", () => {
+  const own = { games: 29, decks: { [deckSignature(NO_SPELL_DECK)]: { games: 21, wins: 16 } } };
+  const result = checkDeck(collection, NO_SPELL_DECK, { own });
+  assert.equal(result.verdict, "keep");
+  assert.ok(result.notes.some((n) => /No spell/.test(n)), "the warning still shows");
+});
+
+test("a losing own record doesn't earn a 'keep'", () => {
+  const own = { games: 29, decks: { [deckSignature(NO_SPELL_DECK)]: { games: 12, wins: 4 } } };
+  assert.notEqual(checkDeck(collection, NO_SPELL_DECK, { own }).verdict, "keep");
+});

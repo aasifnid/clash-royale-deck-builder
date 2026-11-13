@@ -24,6 +24,10 @@ const PROVEN_SWAP_MIN_EDGE = 1.5;
 const TUNE_MIN_GAIN = 2;
 // The best recommendation must out-score the deck by this much before we suggest switching.
 const SWITCH_MIN_GAIN = 8;
+// The player's own record overrides theory: this many recent games at this win rate with these
+// exact 8 makes it a "keep" even with a structural warning (the warning still shows).
+const PROVEN_BY_YOU_GAMES = 10;
+const PROVEN_BY_YOU_RATE = 0.55;
 // How many candidate cards to try when fixing a missing spell / anti-air.
 const SHAPE_FIX_CANDIDATES = 4;
 
@@ -209,7 +213,18 @@ export function checkDeck(
     (c) => c.slots.map((s) => s.chosenKey).sort().join(",") !== sig,
   );
   const alternative = top && top.scores.total >= current.scores.total + SWITCH_MIN_GAIN ? top : null;
-  const verdict = alternative ? "switch" : tuned || provenSwap || shapeFix || structural ? "tweak" : "keep";
+  const yourRecord = opts.own?.decks[deckSignature(keys)] ?? null;
+  const provenByYou = yourRecord != null && yourRecord.games >= PROVEN_BY_YOU_GAMES && yourRecord.wins / yourRecord.games >= PROVEN_BY_YOU_RATE;
+  // Only suggest a fix that actually scores higher; a hole the player is winning through anyway is
+  // reported as a note, not a swap that would cost them.
+  const usefulFix = shapeFix && shapeFix.scoreGain > 0 ? shapeFix : null;
+  const verdict = provenByYou
+    ? "keep"
+    : alternative
+      ? "switch"
+      : tuned || provenSwap || usefulFix || structural
+        ? "tweak"
+        : "keep";
 
   const field = Object.entries(opts.threats ?? {}).filter(([, n]) => n > 0);
   const rates = field.map(([arch]) => ({ archetype: arch, rate: Math.round(matchupRate(deck.archetype, arch) * 1000) / 10 }));
@@ -220,7 +235,7 @@ export function checkDeck(
     tuned,
     provenSwap,
     shapeFix,
-    yourRecord: opts.own?.decks[deckSignature(keys)] ?? null,
+    yourRecord,
     alternative,
     verdict,
     matchups: {
