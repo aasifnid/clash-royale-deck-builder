@@ -12,6 +12,9 @@ interface CheckResponse {
   current: EnrichedPick;
   tuned: EnrichedPick | null;
   provenSwap: { remove: string[]; add: string[]; games: number; winRate: number } | null;
+  shapeFix: { need: "spell" | "air"; remove: string; add: string; scoreGain: number } | null;
+  yourRecord: { games: number; wins: number } | null;
+  recentGames: number | null;
   alternative: EnrichedPick | null;
   matchups: {
     vsField: number | null;
@@ -94,6 +97,7 @@ export default function DeckCheck({ collection, onSave }: Props) {
       avgElixir: pick.avgElixir,
       savedAt: new Date().toISOString(),
       summary: pick.coach.summary,
+      predictedWinRate: pick.listKind === "real" || pick.listKind === "close" ? (pick.evidence?.winRate ?? null) : null,
     });
   }
 
@@ -177,6 +181,30 @@ export default function DeckCheck({ collection, onSave }: Props) {
                   <li key={n}>{n}</li>
                 ))}
               </ul>
+            )}
+            {result.recentGames != null && (
+              <p className="mt-1 text-sm">
+                <span style={{ color: "var(--muted)" }}>Your record with these exact 8:</span>{" "}
+                {result.yourRecord && result.yourRecord.games > 0 ? (
+                  <>
+                    {result.yourRecord.wins}W {result.yourRecord.games - result.yourRecord.wins}L in your last{" "}
+                    {result.recentGames} ranked games ({Math.round((result.yourRecord.wins / result.yourRecord.games) * 100)}%)
+                    {result.yourRecord.games < 10 && <span style={{ color: "var(--muted)" }}> · small sample</span>}
+                  </>
+                ) : (
+                  <span style={{ color: "var(--muted)" }}>not played in your last {result.recentGames} ranked games</span>
+                )}
+                .
+              </p>
+            )}
+            {result.shapeFix && (
+              <p className="mt-2 text-sm">
+                <span className="font-bold">{result.shapeFix.need === "spell" ? "Add a spell" : "Add air defense"}:</span>{" "}
+                {names([result.shapeFix.remove])} → {names([result.shapeFix.add])}
+                {result.shapeFix.scoreGain > 0
+                  ? `. It's the best ${result.shapeFix.need === "spell" ? "spell" : "anti-air"} swap from your cards (+${result.shapeFix.scoreGain} on our score).`
+                  : ". It's the least costly fix from your cards."}
+              </p>
             )}
             {result.provenSwap && (
               <p className="mt-2 text-sm">

@@ -7,12 +7,14 @@ The gap it fills: the in-game Deck Wizard (Nov 2026) can already build a deck. I
 ## How it works
 
 1. **Sync your account** by player tag (public, no password), or add cards by hand. Card levels, evolutions, heroes, king-tower level and your selected in-game deck are stored locally and editable.
-2. **Check your deck.** Grade your current deck, or paste a deck link (from the game or the Deck Wizard): its real win rate if top players run it, its expected result against the decks sampled near your trophies, under-leveled cards, shape problems (no spell, nothing that hits air, too many win conditions), and at most one or two swaps, each backed by a real list's record.
+2. **Check your deck.** Grade your current deck, or paste a deck link (from the game or the Deck Wizard): its real win rate if top players run it, its expected result against the decks sampled near your trophies, under-leveled cards, shape problems (no spell, nothing that hits air, too many win conditions) with the best fix from your own cards, and at most one or two swaps, each backed by a real list's record. A deck with a structural hole is never rated "keep".
 3. **Find new decks.** A deterministic engine ranks the current top-ladder meta (`data/meta-decks.json`, refreshed twice a month from ~1,000 top players' battle logs) against your collection:
    - **Real lists first.** Proven win rate on the exact 8 cards you'd field leads the score, then your card levels, then how the deck fares against what you face.
    - **Honest swaps.** A listed card you don't own, or own under-leveled, is replaced by a same-type card. Beyond that, at most two optional swaps for much higher-level cards. Every swap is named with its reason, and a deck is only labelled a top-player list when the shown 8 cards really are one (or one card off).
    - **Three different decks.** Picks differ by win condition and share at most four cards.
-4. **Coaching.** Each deck gets a game plan, counters and play tips generated from its archetype and actual cards. Fully free and offline. If an `ANTHROPIC_API_KEY` is set, an optional AI layer re-ranks and rephrases instead.
+4. **What to upgrade next.** The cards whose next levels open up the most strong top-player lists (52%+ over 30+ games) for you, nearest first.
+5. **Your real results.** Saved decks remember the win rate we predicted. "Check my results" reads your recent ranked battles (the API keeps the last ~25-30) and shows how each saved deck actually did. Deck Check shows your own record with the checked deck too.
+6. **Coaching.** Each deck gets a game plan, counters and play tips generated from its archetype and actual cards. Fully free and offline. If an `ANTHROPIC_API_KEY` is set, an optional AI layer re-ranks and rephrases instead.
 
 The hand-written library in `data/proven-decks.json` (32 decks, last edited Jul 2026) is now only a fallback for accounts that can't field a meta deck, and the source of card roles and substitutes.
 

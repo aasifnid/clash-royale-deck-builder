@@ -15,6 +15,9 @@ export interface SavedDeck {
   avgElixir: number;
   savedAt: string;
   summary?: string;
+  // The win rate we showed when it was saved (only for real or one-card-off lists), so its real
+  // results can be compared with the prediction later.
+  predictedWinRate?: number | null;
 }
 
 export function emptyCollection(): Collection {

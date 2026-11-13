@@ -17,6 +17,7 @@ import CollectionDashboard from "@/components/CollectionDashboard";
 import TowerTroops from "@/components/TowerTroops";
 import Generator from "@/components/Generator";
 import DeckCheck from "@/components/DeckCheck";
+import UpgradePlan from "@/components/UpgradePlan";
 import SavedDecks from "@/components/SavedDecks";
 
 export default function Home() {
@@ -102,7 +103,8 @@ export default function Home() {
           {/* Check what you play first (the in-game Deck Wizard can already build a deck), then find new ones */}
           <DeckCheck collection={collection} onSave={handleSave} />
           <Generator collection={collection} onSave={handleSave} />
-          <SavedDecks decks={decks} onDelete={handleDelete} />
+          <UpgradePlan collection={collection} />
+          <SavedDecks decks={decks} onDelete={handleDelete} tag={collection.tag} />
           {/* Your account: cards + tower troops in one panel */}
           <section className="rounded-xl p-6" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
             <CollectionDashboard collection={collection} onCardChange={handleCardChange} />

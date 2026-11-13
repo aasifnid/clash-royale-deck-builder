@@ -261,6 +261,7 @@ export default function Generator({ collection, onSave }: Props) {
       avgElixir: pick.avgElixir,
       savedAt: new Date().toISOString(),
       summary: pick.coach.summary,
+      predictedWinRate: pick.listKind === "real" || pick.listKind === "close" ? (pick.evidence?.winRate ?? null) : null,
     });
   }
 

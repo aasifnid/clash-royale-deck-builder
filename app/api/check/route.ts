@@ -8,7 +8,7 @@ import { NextResponse } from "next/server";
 import type { Collection } from "@/lib/types";
 import type { EasePreference } from "@/lib/fieldability";
 import { checkDeck } from "@/lib/deckcheck";
-import { fetchBattleInsights, type BattleInsights } from "@/lib/battlelog";
+import { fetchBattleInsights, fetchOwnRecords, type BattleInsights } from "@/lib/battlelog";
 import { fetchLocalMeta, type LocalMeta } from "@/lib/localmeta";
 import { coachPickFor, enrichCandidate } from "@/lib/present";
 import { cardByKey } from "@/lib/cards";
@@ -40,11 +40,15 @@ export async function POST(request: Request) {
     );
   }
 
-  const [insights, local] = collection.tag
-    ? await Promise.all([fetchBattleInsights(collection.tag), fetchLocalMeta(collection.tag, collection.trophies)])
-    : [null, null];
+  const [insights, local, own] = collection.tag
+    ? await Promise.all([
+        fetchBattleInsights(collection.tag),
+        fetchLocalMeta(collection.tag, collection.trophies),
+        fetchOwnRecords(collection.tag),
+      ])
+    : [null, null, null];
 
-  const result = checkDeck(collection, keys, { ease, threats: threatsFor(local, insights), local });
+  const result = checkDeck(collection, keys, { ease, threats: threatsFor(local, insights), local, own });
   const pick = (c: typeof result.current) => ({ coach: coachPickFor(c), ...enrichCandidate(c) });
 
   return NextResponse.json({
@@ -52,6 +56,10 @@ export async function POST(request: Request) {
     current: pick(result.current),
     tuned: result.tuned ? pick(result.tuned) : null,
     provenSwap: result.provenSwap,
+    shapeFix: result.shapeFix,
+    // The player's own results with these exact 8 in their recent battle log.
+    yourRecord: result.yourRecord,
+    recentGames: own?.games ?? null,
     alternative: result.alternative ? pick(result.alternative) : null,
     matchups: result.matchups,
     notes: result.notes,

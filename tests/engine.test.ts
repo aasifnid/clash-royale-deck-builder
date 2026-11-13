@@ -16,6 +16,8 @@ import { personalizedSummary, listKind } from "@/lib/present";
 import { checkDeck } from "@/lib/deckcheck";
 import { WIN_CONDITION_KEYS, winConditionKeyOf } from "@/lib/archetypes";
 import { parseDeckLink } from "@/lib/deck";
+import { upgradePlan } from "@/lib/upgrades";
+import { deckSignature } from "@/lib/battlelog";
 import { cardByKey, cardById } from "@/lib/cards";
 
 const collection = fixture as unknown as Collection;
@@ -107,3 +109,34 @@ test("deck links from the game parse to 8 cards", () => {
   assert.equal(parseDeckLink("hello"), null);
 });
 
+
+// The deck the fixture account had selected in-game on 2026-11-12: strong cards, but no spell.
+const NO_SPELL_DECK = ["skeleton-barrel", "golden-knight", "inferno-dragon", "wizard", "goblin-gang", "hog-rider", "bomber", "baby-dragon"];
+
+test("a deck with no spell is never a 'keep'", () => {
+  const result = checkDeck(collection, NO_SPELL_DECK);
+  assert.notEqual(result.verdict, "keep");
+  assert.ok(result.notes.some((n) => /No spell/.test(n)));
+});
+
+test("the shape fix adds a spell and never removes a win condition", () => {
+  const fix = checkDeck(collection, NO_SPELL_DECK).shapeFix;
+  assert.ok(fix, "expected a fix for the missing spell");
+  assert.equal(fix.need, "spell");
+  assert.equal(cardByKey(fix.add)?.type, "Spell");
+  assert.ok(!WIN_CONDITION_KEYS.has(fix.remove), `removed win condition ${fix.remove}`);
+});
+
+test("the upgrade plan names owned cards below the target level", () => {
+  const plan = upgradePlan(collection);
+  assert.ok(plan.targets.length > 0);
+  for (const t of plan.targets) {
+    assert.ok(t.level < t.targetLevel, `${t.name} is already at ${t.level}`);
+    assert.ok(t.lists.length > 0);
+    assert.ok(t.lists.every((l) => l.cards.includes(t.key)));
+  }
+});
+
+test("deck signatures ignore card order", () => {
+  assert.equal(deckSignature(["zap", "hog-rider"]), deckSignature(["hog-rider", "zap"]));
+});

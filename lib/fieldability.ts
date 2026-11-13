@@ -203,7 +203,7 @@ const avgCost = (keys: string[]) => {
  *  Higher than the median so the long tail of never-leveled junk cards doesn't drag it down,
  *  but not so high it treats the few maxed outliers as the baseline. Falls back to king level
  *  when nothing is owned. */
-function targetLevel(collection: Collection): number {
+export function targetLevel(collection: Collection): number {
   const levels = Object.values(collection.owned)
     .map((o) => o.level)
     .sort((a, b) => a - b);
